@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "Lasta ut", "Lossa in", "Hämta", "Leverera", "Bomhämtning", 
         "Ej levererat", "Hämtning utan sändnings-ID", "Åter terminal", "Flänsa",
         "Hämta åt annan bil", "Hämta obokad hämtning",
-        "Flänsa på", "Flänsa av"
+        "Flänsa på", "Flänsa av", "Ångra"
     ];
     let scenarios = [];
     let stepCounter = 0;
