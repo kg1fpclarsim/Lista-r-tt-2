@@ -150,3 +150,50 @@ input[type="text"], textarea {
 .small-delete-btn {
     padding: 2px 6px !important; font-size: 12px !important; line-height: 1;
 }
+/* --- Stilar för Certifikat --- */
+#certificate-wrapper {
+    width: 100%;
+    max-width: 800px; /* Bredd för visning på skärmen */
+    margin: 20px auto;
+}
+#certificate {
+    border: 10px solid #00407d;
+    padding: 30px;
+    background-color: #f8f9fa;
+    text-align: center;
+    font-family: 'Times New Roman', serif;
+    color: #333;
+}
+.cert-header h1 {
+    color: #00407d;
+    font-size: 3em;
+    margin: 0;
+}
+.cert-header h2 {
+    font-size: 1.5em;
+    margin-top: 0;
+    font-weight: normal;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+    margin-bottom: 40px;
+}
+.cert-body {
+    margin: 40px 0;
+}
+.cert-body p {
+    font-size: 1.2em;
+}
+.cert-name {
+    font-size: 2.5em;
+    font-style: italic;
+    color: #000;
+}
+.cert-footer {
+    margin-top: 50px;
+    border-top: 1px solid #ccc;
+    padding-top: 15px;
+}
+.company-name {
+    font-weight: bold;
+    color: #555;
+}
