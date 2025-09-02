@@ -41,7 +41,7 @@
     "title": "Hämtning Lots",
     "steps": [
       {
-        "description": "Är hos avsändaren och hämtar, hur registrerar du det i handdatorn?",
+        "description": "Är hos avsändaren och ska lasta, hur registrerar du det i handdatorn?",
         "sequence": [
           "Hämta",
           "Hämta åt annan bil"
