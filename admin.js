@@ -22,60 +22,87 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderScenariosList() { /* ... */ }
 
     function addStep() {
-        const stepId = stepCounter++;
-        const stepDiv = document.createElement('div');
-        stepDiv.className = 'step-card';
-        stepDiv.dataset.stepId = stepId;
-        
-        let buttonsHtml = ALL_EVENTS.map(event => `<button class="btn sequence-builder-btn" data-event-name="${event}">${event}</button>`).join('');
-        let optionsHtml = ALL_EVENTS.map(event => `<option value="${event}">${event}</option>`).join('');
+    const stepId = stepCounter++;
+    const stepDiv = document.createElement('div');
+    stepDiv.className = 'step-card';
+    stepDiv.dataset.stepId = stepId;
+    
+    let buttonsHtml = ALL_EVENTS.map(event => `<button class="btn sequence-builder-btn" data-event-name="${event}">${event}</button>`).join('');
+    let optionsHtml = ALL_EVENTS.map(event => `<option value="${event}">${event}</option>`).join('');
 
-        stepDiv.innerHTML = `
-            <div class="step-header">
-                <h4>Delmoment ${stepsContainer.children.length + 1}</h4>
-                <button class="delete-btn step-delete-btn">Ta bort</button>
-            </div>
-            <label>Beskrivning / Fråga (Markdown):</label>
-            <textarea class="step-description" rows="4"></textarea>
-            <label>Allmänt felmeddelande (valfritt):</label>
-            <input type="text" class="step-error-message" placeholder="Används om inget specifikt meddelande finns">
-            <div class="specific-errors-container"></div>
-            <button class="btn btn-secondary btn-add-specific-error">Lägg till specifikt felmeddelande</button>
-            <label>Korrekt sekvens (klicka i ordning):</label>
+    stepDiv.innerHTML = `
+        <div class="step-header">
+            <h4>Delmoment ${stepsContainer.children.length + 1}</h4>
+            <button class="delete-btn step-delete-btn">Ta bort</button>
+        </div>
+        <label>Beskrivning / Fråga (Markdown):</label>
+        <textarea class="step-description" rows="4"></textarea>
+        <label>Allmänt felmeddelande (valfritt):</label>
+        <input type="text" class="step-error-message" placeholder="Används om inget specifikt meddelande finns">
+        
+        <div class="specific-errors-container"></div>
+        <button class="btn btn-secondary btn-add-specific-error">Lägg till specifikt felmeddelande</button>
+
+        <label>Korrekt sekvens (klicka i ordning):</label>
+        <div class="sequence-header">
             <div class="sequence-display step-sequence-display"></div>
-            
-            <label class="scoring-label" style="display: none;">Vilka klick ska ge "Korrekt"-feedback?</label>
-            <div class="scoring-clicks-container"></div>
-
-            <div class="button-grid">${buttonsHtml}</div>
-        `;
-        stepsContainer.appendChild(stepDiv);
-
-        stepDiv.querySelector('.step-delete-btn').addEventListener('click', () => stepDiv.remove());
-        stepDiv.querySelector('.btn-add-specific-error').addEventListener('click', (e) => { /* ... (oförändrad) ... */ });
+            <button class="btn btn-secondary btn-clear-sequence">Rensa sekvens</button>
+        </div>
         
-        const sequenceDisplay = stepDiv.querySelector('.step-sequence-display');
-        const scoringContainer = stepDiv.querySelector('.scoring-clicks-container');
-        const scoringLabel = stepDiv.querySelector('.scoring-label');
-        let currentSequence = [];
+        <label class="scoring-label" style="display: none;">Vilka klick ska ge "Korrekt"-feedback?</label>
+        <div class="scoring-clicks-container"></div>
 
-        stepDiv.querySelectorAll('.sequence-builder-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const eventName = btn.dataset.eventName;
-                currentSequence.push(eventName);
-                // Visa sekvensen visuellt
-                sequenceDisplay.innerHTML += `<span class="sequence-step">${eventName}</span>`;
-                stepDiv.dataset.sequence = JSON.stringify(currentSequence);
-                
-                // Visa och lägg till en kryssruta för det nya steget
-                scoringLabel.style.display = 'block';
-                const checkboxDiv = document.createElement('div');
-                checkboxDiv.className = 'scoring-checkbox';
-                checkboxDiv.innerHTML = `<input type="checkbox" id="scoring_${stepId}_${currentSequence.length}" value="${eventName}" checked><label for="scoring_${stepId}_${currentSequence.length}">${eventName}</label>`;
-                scoringContainer.appendChild(checkboxDiv);
-            });
+        <div class="button-grid">${buttonsHtml}</div>
+    `;
+    stepsContainer.appendChild(stepDiv);
+
+    // Hämta referenser till de nya elementen
+    const sequenceDisplay = stepDiv.querySelector('.step-sequence-display');
+    const scoringContainer = stepDiv.querySelector('.scoring-clicks-container');
+    const scoringLabel = stepDiv.querySelector('.scoring-label');
+    const clearSequenceBtn = stepDiv.querySelector('.btn-clear-sequence');
+    let currentSequence = [];
+
+    stepDiv.querySelector('.step-delete-btn').addEventListener('click', () => stepDiv.remove());
+    stepDiv.querySelector('.btn-add-specific-error').addEventListener('click', (e) => {
+        const container = e.target.previousElementSibling;
+        const errorRow = document.createElement('div');
+        errorRow.className = 'specific-error-row';
+        errorRow.innerHTML = `
+            <span>OM man klickar på:</span>
+            <select class="specific-error-key">${optionsHtml}</select>
+            <span>VISA meddelandet:</span>
+            <input type="text" class="specific-error-value" placeholder="T.ex. Du kan inte leverera nu...">
+            <button class="delete-btn small-delete-btn">X</button>
+        `;
+        container.appendChild(errorRow);
+        errorRow.querySelector('.small-delete-btn').addEventListener('click', () => errorRow.remove());
+    });
+    
+    stepDiv.querySelectorAll('.sequence-builder-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const eventName = btn.dataset.eventName;
+            currentSequence.push(eventName);
+            sequenceDisplay.innerHTML += `<span class="sequence-step">${eventName}</span>`;
+            stepDiv.dataset.sequence = JSON.stringify(currentSequence);
+            
+            scoringLabel.style.display = 'block';
+            const checkboxDiv = document.createElement('div');
+            checkboxDiv.className = 'scoring-checkbox';
+            checkboxDiv.innerHTML = `<input type="checkbox" id="scoring_${stepId}_${currentSequence.length}" value="${eventName}" checked><label for="scoring_${stepId}_${currentSequence.length}">${eventName}</label>`;
+            scoringContainer.appendChild(checkboxDiv);
         });
-    }
+    });
+
+    // NY EVENT LISTENER FÖR RENSA-KNAPPEN
+    clearSequenceBtn.addEventListener('click', () => {
+        currentSequence = [];
+        stepDiv.dataset.sequence = '[]';
+        sequenceDisplay.innerHTML = '';
+        scoringContainer.innerHTML = '';
+        scoringLabel.style.display = 'none';
+    });
+}
     
     addStepBtn.addEventListener('click', addStep);
 
