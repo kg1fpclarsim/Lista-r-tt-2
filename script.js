@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: "Hem", 
             coords: { top: 655, left: 90, width: 35, height: 50 },
             submenu: {
-                image: 'handdator-hem.png',
+                image: 'Handdator-Hem.png',
                 backButtonCoords: { top: 655, left: 175, width: 80, height: 50 },
                 events: [
                     { 
