@@ -176,6 +176,10 @@ document.addEventListener('DOMContentLoaded', () => {
             backArea.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height];
             backArea.addEventListener('click', () => {
                 if (menuHistory.length > 0) {
+                    if (currentSequenceStep >0) {
+                        currentSequenceStep--;
+                    }
+                    
                     const previousMenu = menuHistory.pop();
                     switchMenuView(previousMenu);
                 }
