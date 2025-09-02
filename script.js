@@ -206,10 +206,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(isFinished && currentScenarioStepIndex >= loadedScenario.steps.length - 1) return;
 
+    // RÄTT KLICK (följer den definierade vägen)
     if (!isFinished && clickedEvent.name === scenarioSequence[currentSequenceStep]) {
-        feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt steg.`;
-        feedbackArea.className = 'feedback-correct';
-        areaElement.classList.add('area-correct-feedback');
+        
+        // NY LOGIK: Avgör om feedback ska visas
+        const scoringClicks = currentStepData.scoringClicks || scenarioSequence; // Använd alla klick om 'scoringClicks' saknas
+        const isScoringClick = scoringClicks.includes(clickedEvent.name);
+
+        if (isScoringClick) {
+            feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt steg.`;
+            feedbackArea.className = 'feedback-correct';
+            areaElement.classList.add('area-correct-feedback');
+        }
+        
         areaElement.style.pointerEvents = 'none';
         currentSequenceStep++;
         
@@ -227,17 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }, 700);
             } else {
-                // NY LOGIK FÖR ANIMERING HÄR
-                // Tona ut den gamla beskrivningen
                 scenarioDescription.classList.add('fade-out');
-                
-                // Vänta tills uttoningen är klar, byt sedan innehåll och tona in
                 setTimeout(() => {
                     currentScenarioStepIndex++;
-                    setupCurrentScenarioStep(); // Denna byter texten
-                    // Ta bort klassen för att tona in den nya texten
+                    setupCurrentScenarioStep();
                     scenarioDescription.classList.remove('fade-out');
-                }, 400); // Denna tid (400ms) matchar vår CSS-transition (0.4s)
+                }, 400);
             }
             return;
         }
@@ -246,7 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
             menuHistory.push(currentMenuView);
             switchMenuView(clickedEvent.submenu);
         }
-    } else {
+
+    } else { // FEL KLICK
         const clickedName = clickedEvent.name;
         let errorMessage = "Fel ordning. Försök igen.";
         if (currentStepData.customErrorMessage) { errorMessage = currentStepData.customErrorMessage; }
