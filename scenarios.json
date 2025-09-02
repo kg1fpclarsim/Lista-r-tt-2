@@ -78,6 +78,8 @@
       {
         "description": "Test ångra",
         "sequence": [
+          "Hem",
+          "Synkronisera visa",
           "Ångra"
         ]
       }
