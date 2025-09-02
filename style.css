@@ -435,3 +435,10 @@ input[type="text"], textarea {
     font-size: 0.8em !important;
     white-space: nowrap; /* Förhindra att texten bryts */
 }
+.clickable-area {
+    position: absolute;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    background-color: rgba(255, 0, 0, 0.4); /* <-- LÄGG TILL DENNA RAD FÖR FELSÖKNING */
+}
