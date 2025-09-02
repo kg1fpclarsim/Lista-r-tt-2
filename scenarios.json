@@ -21,5 +21,43 @@
         "customErrorMessage": "Fel, nu är det dags att registrera själva leveransen."
       }
     ]
+  },
+  {
+    "title": "Fjärrchaufför",
+    "steps": [
+      {
+        "description": "Du får bilen av Lots hur ska du registrera fraktsedlarna på det gods som redan är lastat på bilen?",
+        "sequence": [
+          "Hämta",
+          "Hämta obokad hämtning"
+        ],
+        "wrongClickMessages": {
+          "Lasta ut": "Fel! Lasta ut används på styckegods som lastas på Schenkers terminal.",
+          "Hämta åt annan bil": "Fel! Om du registrera Hämta åt annan bil påbörjas inte någon avräkning",
+          "Flänsa": "Fel! Flänsa använd när du påbörjar ditt arbetspass som lots"
+        }
+      },
+      {
+        "description": "Du kommer till Schenkers terminal och ska lasta styckegods, hur ska det registreras?",
+        "sequence": [
+          "Lasta ut"
+        ],
+        "customErrorMessage": "Fel! Försök igen"
+      },
+      {
+        "description": "Du kommer till ankommande terminal och ska lossa stycket, hur registrerar du det?",
+        "sequence": [
+          "Lossa in"
+        ],
+        "customErrorMessage": "Fel! försök igen"
+      },
+      {
+        "description": "Du är färdig för dagen och har partisändningar kvar i handdatorn, vad gör du?",
+        "sequence": [
+          "Flänsa",
+          "Flänsa av"
+        ]
+      }
+    ]
   }
 ]
