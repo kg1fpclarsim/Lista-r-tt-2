@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utbildning Genomförd</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div id="certificate-wrapper">
+            <div id="certificate">
+                <div class="cert-header">
+                    <h1>Certifikat</h1>
+                    <h2>Intyg om Genomförd Utbildning</h2>
+                </div>
+                <div class="cert-body">
+                    <p>Detta certifikat intygar att</p>
+                    <h2 class="cert-name" id="cert-name">[Namn]</h2>
+                    <p>framgångsrikt har genomfört den interaktiva utbildningen för användning av handdator.</p>
+                </div>
+                <div class="cert-footer">
+                    <p><strong>Datum:</strong> <span id="cert-date">[Datum]</span></p>
+                    <p class="company-name">Ditt Företagsnamn AB</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="form-card">
+            <h2>Grattis, du har klarat alla scenarier!</h2>
+            <p>Fyll i ditt namn nedan för att generera ditt certifikat.</p>
+            <label for="name-input">Ange ditt fullständiga namn:</label>
+            <input type="text" id="name-input" placeholder="Förnamn Efternamn">
+            <button id="generate-pdf-btn" class="btn btn-primary">Generera & Ladda Ner PDF</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="certifikat.js"></script>
+</body>
+</html>
