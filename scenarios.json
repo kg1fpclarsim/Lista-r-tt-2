@@ -36,5 +36,40 @@
         ]
       }
     ]
+  },
+  {
+    "title": "Hämtning Lots",
+    "steps": [
+      {
+        "description": "Är hos avsändaren och hämtar, hur registrerar du det i handdatorn?",
+        "sequence": [
+          "Hämta",
+          "Hämta åt annan bil"
+        ],
+        "wrongClickMessages": {
+          "Hämta obokad hämtning": "Fel! Hämta obokad hämtning påbörjar avräkning, och det är inte säkert att bilen du har ska köra godset vidare till mottagaren."
+        }
+      },
+      {
+        "description": "Du har lossat godset på vår omlastning, hur registrerar du det i handdatorn?",
+        "sequence": [
+          "Flänsa",
+          "Flänsa av"
+        ],
+        "wrongClickMessages": {
+          "Lossa in": "Fel! Registrerar du Lossa in på egen omlastning, tror systemet att den är inhämtad av distributionsåkeri och terminalhanterats."
+        }
+      },
+      {
+        "description": "Du är färdig för dagen och ska lämna över ekipaget till fjärr chaufför, det finns sändningar kvar i handdatorn som är på ekipaget. Hur registrerar du det i handdatorn.",
+        "sequence": [
+          "Flänsa",
+          "Flänsa av"
+        ],
+        "wrongClickMessages": {
+          "Hämta": "Fel! Det är fjärrchauffören som registrerar Hämta Obokad hämtning."
+        }
+      }
+    ]
   }
 ]
