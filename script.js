@@ -1,51 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ####################################################################
-    // ### DITT JOBB: FYLL I VÄRDENA NEDAN                              ###
+    // ### DITT JOBB: FYLL I VÄRDET NEDAN                               ###
     // ####################################################################
     
-    // 1. Ersätt 430 med den verkliga bredden i pixlar på din `handdator.png`-fil.
-    //    Det är VIKTIGT att alla dina 3 bilder har SAMMA bredd för att detta ska fungera.
+    // Ersätt 430 med den verkliga bredden i pixlar på din `handdator.png`-fil.
+    // Det är VIKTIGT att alla dina 3 bilder har SAMMA bredd för att detta ska fungera.
     const ORIGINAL_IMAGE_WIDTH = 430; 
     
-    // 2. Fyll i alla `coords` (top, left, width, height) för alla knappar.
+    // Dina koordinater är nu infogade här nedanför.
     const topLevelMenu = {
         image: 'handdator.png',
         events: [
-            { name: "Lasta ut", coords: { top: 0, left: 0, width: 0, height: 0 } },
-            { name: "Lossa in", coords: { top: 0, left: 0, width: 0, height: 0 } },
+            { name: "Lasta ut", coords: { top:  197, left: 71, width: 138, height: 76 } },
+            { name: "Lossa in", coords: { top: 197, left: 221, width: 138, height: 76 } },
             { 
                 name: "Hämta", 
-                coords: { top: 0, left: 0, width: 0, height: 0 },
+                coords: { top: 287, left: 71, width: 138, height: 76 },
                 submenu: {
                     image: 'handdator-hamta.png',
-                    backButtonCoords: { top: 0, left: 0, width: 0, height: 0 },
+                    backButtonCoords: { top: 145, left: 70, width: 20, height: 25 }, // Rättad från "with"
                     events: [
-                        { name: "Hämta åt annan bil", coords: { top: 0, left: 0, width: 0, height: 0 } },
-                        { name: "Hämta obokad hämtning", coords: { top: 0, left: 0, width: 0, height: 0 } }
+                        { name: "Hämta åt annan bil", coords: { top: 295, left: 70, width: 185, height: 30 } },
+                        { name: "Hämta obokad hämtning", coords: { top: 240, left: 70, width: 185, height: 30 } }
                     ]
                 }
             },
-            { name: "Leverera", coords: { top: 0, left: 0, width: 0, height: 0 } },
-            { name: "Bomhämtning", coords: { top: 0, left: 0, width: 0, height: 0 } },
-            { name: "Ej levererat", coords: { top: 0, left: 0, width: 0, height: 0 } },
-            { name: "Hämtning utan sändnings-ID", coords: { top: 0, left: 0, width: 0, height: 0 } },
-            { name: "Åter terminal", coords: { top: 0, left: 0, width: 0, height: 0 } },
+            { name: "Leverera", coords: { top: 287, left: 221, width: 138, height: 76 } },
+            { name: "Bomhämtning", coords: { top: 374, left: 71, width: 138, height: 76 } },
+            { name: "Ej levererat", coords: { top: 374, left: 221, width: 138, height: 76 } },
+            { name: "Hämtning utan sändnings-ID", coords: { top: 463, left: 71, width: 138, height: 76 } },
+            { name: "Åter terminal", coords: { top: 463, left: 221, width: 138, height: 76 } },
             { 
                 name: "Flänsa", 
-                coords: { top: 0, left: 0, width: 0, height: 0 },
+                coords: { top: 552, left: 71, width: 138, height: 76 },
                 submenu: {
                     image: 'handdator-flansa.png',
-                    backButtonCoords: { top: 0, left: 0, width: 0, height: 0 },
+                    backButtonCoords: { top: 145, left: 70, width: 20, height: 25 }, // Rättad från "with"
                     events: [
-                        { name: "Flänsa på", coords: { top: 0, left: 0, width: 0, height: 0 } },
-                        { name: "Flänsa av", coords: { top: 0, left: 0, width: 0, height: 0 } }
+                        { name: "Flänsa på", coords: { top: 197, left: 71, width: 138, height: 76 } },
+                        { name: "Flänsa av", coords: { top: 197, left: 221, width: 138, height: 76 } }
                     ]
                 }
             }
         ]
     };
     // ####################################################################
-    // ### SLUT PÅ SEKTIONEN DU BEHÖVER REDIGERA                        ###
+    // ### SLUT PÅ SEKTIONEN MED DINA VÄRDEN                            ###
     // ####################################################################
 
     let loadedScenario = null;
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackMessage.textContent = errorMessage;
             feedbackArea.className = 'feedback-incorrect';
             areaElement.classList.add('area-incorrect-feedback');
-            setTimeout(() => { areaElement.classList.remove('area-incorrect-feedback'); }, 500);
+setTimeout(() => { areaElement.classList.remove('area-incorrect-feedback'); }, 500);
         }
     }
 
