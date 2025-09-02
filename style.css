@@ -394,3 +394,26 @@ input[type="text"], textarea {
     font-weight: bold;
     color: #555;
 }
+.scoring-label {
+    margin-top: 15px;
+}
+.scoring-clicks-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+.scoring-checkbox {
+    display: flex;
+    align-items: center;
+}
+.scoring-checkbox input {
+    margin-right: 5px;
+}
+.scoring-checkbox label {
+    margin-bottom: 0;
+    font-weight: normal;
+}
