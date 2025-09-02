@@ -441,5 +441,22 @@ input[type="text"], textarea {
     border-radius: 5px;
     transition: background-color 0.2s;
     pointer-events:all;
-    background-color: rgba(255, 0, 0, 0.4); /* <-- LÄGG TILL DENNA RAD FÖR FELSÖKNING */
+     
+}
+/* --- Stilar för Skrivmaskinsanimering --- */
+#scenario-description.typing {
+    position: relative;
+}
+
+/* Skapar en blinkande textmarkör med CSS */
+#scenario-description.typing::after {
+    content: '▋'; /* Du kan byta detta tecken mot '|' eller annat */
+    position: relative;
+    top: -0.05em;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    from, to { color: transparent; }
+    50% { color: black; }
 }
