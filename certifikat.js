@@ -1,22 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const nameInput = document.getElementById('name-input');
     const generatePdfBtn = document.getElementById('generate-pdf-btn');
-    const certificateName = document.getElementById('cert-name');
-    const certificateDate = document.getElementById('cert-date');
-    const certificateElement = document.getElementById('certificate');
-    const formCard = document.getElementById('form-card');
-    const wrapper = document.getElementById('certificate-wrapper');
+    
+    // Vi behöver inte längre referenser till certifikatets HTML-element
+    // eftersom vi bygger PDF:en från grunden.
 
-    // Sätt dagens datum direkt
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString('sv-SE', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-    certificateDate.textContent = formattedDate;
-
-    // Lyssna på generera-knappen
     generatePdfBtn.addEventListener('click', () => {
         const name = nameInput.value.trim();
         if (name === '') {
@@ -24,32 +12,84 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Steg 1: Uppdatera namnet på certifikatet
-        certificateName.textContent = name;
+        // Hämta dagens datum
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('sv-SE', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
 
-        // Steg 2: Förbered för PDF-generering
-        formCard.style.display = 'none'; // Göm formuläret
-        wrapper.style.border = 'none'; // Göm den yttre ramen
-        certificateElement.classList.add('render-for-pdf'); // Byt till A4-läge
+        // Inaktivera knappen medan PDF skapas
+        generatePdfBtn.disabled = true;
+        generatePdfBtn.textContent = 'Genererar PDF...';
 
-        // Steg 3: Vänta ett ögonblick så CSS hinner appliceras
+        // Använd en liten timeout för att låta webbläsaren uppdatera knappens text
         setTimeout(() => {
-            const options = {
-                margin:       0,
-                filename:     `certifikat_${name.replace(/\s+/g, '_')}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 3, useCORS: true }, // Ökad skala för bättre kvalitet
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-            };
-
-            // Steg 4: Skapa och ladda ner PDF:en
-            html2pdf().set(options).from(certificateElement).save().finally(() => {
-                // Steg 5: Återställ allt när PDF är klar
-                formCard.style.display = 'block';
-                wrapper.style.border = '1px solid #ccc';
-                certificateElement.classList.remove('render-for-pdf');
+            // Skapa ett nytt jsPDF-dokument i liggande A4-format
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: 'a4'
             });
 
-        }, 500);
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 20;
+
+            // ---- Här "ritar" vi certifikatet ----
+
+            // 1. Rita en tjock yttre ram
+            doc.setLineWidth(1.5);
+            doc.setDrawColor('#00407d'); // Mörkblå färg
+            doc.rect(margin / 2, margin / 2, pageWidth - margin, pageHeight - margin);
+            
+            // 2. Rita en tunn inre ram
+            doc.setLineWidth(0.5);
+            doc.rect(margin / 2 + 2, margin / 2 + 2, pageWidth - margin - 4, pageHeight - margin - 4);
+
+            // 3. Lägg till huvudrubriker
+            doc.setFont('times', 'normal');
+            doc.setFontSize(50);
+            doc.setTextColor('#00407d');
+            doc.text('Certifikat', pageWidth / 2, 60, { align: 'center' });
+
+            doc.setFontSize(20);
+            doc.setTextColor('#333333');
+            doc.text('Intyg om Genomförd Utbildning', pageWidth / 2, 75, { align: 'center' });
+
+            // 4. Lägg till brödtext och namn
+            doc.setFontSize(16);
+            doc.text('Detta certifikat intygar att', pageWidth / 2, 105, { align: 'center' });
+
+            doc.setFont('times', 'bolditalic');
+            doc.setFontSize(30);
+            doc.setTextColor('#000000');
+            doc.text(name, pageWidth / 2, 125, { align: 'center' });
+
+            doc.setFont('times', 'normal');
+            doc.setFontSize(16);
+            doc.setTextColor('#333333');
+            doc.text('framgångsrikt har genomfört den interaktiva utbildningen för användning av handdator.', pageWidth / 2, 145, { align: 'center' });
+
+            // 5. Lägg till datum och företagsnamn i sidfoten
+            doc.setFontSize(14);
+            const footerY = pageHeight - 35;
+            doc.text(`Datum: ${formattedDate}`, pageWidth / 2, footerY, { align: 'center' });
+            
+            doc.setFont('times', 'bold');
+            doc.text('Börjeskoncernen', pageWidth / 2, footerY + 10, { align: 'center' });
+
+            // -----------------------------------------
+
+            // Spara PDF-filen
+            doc.save(`certifikat_${name.replace(/\s+/g, '_')}.pdf`);
+
+            // Återaktivera knappen
+            generatePdfBtn.disabled = false;
+            generatePdfBtn.textContent = 'Generera & Ladda Ner PDF';
+
+        }, 100);
     });
 });
