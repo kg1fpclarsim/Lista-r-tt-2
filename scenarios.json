@@ -1,22 +1,25 @@
 [
   {
-    "description": "## Påbörja arbetspass som lots\nDu ska påbörja ditt arbetspass som lots. Hur ska du registrera dina fraktsedlar i handdatorn?",
-    "sequence": [
-      "Flänsa",
-      "Flänsa på"
-    ]
-  },
-  {
-    "description": "## Leverera sändning\nDu har kommit fram till kund, hur registrerar du leveransen i handdatorn?",
-    "sequence": [
-      "Leverera"
-    ]
-  },
-  {
-    "description": "## Fjärrchaufför\nDu påbörjar ditt arbetspass och får bilen av Lots.\n\nHur ska du registrera dina sändningar i handdatorn?",
-    "sequence": [
-      "Hämta",
-      "Hämta obokad hämtning"
+    "title": "Exempel: Fullständig Leverans",
+    "steps": [
+      {
+        "description": "## Steg 1: Ankomst\nDu har anlänt till kunden. Vad är det första du registrerar?",
+        "sequence": [
+          "Lasta ut"
+        ],
+        "customErrorMessage": "Fel, du måste alltid registrera urlastning först.",
+        "wrongClickMessages": {
+          "Leverera": "Du kan inte leverera något innan du har lastat ut det från bilen.",
+          "Hämta": "Fel, du är här för en leverans, inte en hämtning."
+        }
+      },
+      {
+        "description": "## Steg 2: Leverans\nKunden tar emot paketet. Slutför leveransen.",
+        "sequence": [
+          "Leverera"
+        ],
+        "customErrorMessage": "Fel, nu är det dags att registrera själva leveransen."
+      }
     ]
   }
 ]
