@@ -73,10 +73,10 @@
     ]
   },
   {
-    "title": "Test",
+    "title": "Det blev fel",
     "steps": [
       {
-        "description": "Test ångra",
+        "description": "Du har av misstag registrerat fel händelse, hur ångrar du det i handdatorn?",
         "sequence": [
           "Hem",
           "Synkronisera visa",
