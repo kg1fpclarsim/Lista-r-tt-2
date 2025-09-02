@@ -61,7 +61,7 @@
         }
       },
       {
-        "description": "Du är färdig för dagen och ska lämna över ekipaget till fjärr chaufför, det finns sändningar kvar i handdatorn som är på ekipaget. Hur registrerar du det i handdatorn.",
+        "description": "Du är färdig för dagen och ska lämna över ekipaget till fjärrchaufför, det finns sändningar kvar i handdatorn som är lastade på ekipaget. Hur registrerar du det i handdatorn.",
         "sequence": [
           "Flänsa",
           "Flänsa av"
