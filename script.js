@@ -176,60 +176,67 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleEventClick(clickedEvent, areaElement) {
-        if (!loadedScenario) return;
+    if (!loadedScenario) return;
 
-        const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
-        const scenarioSequence = currentStepData.sequence;
-        const isFinished = currentSequenceStep >= scenarioSequence.length;
+    const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
+    const scenarioSequence = currentStepData.sequence;
+    const isFinished = currentSequenceStep >= scenarioSequence.length;
 
-        if(isFinished && currentScenarioStepIndex >= loadedScenario.steps.length - 1) return;
+    if(isFinished && currentScenarioStepIndex >= loadedScenario.steps.length - 1) return;
 
-        if (!isFinished && clickedEvent.name === scenarioSequence[currentSequenceStep]) {
-            feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt steg.`;
-            feedbackArea.className = 'feedback-correct';
-            areaElement.classList.add('area-correct-feedback');
-            areaElement.style.pointerEvents = 'none';
-            currentSequenceStep++;
-            
-            const isStepComplete = currentSequenceStep === scenarioSequence.length;
-            if (isStepComplete) {
-                const isLastStepOfScenario = currentScenarioStepIndex === loadedScenario.steps.length - 1;
-                if (isLastStepOfScenario) {
-                    setTimeout(() => {
-                        feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
-                        feedbackArea.className = 'feedback-correct';
-                        nextScenarioButton.style.display = 'block';
-                        if (menuHistory.length > 0) {
-                            menuHistory = [];
-                            switchMenuView(topLevelMenu);
-                        }
-                    }, 700);
-                } else {
-                    setTimeout(() => {
-                        currentScenarioStepIndex++;
-                        setupCurrentScenarioStep();
-                    }, 1200);
-                }
-                return;
+    if (!isFinished && clickedEvent.name === scenarioSequence[currentSequenceStep]) {
+        feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt steg.`;
+        feedbackArea.className = 'feedback-correct';
+        areaElement.classList.add('area-correct-feedback');
+        areaElement.style.pointerEvents = 'none';
+        currentSequenceStep++;
+        
+        const isStepComplete = currentSequenceStep === scenarioSequence.length;
+        if (isStepComplete) {
+            const isLastStepOfScenario = currentScenarioStepIndex === loadedScenario.steps.length - 1;
+            if (isLastStepOfScenario) {
+                setTimeout(() => {
+                    feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
+                    feedbackArea.className = 'feedback-correct';
+                    nextScenarioButton.style.display = 'block';
+                    if (menuHistory.length > 0) {
+                        menuHistory = [];
+                        switchMenuView(topLevelMenu);
+                    }
+                }, 700);
+            } else {
+                // NY LOGIK FÖR ANIMERING HÄR
+                // Tona ut den gamla beskrivningen
+                scenarioDescription.classList.add('fade-out');
+                
+                // Vänta tills uttoningen är klar, byt sedan innehåll och tona in
+                setTimeout(() => {
+                    currentScenarioStepIndex++;
+                    setupCurrentScenarioStep(); // Denna byter texten
+                    // Ta bort klassen för att tona in den nya texten
+                    scenarioDescription.classList.remove('fade-out');
+                }, 400); // Denna tid (400ms) matchar vår CSS-transition (0.4s)
             }
-            
-            if (clickedEvent.submenu) {
-                menuHistory.push(currentMenuView);
-                switchMenuView(clickedEvent.submenu);
-            }
-        } else {
-            const clickedName = clickedEvent.name;
-            let errorMessage = "Fel ordning. Försök igen.";
-            if (currentStepData.customErrorMessage) { errorMessage = currentStepData.customErrorMessage; }
-            if (currentStepData.wrongClickMessages && currentStepData.wrongClickMessages[clickedName]) {
-                errorMessage = currentStepData.wrongClickMessages[clickedName];
-            }
-            feedbackMessage.textContent = errorMessage;
-            feedbackArea.className = 'feedback-incorrect';
-            areaElement.classList.add('area-incorrect-feedback');
-            setTimeout(() => { areaElement.classList.remove('area-incorrect-feedback'); }, 500);
+            return;
         }
+        
+        if (clickedEvent.submenu) {
+            menuHistory.push(currentMenuView);
+            switchMenuView(clickedEvent.submenu);
+        }
+    } else {
+        const clickedName = clickedEvent.name;
+        let errorMessage = "Fel ordning. Försök igen.";
+        if (currentStepData.customErrorMessage) { errorMessage = currentStepData.customErrorMessage; }
+        if (currentStepData.wrongClickMessages && currentStepData.wrongClickMessages[clickedName]) {
+            errorMessage = currentStepData.wrongClickMessages[clickedName];
+        }
+        feedbackMessage.textContent = errorMessage;
+        feedbackArea.className = 'feedback-incorrect';
+        areaElement.classList.add('area-incorrect-feedback');
+        setTimeout(() => { areaElement.classList.remove('area-incorrect-feedback'); }, 500);
     }
+}
     
     function scaleClickableAreas() {
         const scaleRatio = gameImage.offsetWidth / ORIGINAL_IMAGE_WIDTH;
