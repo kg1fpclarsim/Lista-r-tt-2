@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Skapa Scenarier</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Admin: Skapa & Hantera Scenarier</h1>
+        
+        <div class="card">
+            <h2>Skapa Nytt Scenario</h2>
+            
+            <div class="editor-layout">
+                <div class="editor-column">
+                    <label for="scenario-description">Beskrivning (stöder Markdown):</label>
+                    <textarea id="scenario-description" rows="10" placeholder="Skriv ## Rubrik&#10;**Fet text**&#10;* En punktlista"></textarea>
+                </div>
+                <div class="editor-column">
+                    <label>Förhandsvisning:</label>
+                    <div id="description-preview" class="description-preview"></div>
+                </div>
+            </div>
+            
+            <p>Klicka på knapparna nedan i den ordning som är korrekt för scenariot:</p>
+            <div id="available-buttons" class="button-grid">
+                </div>
+            
+            <h3>Vald sekvens:</h3>
+            <div id="selected-sequence" class="sequence-display">
+                 <p><em>Inga steg valda.</em></p>
+            </div>
+            
+            <button id="save-scenario-btn" class="btn btn-primary">Lägg till Scenario i listan</button>
+            <button id="clear-sequence-btn" class="btn btn-secondary">Rensa Sekvens</button>
+        </div>
+
+        <div class="card">
+            <h2>Scenarielista (för export)</h2>
+            <p>Dina tillagda och befintliga scenarier visas här. När du är klar, generera JSON och kopiera över till GitHub.</p>
+            <ul id="scenarios-list"></ul>
+        </div>
+        
+        <div class="card export-container">
+            <h3>Exportera för GitHub</h3>
+            <p>Klicka på knappen för att generera den färdiga texten. Kopiera allt från rutan nedan och ersätt innehållet i din <code>scenarios.json</code>-fil på GitHub.</p>
+            <button id="export-btn" class="btn btn-primary">Generera JSON</button>
+            <textarea id="json-output" readonly></textarea>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script src="admin.js"></script>
+</body>
+</html>

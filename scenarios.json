@@ -1,0 +1,22 @@
+[
+  {
+    "description": "## Påbörja arbetspass som lots\nDu ska påbörja ditt arbetspass som lots. Hur ska du registrera dina fraktsedlar i handdatorn?",
+    "sequence": [
+      "Flänsa",
+      "Flänsa på"
+    ]
+  },
+  {
+    "description": "## Leverera sändning\nDu har kommit fram till kund, hur registrerar du leveransen i handdatorn?",
+    "sequence": [
+      "Leverera"
+    ]
+  },
+  {
+    "description": "## Fjärrchaufför\nDu påbörjar ditt arbetspass och får bilen av Lots.\n\nHur ska du registrera dina sändningar i handdatorn?",
+    "sequence": [
+      "Hämta",
+      "Hämta obokad hämtning"
+    ]
+  }
+]
