@@ -50,6 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 certificateElement.classList.remove('render-for-pdf');
             });
 
-        }, 100);
+        }, 500);
     });
 });
