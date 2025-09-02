@@ -417,3 +417,21 @@ input[type="text"], textarea {
     margin-bottom: 0;
     font-weight: normal;
 }
+/* Styling för att "Rensa sekvens"-knappen ska se bra ut */
+.sequence-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px; /* Ersätter margin på .sequence-display */
+}
+
+.sequence-display {
+    flex-grow: 1; /* Tar upp tillgängligt utrymme */
+    margin-bottom: 0 !important; /* Ta bort gammal marginal */
+}
+
+.btn-clear-sequence {
+    padding: 5px 10px !important;
+    font-size: 0.8em !important;
+    white-space: nowrap; /* Förhindra att texten bryts */
+}
