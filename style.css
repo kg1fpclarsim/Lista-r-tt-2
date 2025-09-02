@@ -353,10 +353,6 @@ input[type="text"], textarea {
 #certificate.render-for-pdf {
     width: 297mm;
     height: 210mm;
-    position: absolute; /* Ta ut den ur flödet för att inte störa sidan */
-    top: 0;
-    left: 0;
-    z-index: -1; /* Göm den bakom annat innehåll ifall den syns */
 }
 
 .cert-header, .cert-body, .cert-footer {
