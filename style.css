@@ -197,3 +197,26 @@ input[type="text"], textarea {
     font-weight: bold;
     color: #555;
 }
+/* --- Förbättrad stil & animering för scenariobeskrivning --- */
+#scenario-description {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+#scenario-description h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+#scenario-description.fade-out {
+    opacity: 0;
+    transform: translateY(-15px);
+}
