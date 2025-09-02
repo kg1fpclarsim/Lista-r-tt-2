@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Ersätt 430 med den verkliga bredden i pixlar på din `handdator.png`-fil.
     // Det är VIKTIGT att alla dina 3 bilder har SAMMA bredd för att detta ska fungera.
-    const ORIGINAL_IMAGE_WIDTH = 430; 
+    const ORIGINAL_IMAGE_WIDTH = 426; 
     
     // Dina koordinater är nu infogade här nedanför.
     const topLevelMenu = {
