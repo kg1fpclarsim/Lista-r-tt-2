@@ -322,36 +322,43 @@ input[type="text"], textarea {
 }
 
 /* --- Certifikatsidan (certifikat.html) --- */
+
+/* Wrapper-elementet som syns på skärmen */
 #certificate-wrapper {
     width: 100%;
-    max-width: 800px; /* Bredd för visning på skärmen */
+    max-width: 800px;
     margin: 20px auto;
-    border: 1px solid #ccc; /* Ram för visning på skärmen */
-    padding: 10px; /* Lite luft på mobil */
+    border: 1px solid #ccc;
+    padding: 10px;
     box-sizing: border-box;
 }
 
+/* Standardutseende för certifikatet på skärmen (responsivt) */
 #certificate {
     background-color: #f8f9fa;
     color: #333;
     font-family: 'Times New Roman', serif;
-    
-    /* NYA REGLER FÖR RESPONSIV LAYOUT */
-    width: 100%; /* Fyller sin wrapper */
-    height: auto;  /* Höjden anpassas efter innehållet */
+    width: 100%;
     aspect-ratio: 297 / 210; /* Behåller A4 landskaps-proportioner */
     box-sizing: border-box;
-    padding: 5%; /* Använd procent för marginaler som skalar med storleken */
+    padding: 5%;
     border: 10px solid #00407d;
-
-    /* Använd Flexbox för att centrera innehållet */
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Skjuter sidhuvud och sidfot till kanterna */
-    align-items: center; /* Centrerar allt horisontellt */
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Se till att innehållsblocken kan ta upp hela bredden */
+/* NYTT: En specialklass som tvingar A4-format vid PDF-generering */
+#certificate.render-for-pdf {
+    width: 297mm;
+    height: 210mm;
+    position: absolute; /* Ta ut den ur flödet för att inte störa sidan */
+    top: 0;
+    left: 0;
+    z-index: -1; /* Göm den bakom annat innehåll ifall den syns */
+}
+
 .cert-header, .cert-body, .cert-footer {
     width: 90%;
     text-align: center;
@@ -359,12 +366,12 @@ input[type="text"], textarea {
 
 .cert-header h1 {
     color: #00407d;
-    font-size: 2.5em; /* Något mindre på mobilen */
+    font-size: clamp(1.5em, 5vw, 3em); /* Skalbar fontstorlek */
     margin: 0;
 }
 
 .cert-header h2 {
-    font-size: 1.2em; /* Något mindre på mobilen */
+    font-size: clamp(1em, 3vw, 1.5em);
     margin-top: 0;
     font-weight: normal;
     border-bottom: 1px solid #ccc;
@@ -372,16 +379,10 @@ input[type="text"], textarea {
     margin-bottom: 0;
 }
 
-.cert-body {
-    margin: 20px 0;
-}
-
-.cert-body p {
-    font-size: 1em; /* Något mindre på mobilen */
-}
-
+.cert-body { margin: 20px 0; }
+.cert-body p { font-size: clamp(0.9em, 2.5vw, 1.2em); }
 .cert-name {
-    font-size: 1.8em; /* Något mindre på mobilen */
+    font-size: clamp(1.2em, 4vw, 2.5em);
     font-style: italic;
     color: #000;
 }
