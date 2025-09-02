@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         coords: { top: 385, left: 70, width: 80, height: 25 },
                         // KORRIGERAD KOD BÖRJAR HÄR
                         submenu: { // Rättad från "submenu;"
-                            image: 'handdator-senastehandelse.png',
+                            image: 'Handdator-Senaste handelse.png',
                             backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
                             events: [
                                 { name: "Ångra", coords: { top: 240, left: 300, width: 60, height: 30 } }
