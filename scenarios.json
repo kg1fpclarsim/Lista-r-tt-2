@@ -1,86 +1,28 @@
 [
   {
-    "title": "Fjärrchaufför",
+    "title": "Lots",
     "steps": [
       {
-        "description": "Du får bilen av Lots hur ska du registrera fraktsedlarna på det gods som redan är lastat på bilen?",
-        "sequence": [
-          "Hämta",
-          "Hämta obokad hämtning"
-        ],
-        "wrongClickMessages": {
-          "Lasta ut": "Fel! Lasta ut används på styckegods som lastas på Schenkers terminal.",
-          "Hämta åt annan bil": "Fel! Om du registrera Hämta åt annan bil påbörjas inte någon avräkning",
-          "Flänsa": "Fel! Flänsa använd när du påbörjar ditt arbetspass som lots"
-        }
-      },
-      {
-        "description": "Du kommer till Schenkers terminal och ska lasta styckegods, hur ska det registreras?",
-        "sequence": [
-          "Lasta ut"
-        ],
-        "customErrorMessage": "Fel! Försök igen"
-      },
-      {
-        "description": "Du kommer till ankommande terminal och ska lossa stycket, hur registrerar du det?",
-        "sequence": [
-          "Lossa in"
-        ],
-        "customErrorMessage": "Fel! försök igen"
-      },
-      {
-        "description": "Du är färdig för dagen och har partisändningar kvar i handdatorn, vad gör du?",
-        "sequence": [
-          "Flänsa",
-          "Flänsa av"
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Hämtning Lots",
-    "steps": [
-      {
-        "description": "Är hos avsändaren och ska lasta, hur registrerar du det i handdatorn?",
+        "description": "Du är hos avsändaren och lastar, hur registrerar du det i handdatorn?",
         "sequence": [
           "Hämta",
           "Hämta åt annan bil"
         ],
-        "wrongClickMessages": {
-          "Hämta obokad hämtning": "Fel! Hämta obokad hämtning påbörjar avräkning, och det är inte säkert att bilen du har ska köra godset vidare till mottagaren."
-        }
+        "scoringClicks": [
+          "Hämta åt annan bil"
+        ]
       },
       {
-        "description": "Du har lossat godset på vår omlastning, hur registrerar du det i handdatorn?",
+        "description": "Du kommer till egen omlastning och lossar godset, hur registrerar du det i handdatorn?",
         "sequence": [
           "Flänsa",
           "Flänsa av"
         ],
         "wrongClickMessages": {
-          "Lossa in": "Fel! Registrerar du Lossa in på egen omlastning, tror systemet att den är inhämtad av distributionsåkeri och terminalhanterats."
-        }
-      },
-      {
-        "description": "Du är färdig för dagen och ska lämna över ekipaget till fjärrchaufför, det finns sändningar kvar i handdatorn som är lastade på ekipaget. Hur registrerar du det i handdatorn.",
-        "sequence": [
-          "Flänsa",
+          "Lossa in": "Används bara när vi lossar på Schenkers terminaler"
+        },
+        "scoringClicks": [
           "Flänsa av"
-        ],
-        "wrongClickMessages": {
-          "Hämta": "Fel! Det är fjärrchauffören som registrerar Hämta Obokad hämtning."
-        }
-      }
-    ]
-  },
-  {
-    "title": "Det blev fel",
-    "steps": [
-      {
-        "description": "Du har av misstag registrerat fel händelse, hur ångrar du det i handdatorn?",
-        "sequence": [
-          "Hem",
-          "Synkronisera visa",
-          "Ångra"
         ]
       }
     ]
