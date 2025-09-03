@@ -1,28 +1,18 @@
 [
+  
   {
-    "title": "Lots",
+    "title": "Scenario 1",
     "steps": [
       {
-        "description": "Du är hos avsändaren och lastar, hur registrerar du det i handdatorn?",
+        "description": "Du börjar ditt arbetspass och ska lotsa ett ekipage.\n\nDu har fått fraktsedlarna på godset du ska leverera, hur registrerar du dem i handdatorn?",
         "sequence": [
-          "Hämta",
-          "Hämta åt annan bil"
-        ],
-        "scoringClicks": [
-          "Hämta åt annan bil"
+          "Flänsa på"
         ]
       },
       {
-        "description": "Du kommer till egen omlastning och lossar godset, hur registrerar du det i handdatorn?",
+        "description": "Du kommer fram till mottagaren och lossar godset, vilken registrering ska du göra i handdatorn?",
         "sequence": [
-          "Flänsa",
-          "Flänsa av"
-        ],
-        "wrongClickMessages": {
-          "Lossa in": "Används bara när vi lossar på Schenkers terminaler"
-        },
-        "scoringClicks": [
-          "Flänsa av"
+          "Leverera"
         ]
       }
     ]
