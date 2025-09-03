@@ -225,3 +225,19 @@ input[type="text"], textarea {
     font-size: 0.9em;
     color: #555;
 }
+/* Tydligare Admin-flöde */
+.mode-toggle {
+    margin: 15px 0;
+    padding: 15px;
+    background-color: #f0f8ff; /* Ljusblå bakgrund för att markera sektionen */
+    border-radius: 4px;
+}
+.mode-toggle p {
+    margin-top: 0;
+    font-weight: bold;
+}
+.sequence-editor, .errors-editor {
+    border-top: 1px solid #ddd;
+    margin-top: 15px;
+    padding-top: 15px;
+}
