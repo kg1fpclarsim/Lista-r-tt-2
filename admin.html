@@ -13,6 +13,7 @@
             <div id="simulator-container">
                 </div>
         </div>
+
         <div class="editor-column-main">
             <h1>Scenarioredigerare</h1>
             <div class="card">
@@ -20,13 +21,13 @@
                 <label for="scenario-title">Scenariots Titel:</label>
                 <input type="text" id="scenario-title" placeholder="Ex: Fullständig Leverans med Hinder">
                 <h3>Delmoment i Scenariot:</h3>
-                <p>Klicka på ett delmoments textruta för att aktivera det. Klicka sedan i simulatorn för att spela in sekvensen.</p>
+                <p>Klicka på ett delmoment för att aktivera det. Använd sedan simulatorn för att bygga scenariot.</p>
                 <div id="steps-container"></div>
                 <button id="add-step-btn" class="btn btn-secondary">Lägg till Delmoment</button>
             </div>
             <div class="card export-container">
                 <h3>Spara & Exportera</h3>
-                <button id="save-scenario-btn" class="btn btn-primary">Spara Scenario & Generera JSON</button>
+                <button id="save-scenario-btn" class="btn btn-primary">Spara Scenarier & Generera JSON</button>
                 <textarea id="json-output" readonly></textarea>
             </div>
             <div class="card">
@@ -35,6 +36,7 @@
             </div>
         </div>
     </div>
+    
     <script src="menu-definitions.js"></script>
     <script src="simulator-engine.js"></script>
     <script src="admin.js"></script>
