@@ -1,6 +1,5 @@
-// script.js (ny, förenklad version)
 document.addEventListener('DOMContentLoaded', () => {
-    const simulatorContainer = document.querySelector('.game-container');
+    const simulatorContainer = document.getElementById('simulator-wrapper');
     const scenarioTitle = document.getElementById('scenario-title');
     const scenarioDescription = document.getElementById('scenario-description');
     const feedbackMessage = document.getElementById('feedback-message');
@@ -17,16 +16,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         const targetActions = currentStepData.sequence;
         const isStepFinished = currentSequenceStep >= targetActions.length;
-        if (isStepFinished) return;
+        if (isStepFinished && currentScenarioStepIndex >= loadedScenario.steps.length - 1) return;
+        if (isStepFinished) { return; }
 
         const nextTargetAction = targetActions[currentSequenceStep];
-        const areaElement = document.querySelector(`[data-event-name="${clickedEvent.name}"]`); // Not robust, needs improvement
 
         if (clickedEvent.name === nextTargetAction) {
             feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt steg.`;
             feedbackArea.className = 'feedback-correct';
+            // Not perfect, but finds the area to highlight. Requires more robust solution if multiple buttons have same name.
+            const allAreas = simulatorContainer.querySelectorAll('.clickable-area');
+            allAreas.forEach(area => {
+                const coords = area.dataset.originalCoords.split(',');
+                if(coords.includes(clickedEvent.coords?.top)) area.classList.add('area-correct-feedback');
+            });
+            
             currentSequenceStep++;
             const isStepComplete = currentSequenceStep === targetActions.length;
+
             if (isStepComplete) {
                 const isLastStepOfScenario = currentScenarioStepIndex === loadedScenario.steps.length - 1;
                 if (isLastStepOfScenario) {
@@ -60,15 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
                 if (!response.ok) throw new Error('Nätverksfel');
                 let allScenarios = await response.json();
-                if (!allScenarios || allScenarios.length === 0) {
-                     scenarioTitle.textContent = "Inga Scenarier Hittades";
+                const validScenarios = allScenarios.filter(scenario => scenario.steps && scenario.steps.length > 0);
+                if (!validScenarios || validScenarios.length === 0) {
+                    scenarioTitle.textContent = "Inga giltiga scenarier hittades";
                     return;
                 }
-                for (let i = allScenarios.length - 1; i > 0; i--) {
+                for (let i = validScenarios.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
-                    [allScenarios[i], allScenarios[j]] = [allScenarios[j], allScenarios[i]];
+                    [validScenarios[i], validScenarios[j]] = [validScenarios[j], validScenarios[i]];
                 }
-                scenarioPlaylist = allScenarios;
+                scenarioPlaylist = validScenarios;
                 sessionStorage.setItem('scenarioPlaylist', JSON.stringify(scenarioPlaylist));
                 sessionStorage.setItem('currentPlaylistIndex', '0');
             } catch (error) {
@@ -86,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentScenarioStepIndex = 0;
         setupCurrentScenarioStep();
     }
-    
+
     function setupCurrentScenarioStep() {
         currentSequenceStep = 0;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
