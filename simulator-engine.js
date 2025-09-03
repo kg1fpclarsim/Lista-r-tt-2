@@ -1,4 +1,4 @@
-// simulator-engine.js
+// simulator-engine.js (korrigerad version)
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     containerElement.innerHTML = `
@@ -24,7 +24,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         if (gameImage.complete) { gameImage.onload(); }
     }
 
-    // ... (alla interna funktioner som createUIElements, handleDropdown, createArea, etc. är oförändrade) ...
     function createUIElements(menuData) {
         imageContainer.querySelectorAll('.clickable-area, .dynamic-select').forEach(el => el.remove());
         navOverlay.innerHTML = '';
@@ -32,7 +31,9 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             menuData.events.forEach(event => {
                 const area = createArea(event.coords);
                 area.addEventListener('click', () => {
-                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event);
+                    // SKICKAR NU MED "area" SOM ETT ANDRA ARGUMENT
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event, area);
+                    
                     if (event.submenu) {
                         menuHistory.push(currentMenuViewKey);
                         switchMenuView(event.submenu);
@@ -47,7 +48,9 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             const backArea = createArea(menuData.backButtonCoords);
             backArea.addEventListener('click', () => {
                 if (menuHistory.length > 0) {
-                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: 'Tillbaka' });
+                    // SKICKAR NU MED "backArea" SOM ETT ANDRA ARGUMENT
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: 'Tillbaka' }, backArea);
+                    
                     const previousMenuKey = menuHistory.pop();
                     switchMenuView(previousMenuKey);
                 }
@@ -55,7 +58,8 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             navOverlay.appendChild(backArea);
         }
     }
-    function handleDropdown(event) {
+
+    function handleDropdown(event, area) {
         const oldSelect = imageContainer.querySelector('.dynamic-select');
         if (oldSelect) oldSelect.remove();
         const selectEl = document.createElement('select');
@@ -72,18 +76,21 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             selectEl.appendChild(optionEl);
         });
         selectEl.addEventListener('change', () => {
-            if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: selectEl.value });
+            // Skickar "null" för area, då en rullista inte har en klickbar yta på samma sätt
+            if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: selectEl.value }, null);
             selectEl.remove();
         });
         imageContainer.appendChild(selectEl);
         scaleSingleElement(selectEl, event.coords);
     }
+
     function createArea(coords) {
         const area = document.createElement('div');
         area.classList.add('clickable-area');
         area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height];
         return area;
     }
+
     function scaleSingleElement(element, coords) {
         const menuData = ALL_MENUS[currentMenuViewKey];
         if (!gameImage.offsetWidth || !menuData || !menuData.originalWidth) return;
@@ -93,6 +100,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         element.style.width = `${coords.width * scaleRatio}px`;
         element.style.height = `${coords.height * scaleRatio}px`;
     }
+
     function scaleUIElements() {
         containerElement.querySelectorAll('.clickable-area').forEach(area => {
             const coordsArray = area.dataset.originalCoords.split(',');
@@ -103,10 +111,8 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
 
     window.addEventListener('resize', scaleUIElements);
     
-    // Starta simulatorn första gången
     switchMenuView(startMenuKey);
 
-    // NYTT: Returnera ett objekt med en "reset"-funktion som kan anropas utifrån
     return {
         reset: () => {
             menuHistory = [];
