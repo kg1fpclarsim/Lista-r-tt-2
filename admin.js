@@ -1,4 +1,4 @@
-// admin.js (Komplett version med förbättrat arbetsflöde)
+// admin.js (Komplett och ren version)
 document.addEventListener('DOMContentLoaded', () => {
     // Referenser till HTML-element
     const simulatorContainer = document.getElementById('simulator-container');
@@ -16,22 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let adminMode = 'idle'; // Lägen: 'idle', 'sequence', 'errors'
 
     // Huvudfunktion som tar emot klick från simulatorn
-    function recordSimulatorClick(clickedEvent) {
+    function recordSimulatorClick(clickedEvent, areaElement) {
         if (!activeStepCard) {
             // Gör inget om inget kort är aktivt
             return; 
         }
         // Anropa rätt funktion beroende på vilket läge som är aktivt
         if (adminMode === 'sequence') {
-            recordCorrectStep(clickedEvent);
+            recordCorrectStep(clickedEvent, areaElement);
         } else if (adminMode === 'errors') {
-            defineErrorMessage(clickedEvent);
+            defineErrorMessage(clickedEvent, areaElement);
         }
-        // Om adminMode är 'idle', gör ingenting med klicket.
     }
 
     // Spelar in ett klick som en del av den korrekta sekvensen
-    function recordCorrectStep(clickedEvent) {
+    function recordCorrectStep(clickedEvent, areaElement) {
         const eventName = clickedEvent.name;
         const sequenceDisplay = activeStepCard.querySelector('.step-sequence-display');
         const scoringContainer = activeStepCard.querySelector('.scoring-clicks-container');
@@ -46,8 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Öppnar en dialogruta för att definiera ett felmeddelande
-    function defineErrorMessage(clickedEvent) {
+    function defineErrorMessage(clickedEvent, areaElement) {
         const buttonName = clickedEvent.name;
+        // Ignorera "Tillbaka"-knappen i detta läge
+        if (buttonName === 'Tillbaka') return;
+
         const dataStore = activeStepCard.querySelector('.wrong-messages-datastore');
         let wrongMessages = JSON.parse(dataStore.value || '{}');
         const currentMessage = wrongMessages[buttonName] || '';
@@ -76,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.className = 'defined-error-row';
                 row.innerHTML = `<strong>${buttonName}:</strong> <em>"${message}"</em> <button class="delete-btn small-delete-btn" data-button-name="${buttonName}">X</button>`;
                 container.appendChild(row);
+
                 row.querySelector('.small-delete-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
                     delete wrongMessages[buttonName];
@@ -125,7 +128,103 @@ document.addEventListener('DOMContentLoaded', () => {
             stepDiv.classList.add('active');
             activeStepCard = stepDiv;
             adminMode = 'idle'; // Återställ läge när man byter kort
+            // Dölj båda redigeringsytorna när ett nytt kort aktiveras
+            stepDiv.querySelector('.sequence-editor').style.display = 'none';
+            stepDiv.querySelector('.errors-editor').style.display = 'none';
+            stepDiv.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
         };
         stepDiv.addEventListener('click', activateCard);
 
-        stepDiv.querySelector('.step-delete-btn').addEventListener('click', (e) => { e.stopPropagation(); if (activeStepCard === stepDiv) activeStepCard = null
+        stepDiv.querySelector('.step-delete-btn').addEventListener('click', (e) => { e.stopPropagation(); if (activeStepCard === stepDiv) activeStepCard = null; stepDiv.remove(); });
+        stepDiv.querySelector('.btn-clear-sequence').addEventListener('click', (e) => { e.stopPropagation(); stepDiv.querySelector('.step-sequence-display').innerHTML = ''; stepDiv.querySelector('.scoring-clicks-container').innerHTML = ''; });
+        
+        const modeButtons = stepDiv.querySelectorAll('.btn-mode');
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                activateCard();
+                
+                adminMode = e.target.dataset.mode;
+                modeButtons.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+
+                stepDiv.querySelector('.sequence-editor').style.display = adminMode === 'sequence' ? 'block' : 'none';
+                stepDiv.querySelector('.errors-editor').style.display = adminMode === 'errors' ? 'block' : 'none';
+            });
+        });
+        
+        activateCard();
+    }
+    
+    // Sparar alla scenarier till JSON
+    saveScenarioBtn.addEventListener('click', () => {
+        const title = scenarioTitleInput.value.trim();
+        if (!title) { alert("Du måste ange en titel för scenariot."); return; }
+        const newScenario = { title: title, steps: [] };
+        
+        stepsContainer.querySelectorAll('.step-card').forEach(card => {
+            const description = card.querySelector('.step-description').value.trim();
+            const sequence = [];
+            card.querySelectorAll('.scoring-clicks-container input[type="checkbox"]:checked').forEach(checkbox => {
+                sequence.push(checkbox.value);
+            });
+            if (!description || sequence.length === 0) return;
+            
+            const stepData = { description, sequence };
+            const wrongMessages = JSON.parse(card.querySelector('.wrong-messages-datastore').value || '{}');
+            if (Object.keys(wrongMessages).length > 0) {
+                stepData.wrongClickMessages = wrongMessages;
+            }
+            newScenario.steps.push(stepData);
+        });
+
+        if (newScenario.steps.length > 0) {
+            scenarios.push(newScenario);
+            alert(`Scenariot "${title}" har sparats!`);
+            scenarioTitleInput.value = '';
+            stepsContainer.innerHTML = '';
+            addStep();
+            renderScenariosList();
+            jsonOutput.value = JSON.stringify(scenarios, null, 2);
+        } else {
+            alert("Kunde inte spara. Se till att minst ett delmoment har en beskrivning och en poänggivande sekvens.");
+        }
+    });
+
+    // Laddar befintliga scenarier från scenarios.json
+    async function loadExistingScenarios() {
+        try {
+            const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
+            if (response.ok) { 
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    scenarios = data;
+                    renderScenariosList();
+                }
+            }
+        } catch (error) { console.warn("Kunde inte ladda scenarios.json", error); }
+    }
+
+    // Ritar upp listan med sparade scenarier
+    function renderScenariosList() {
+        scenariosList.innerHTML = '';
+        scenarios.forEach((scenario, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${scenario.title} (${scenario.steps.length} steg)</span> <button data-index="${index}" class="delete-btn">Ta bort</button>`;
+            scenariosList.appendChild(li);
+        });
+        scenariosList.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                scenarios.splice(e.target.dataset.index, 1);
+                renderScenariosList();
+                jsonOutput.value = JSON.stringify(scenarios, null, 2);
+            });
+        });
+    }
+
+    // Starta allt
+    const simulator = initializeSimulator(simulatorContainer, 'main', recordSimulatorClick);
+    addStepBtn.addEventListener('click', () => { addStep(); simulator.reset(); });
+    loadExistingScenarios();
+    addStep();
+});
