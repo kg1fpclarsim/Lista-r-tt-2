@@ -1,18 +1,11 @@
 [
-  
   {
-    "title": "Scenario 1",
+    "title": "Scenario 2",
     "steps": [
       {
-        "description": "Du börjar ditt arbetspass och ska lotsa ett ekipage.\n\nDu har fått fraktsedlarna på godset du ska leverera, hur registrerar du dem i handdatorn?",
+        "description": "Du kör distribution och ska lasta på Schenkers terminal, hur registrerar du sändningarna i handdatorn?",
         "sequence": [
-          "Flänsa på"
-        ]
-      },
-      {
-        "description": "Du kommer fram till mottagaren och lossar godset, vilken registrering ska du göra i handdatorn?",
-        "sequence": [
-          "Leverera"
+          "Lasta ut"
         ]
       }
     ]
