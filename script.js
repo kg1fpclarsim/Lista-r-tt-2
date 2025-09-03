@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const scoringClicks = currentStepData.scoringClicks || scenarioSequence;
             const isScoringClick = scoringClicks.includes(clickedEvent.name);
             if (isScoringClick) {
-                feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt steg.`;
+                feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt.`;
                 feedbackArea.className = 'feedback-correct';
                 areaElement.classList.add('area-correct-feedback');
             }
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             const clickedName = clickedEvent.name;
-            let errorMessage = "Fel ordning. Försök igen.";
+            let errorMessage = "Fel. Försök igen.";
             if (currentStepData.customErrorMessage) { errorMessage = currentStepData.customErrorMessage; }
             if (currentStepData.wrongClickMessages && currentStepData.wrongClickMessages[clickedName]) {
                 errorMessage = currentStepData.wrongClickMessages[clickedName];
