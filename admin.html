@@ -3,39 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Avancerad Scenarioredigerare</title>
+    <title>Admin - WYSIWYG Scenarioredigerare</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="admin-container">
-        <h1>Admin: Avancerad Scenarioredigerare</h1>
-        
-        <div class="card">
-            <h2>Skapa Nytt Scenario</h2>
-            <label for="scenario-title">Scenariots Titel:</label>
-            <input type="text" id="scenario-title" placeholder="Ex: Fullständig Leverans med Hinder">
-
-            <h3>Delmoment i Scenariot:</h3>
-            <div id="steps-container">
+    <div class="admin-container wysiwyg-layout">
+        <div class="simulator-column">
+            <h2>Simulator</h2>
+            <div id="simulator-container">
                 </div>
-            <button id="add-step-btn" class="btn btn-secondary">Lägg till Delmoment</button>
         </div>
 
-        <div class="card export-container">
-            <h3>Spara & Exportera</h3>
-            <p>Klicka på knappen för att spara detta scenario till den fullständiga listan och generera den nya JSON-koden för export. Kopiera texten och ersätt innehållet i din <code>scenarios.json</code>-fil.</p>
-            <button id="save-scenario-btn" class="btn btn-primary">Spara Scenario & Generera JSON</button>
-            <textarea id="json-output" readonly></textarea>
-        </div>
-        
-        <div class="card">
-            <h2>Befintlig Scenarielista (från scenarios.json)</h2>
-            <ul id="scenarios-list">
-                </ul>
+        <div class="editor-column-main">
+            <h1>Scenarioredigerare</h1>
+            <div class="card">
+                <h2>Skapa Nytt Scenario</h2>
+                <label for="scenario-title">Scenariots Titel:</label>
+                <input type="text" id="scenario-title" placeholder="Ex: Fullständig Leverans med Hinder">
+                <h3>Delmoment i Scenariot:</h3>
+                <p>Klicka på ett delmoments textruta för att aktivera det. Klicka sedan i simulatorn för att spela in sekvensen.</p>
+                <div id="steps-container"></div>
+                <button id="add-step-btn" class="btn btn-secondary">Lägg till Delmoment</button>
+            </div>
+            <div class="card export-container">
+                <h3>Spara & Exportera</h3>
+                <button id="save-scenario-btn" class="btn btn-primary">Spara Scenario & Generera JSON</button>
+                <textarea id="json-output" readonly></textarea>
+            </div>
+            <div class="card">
+                <h2>Befintlig Scenarielista</h2>
+                <ul id="scenarios-list"></ul>
+            </div>
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="menu-definitions.js"></script> <script src="admin.js"></script>
+    <script src="menu-definitions.js"></script>
+    <script src="simulator-engine.js"></script>
+    <script src="admin.js"></script>
 </body>
 </html>
