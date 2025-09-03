@@ -1,4 +1,3 @@
-// admin.js (ny version)
 document.addEventListener('DOMContentLoaded', () => {
     const simulatorContainer = document.getElementById('simulator-container');
     const scenarioTitleInput = document.getElementById('scenario-title');
@@ -17,11 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Klicka i ett delmoments beskrivningsruta för att aktivera det först.");
             return;
         }
-
         const eventName = clickedEvent.name;
         const sequenceDisplay = activeStepCard.querySelector('.step-sequence-display');
         const scoringContainer = activeStepCard.querySelector('.scoring-clicks-container');
-        const clickCounter = (sequenceDisplay.children.length);
+        const clickCounter = sequenceDisplay.children.length;
 
         sequenceDisplay.innerHTML += `<span class="sequence-step">${eventName}</span>`;
         
@@ -36,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const stepDiv = document.createElement('div');
         stepDiv.className = 'step-card';
         stepDiv.dataset.stepId = stepId;
-
         stepDiv.innerHTML = `
             <div class="step-header"><h4>Delmoment ${stepsContainer.children.length + 1}</h4><button class="delete-btn step-delete-btn">Ta bort</button></div>
             <label>Beskrivning / Fråga (för detta delmoment):</label>
@@ -56,9 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         stepDiv.querySelector('.step-delete-btn').addEventListener('click', (e) => {
             e.stopPropagation();
-            if (activeStepCard === stepDiv) {
-                activeStepCard = null;
-            }
+            if (activeStepCard === stepDiv) activeStepCard = null;
             stepDiv.remove();
         });
 
@@ -67,11 +62,35 @@ document.addEventListener('DOMContentLoaded', () => {
             stepDiv.querySelector('.step-sequence-display').innerHTML = '';
             stepDiv.querySelector('.scoring-clicks-container').innerHTML = '';
         });
-        
         stepDiv.click();
     }
     
-    // Spara-logiken är nu anpassad för den nya strukturen
+    async function loadExistingScenarios() {
+        try {
+            const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
+            if (response.ok) {
+                scenarios = await response.json();
+                renderScenariosList();
+            }
+        } catch (error) { console.warn("Kunde inte ladda scenarios.json"); }
+    }
+
+    function renderScenariosList() {
+        scenariosList.innerHTML = '';
+        scenarios.forEach((scenario, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${scenario.title} (${scenario.steps.length} steg)</span> <button data-index="${index}" class="delete-btn">Ta bort</button>`;
+            scenariosList.appendChild(li);
+        });
+        scenariosList.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                scenarios.splice(e.target.dataset.index, 1);
+                renderScenariosList();
+                jsonOutput.value = JSON.stringify(scenarios, null, 2);
+            });
+        });
+    }
+
     saveScenarioBtn.addEventListener('click', () => {
         const title = scenarioTitleInput.value.trim();
         if (!title) { alert("Du måste ange en titel för scenariot."); return; }
@@ -100,10 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Kunde inte spara. Se till att minst ett delmoment har en beskrivning och en poänggivande sekvens.");
         }
     });
-
-    // ... (loadExistingScenarios och renderScenariosList är oförändrade) ...
-    async function loadExistingScenarios() { /* ... */ }
-    function renderScenariosList() { /* ... */ }
 
     addStepBtn.addEventListener('click', addStep);
     initializeSimulator(simulatorContainer, 'main', recordSimulatorClick);
