@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function setupCurrentScenarioStep() {
+        window.scrollTo({ top: 0, behavior: 'smooth' }); //  Scrolla mjukt till toppen av sidan
         currentSequenceStep = 0;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         scenarioTitle.textContent = loadedScenario.title;
