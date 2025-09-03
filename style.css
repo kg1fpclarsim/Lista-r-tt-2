@@ -96,6 +96,7 @@ h1 { color: #333; }
 }
 
 /* --- Stilar för anpassad rullista (dropdown) --- */
+
 .custom-dropdown-overlay {
     position: absolute;
     top: 0; left: 0;
@@ -105,7 +106,15 @@ h1 { color: #333; }
     justify-content: center;
     align-items: center;
     z-index: 20;
+    /* Mjuk övergång när den försvinner */
+    opacity: 1;
+    transition: opacity 0.3s ease;
 }
+/* Klass för att tona ut overlayen */
+.custom-dropdown-overlay.fade-out {
+    opacity: 0;
+}
+
 .custom-dropdown-panel {
     background-color: white;
     width: 85%;
@@ -114,6 +123,7 @@ h1 { color: #333; }
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     padding: 10px 0;
 }
+
 .custom-dropdown-panel h3 {
     font-size: 1em;
     padding: 10px 20px;
@@ -121,19 +131,30 @@ h1 { color: #333; }
     border-bottom: 1px solid #eee;
     color: #333;
 }
-/* Layout 1: radio-list */
+
+/* --- Layout 1: radio-list --- */
 .radio-list .custom-dropdown-option {
     display: block; width: 100%; padding: 15px 20px 15px 50px;
     border: none; background: none; text-align: left; font-size: 1em;
     position: relative; cursor: pointer;
 }
-.radio-list .custom-dropdown-option:hover { background-color: #f0f8ff; }
+.radio-list .custom-dropdown-option:hover {
+    background-color: #f0f8ff;
+}
 .radio-list .custom-dropdown-option::before {
     content: ''; position: absolute; left: 20px; top: 50%;
     transform: translateY(-50%); width: 20px; height: 20px;
     border: 2px solid #ccc; border-radius: 50%; box-sizing: border-box;
+    transition: all 0.2s ease;
 }
-/* Layout 2: button-grid */
+
+/* NYTT: Utseende för en vald radioknapp */
+.radio-list .custom-dropdown-option.selected::before {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* --- Layout 2: button-grid --- */
 .button-grid .options-container {
     padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
 }
@@ -142,7 +163,10 @@ h1 { color: #333; }
     padding: 15px 10px; border-radius: 5px; font-size: 1em; cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
 }
-.button-grid .custom-dropdown-option:hover { background-color: #007bff; color: white; }
+.button-grid .custom-dropdown-option:hover {
+    background-color: #007bff;
+    color: white;
+}
 
 /* --- Adminsidan (admin.html) --- */
 .wysiwyg-layout { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
