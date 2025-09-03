@@ -90,71 +90,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Skapar ett nytt, tomt delmoment-kort
-    function addStep() {
-        const stepId = stepCounter++;
-        const stepDiv = document.createElement('div');
-        stepDiv.className = 'step-card';
-        stepDiv.dataset.stepId = stepId;
-        
-        stepDiv.innerHTML = `
-            <div class="step-header"><h4>Delmoment ${stepsContainer.children.length + 1}</h4><button class="delete-btn step-delete-btn">Ta bort</button></div>
-            
-            <label>1. Skriv beskrivning / fråga:</label>
-            <textarea class="step-description" rows="3" placeholder="Skriv uppgiften här..."></textarea>
-            
-            <div class="mode-toggle">
-                <p>2. Välj vad du vill göra (klicka i simulatorn efter val):</p>
-                <button class="btn btn-mode" data-mode="sequence">Spela in poänggivande sekvens</button>
-                <button class="btn btn-mode" data-mode="errors">Definiera felmeddelanden</button>
-            </div>
-            
-            <div class="sequence-editor" style="display: none;">
-                <label>Inspelad sekvens:</label>
-                <div class="sequence-header"><div class="sequence-display step-sequence-display"></div><button class="btn btn-secondary btn-clear-sequence">Rensa</button></div>
-                <label>Poänggivande klick (bocka ur navigationsklick):</label>
-                <div class="scoring-clicks-container"></div>
-            </div>
+  function addStep() {
+    const stepId = stepCounter++;
+    const stepDiv = document.createElement('div');
+    stepDiv.className = 'step-card';
+    stepDiv.dataset.stepId = stepId;
+    
+    // Denna logik var mer komplicerad än nödvändigt, förenklad nu
+    const uniqueEventNames = Object.values(ALL_MENUS)
+        .flatMap(menu => (menu.events || []).flatMap(event => event.type === 'dropdown' ? event.options : event.name))
+        .filter((value, index, self) => self.indexOf(value) === index);
+    let optionsHtml = uniqueEventNames.map(event => `<option value="${event}">${event}</option>`).join('');
 
-            <div class="errors-editor" style="display: none;">
-                <label>Definierade felmeddelanden:</label>
-                <div class="defined-errors-list"></div>
-                <input type="hidden" class="wrong-messages-datastore">
-            </div>
-        `;
-        stepsContainer.appendChild(stepDiv);
+    stepDiv.innerHTML = `
+        <div class="step-header"><h4>Delmoment ${stepsContainer.children.length + 1}</h4><button class="delete-btn step-delete-btn">Ta bort</button></div>
+        <textarea class="step-description" rows="3" placeholder="Skriv beskrivning/fråga här..."></textarea>
+        <div class="mode-toggle">
+            <p>2. Välj vad du vill göra (klicka i simulatorn efter val):</p>
+            <button class="btn btn-mode" data-mode="sequence">Spela in poänggivande sekvens</button>
+            <button class="btn btn-mode" data-mode="errors">Definiera felmeddelanden</button>
+        </div>
+        <div class="sequence-editor" style="display: none;">
+            <label>Inspelad sekvens:</label>
+            <div class="sequence-header"><div class="sequence-display step-sequence-display"></div><button class="btn btn-secondary btn-clear-sequence">Rensa</button></div>
+            <label>Poänggivande klick:</label>
+            <div class="scoring-clicks-container"></div>
+        </div>
+        <div class="errors-editor" style="display: none;">
+            <label>Definierade felmeddelanden:</label>
+            <div class="defined-errors-list"></div>
+            <input type="hidden" class="wrong-messages-datastore">
+        </div>
+    `;
+    stepsContainer.appendChild(stepDiv);
 
-        const activateCard = () => {
-            document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
-            stepDiv.classList.add('active');
-            activeStepCard = stepDiv;
-            adminMode = 'idle'; // Återställ läge när man byter kort
-            // Dölj båda redigeringsytorna när ett nytt kort aktiveras
-            stepDiv.querySelector('.sequence-editor').style.display = 'none';
-            stepDiv.querySelector('.errors-editor').style.display = 'none';
-            stepDiv.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
-        };
-        stepDiv.addEventListener('click', activateCard);
+    const activateCard = () => {
+        document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
+        stepDiv.classList.add('active');
+        activeStepCard = stepDiv;
+        adminMode = 'idle';
+        stepDiv.querySelector('.sequence-editor').style.display = 'none';
+        stepDiv.querySelector('.errors-editor').style.display = 'none';
+        stepDiv.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+    };
+    stepDiv.addEventListener('click', activateCard);
 
-        stepDiv.querySelector('.step-delete-btn').addEventListener('click', (e) => { e.stopPropagation(); if (activeStepCard === stepDiv) activeStepCard = null; stepDiv.remove(); });
-        stepDiv.querySelector('.btn-clear-sequence').addEventListener('click', (e) => { e.stopPropagation(); stepDiv.querySelector('.step-sequence-display').innerHTML = ''; stepDiv.querySelector('.scoring-clicks-container').innerHTML = ''; });
-        
-        const modeButtons = stepDiv.querySelectorAll('.btn-mode');
-        modeButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                activateCard();
-                
-                adminMode = e.target.dataset.mode;
-                modeButtons.forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-
-                stepDiv.querySelector('.sequence-editor').style.display = adminMode === 'sequence' ? 'block' : 'none';
-                stepDiv.querySelector('.errors-editor').style.display = adminMode === 'errors' ? 'block' : 'none';
-            });
+    stepDiv.querySelector('.step-delete-btn').addEventListener('click', (e) => { e.stopPropagation(); if (activeStepCard === stepDiv) activeStepCard = null; stepDiv.remove(); });
+    stepDiv.querySelector('.btn-clear-sequence').addEventListener('click', (e) => { e.stopPropagation(); stepDiv.querySelector('.step-sequence-display').innerHTML = ''; stepDiv.querySelector('.scoring-clicks-container').innerHTML = ''; });
+    
+    const modeButtons = stepDiv.querySelectorAll('.btn-mode');
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            activateCard();
+            adminMode = e.target.dataset.mode;
+            modeButtons.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            stepDiv.querySelector('.sequence-editor').style.display = adminMode === 'sequence' ? 'block' : 'none';
+            stepDiv.querySelector('.errors-editor').style.display = adminMode === 'errors' ? 'block' : 'none';
         });
-        
-        activateCard();
-    }
+    });
+
+    const scoringContainer = stepDiv.querySelector('.scoring-clicks-container');
+    
+    // NYTT TILLÄGG: Stoppa klick från att "bubbla" upp från checkbox-området
+    scoringContainer.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    
+    let clickCounter = 0;
+    stepDiv.querySelectorAll('.sequence-builder-btn').forEach(btn => {
+        // Denna kod är nu borttagen härifrån och flyttad in i `recordCorrectStep`
+    });
+    
+    activateCard();
+}
     
     // Sparar alla scenarier till JSON
     saveScenarioBtn.addEventListener('click', () => {
