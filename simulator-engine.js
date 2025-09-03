@@ -1,4 +1,5 @@
 // simulator-engine.js
+
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     containerElement.innerHTML = `
         <div id="image-container">
@@ -6,9 +7,11 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             <div id="navigation-overlay"></div>
         </div>
     `;
+
     const gameImage = containerElement.querySelector('#game-image');
     const imageContainer = containerElement.querySelector('#image-container');
     const navOverlay = containerElement.querySelector('#navigation-overlay');
+    
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
 
@@ -21,6 +24,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         if (gameImage.complete) { gameImage.onload(); }
     }
 
+    // ... (alla interna funktioner som createUIElements, handleDropdown, createArea, etc. är oförändrade) ...
     function createUIElements(menuData) {
         imageContainer.querySelectorAll('.clickable-area, .dynamic-select').forEach(el => el.remove());
         navOverlay.innerHTML = '';
@@ -33,7 +37,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                         menuHistory.push(currentMenuViewKey);
                         switchMenuView(event.submenu);
                     } else if (event.type === 'dropdown') {
-                        handleDropdown(event);
+                        handleDropdown(event, area);
                     }
                 });
                 imageContainer.appendChild(area);
@@ -51,7 +55,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             navOverlay.appendChild(backArea);
         }
     }
-
     function handleDropdown(event) {
         const oldSelect = imageContainer.querySelector('.dynamic-select');
         if (oldSelect) oldSelect.remove();
@@ -75,14 +78,12 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         imageContainer.appendChild(selectEl);
         scaleSingleElement(selectEl, event.coords);
     }
-
     function createArea(coords) {
         const area = document.createElement('div');
         area.classList.add('clickable-area');
         area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height];
         return area;
     }
-
     function scaleSingleElement(element, coords) {
         const menuData = ALL_MENUS[currentMenuViewKey];
         if (!gameImage.offsetWidth || !menuData || !menuData.originalWidth) return;
@@ -92,7 +93,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         element.style.width = `${coords.width * scaleRatio}px`;
         element.style.height = `${coords.height * scaleRatio}px`;
     }
-
     function scaleUIElements() {
         containerElement.querySelectorAll('.clickable-area').forEach(area => {
             const coordsArray = area.dataset.originalCoords.split(',');
@@ -102,5 +102,15 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     }
 
     window.addEventListener('resize', scaleUIElements);
+    
+    // Starta simulatorn första gången
     switchMenuView(startMenuKey);
+
+    // NYTT: Returnera ett objekt med en "reset"-funktion som kan anropas utifrån
+    return {
+        reset: () => {
+            menuHistory = [];
+            switchMenuView(startMenuKey);
+        }
+    };
 }
