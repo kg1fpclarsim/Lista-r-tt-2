@@ -64,13 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="specific-errors-container"></div>
             <button class="btn btn-secondary btn-add-specific-error">Lägg till specifikt felmeddelande</button>
 
-            <label>Korrekt sekvens (klicka i ordning):</label>
+            <label>Poänggivande sekvens (klicka på knappar nedan i rätt ordning):</label>
             <div class="sequence-header">
                 <div class="sequence-display step-sequence-display"></div>
                 <button class="btn btn-secondary btn-clear-sequence">Rensa sekvens</button>
             </div>
             
-            <label class="scoring-label" style="display: none;">Vilka klick ska ge "Korrekt"-feedback?</label>
             <div class="scoring-clicks-container"></div>
 
             <div class="button-grid">${buttonsHtml}</div>
@@ -79,10 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sequenceDisplay = stepDiv.querySelector('.step-sequence-display');
         const scoringContainer = stepDiv.querySelector('.scoring-clicks-container');
-        const scoringLabel = stepDiv.querySelector('.scoring-label');
         const clearSequenceBtn = stepDiv.querySelector('.btn-clear-sequence');
-        let currentSequence = [];
-
+        
         stepDiv.querySelector('.step-delete-btn').addEventListener('click', () => stepDiv.remove());
         
         stepDiv.querySelector('.btn-add-specific-error').addEventListener('click', (e) => {
@@ -100,27 +97,23 @@ document.addEventListener('DOMContentLoaded', () => {
             errorRow.querySelector('.small-delete-btn').addEventListener('click', () => errorRow.remove());
         });
         
+        let clickCounter = 0; // För unika IDn till checkboxes
         stepDiv.querySelectorAll('.sequence-builder-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const eventName = btn.dataset.eventName;
-                currentSequence.push(eventName);
                 sequenceDisplay.innerHTML += `<span class="sequence-step">${eventName}</span>`;
-                stepDiv.dataset.sequence = JSON.stringify(currentSequence);
                 
-                scoringLabel.style.display = 'block';
                 const checkboxDiv = document.createElement('div');
                 checkboxDiv.className = 'scoring-checkbox';
-                checkboxDiv.innerHTML = `<input type="checkbox" id="scoring_${stepId}_${currentSequence.length}" value="${eventName}" checked><label for="scoring_${stepId}_${currentSequence.length}">${eventName}</label>`;
+                checkboxDiv.innerHTML = `<input type="checkbox" id="scoring_${stepId}_${clickCounter}" value="${eventName}" checked><label for="scoring_${stepId}_${clickCounter}">${eventName}</label>`;
                 scoringContainer.appendChild(checkboxDiv);
+                clickCounter++;
             });
         });
 
         clearSequenceBtn.addEventListener('click', () => {
-            currentSequence = [];
-            stepDiv.dataset.sequence = '[]';
             sequenceDisplay.innerHTML = '';
             scoringContainer.innerHTML = '';
-            scoringLabel.style.display = 'none';
         });
     }
     
@@ -139,10 +132,15 @@ document.addEventListener('DOMContentLoaded', () => {
         stepCards.forEach((card, index) => {
             try {
                 const description = card.querySelector('.step-description').value.trim();
-                const sequence = JSON.parse(card.dataset.sequence || '[]');
+                
+                // Bygg sekvensen från de ibockade rutorna
+                const sequence = [];
+                card.querySelectorAll('.scoring-clicks-container input[type="checkbox"]:checked').forEach(checkbox => {
+                    sequence.push(checkbox.value);
+                });
                 
                 if (!description || sequence.length === 0) {
-                    return;
+                    return; // Hoppa över ofullständiga delmoment
                 }
                 
                 const stepData = { description, sequence };
@@ -163,15 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     stepData.wrongClickMessages = wrongClickMessages;
                 }
 
-                const scoringClicks = [];
-                card.querySelectorAll('.scoring-clicks-container input[type="checkbox"]:checked').forEach(checkbox => {
-                    scoringClicks.push(checkbox.value);
-                });
-                
-                if (scoringClicks.length < sequence.length) {
-                    stepData.scoringClicks = scoringClicks;
-                }
-
                 newScenario.steps.push(stepData);
 
             } catch (error) {
@@ -187,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addStep();
             renderScenariosList();
         } else {
-            alert("Kunde inte spara. Se till att minst ett delmoment har en fullständig beskrivning och en sekvens.");
+            alert("Kunde inte spara. Se till att minst ett delmoment har en beskrivning och minst ett ibockat poänggivande klick.");
             return;
         }
         
