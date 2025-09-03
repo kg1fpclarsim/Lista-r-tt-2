@@ -1,11 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const ALL_EVENTS = [
-        "Lasta ut", "Lossa in", "Hämta", "Leverera", "Bomhämtning", 
-        "Ej levererat", "Hämtning utan sändnings-ID", "Åter terminal", "Flänsa",
-        "Hämta åt annan bil", "Hämta obokad hämtning",
-        "Flänsa på", "Flänsa av",
-        "Hem", "Synkronisera visa", "Ångra"
-    ];
+    // --- DYNAMISK LISTA MED KNAPPAR ---
+    // Denna funktion går igenom ALL_MENUS och samlar alla unika knappnamn.
+    function generateAllEventsList(menusObject) {
+        const eventNames = new Set(); // Använder ett Set för att undvika dubbletter
+
+        function traverseMenu(menu) {
+            if (!menu || !menu.events) return;
+            
+            menu.events.forEach(event => {
+                eventNames.add(event.name);
+                if (event.submenu) {
+                    // Om en knapp har en undermeny (som är en nyckel), hämta den och fortsätt
+                    const submenuObject = menusObject[event.submenu];
+                    traverseMenu(submenuObject);
+                }
+            });
+        }
+        
+        // Starta genomgången från alla huvudmenyer (i vårt fall bara 'main')
+        Object.values(menusObject).forEach(menu => traverseMenu(menu));
+        
+        return Array.from(eventNames); // Konvertera tillbaka till en vanlig lista
+    }
+
+    // Skapa listan automatiskt från menu-definitions.js
+    const ALL_EVENTS = generateAllEventsList(ALL_MENUS);
+    
+    // --- RESTEN AV KODEN ÄR PRECIS SOM FÖRUT ---
+    
     let scenarios = [];
     let stepCounter = 0;
 
@@ -97,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             errorRow.querySelector('.small-delete-btn').addEventListener('click', () => errorRow.remove());
         });
         
-        let clickCounter = 0; // För unika IDn till checkboxes
+        let clickCounter = 0;
         stepDiv.querySelectorAll('.sequence-builder-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const eventName = btn.dataset.eventName;
@@ -133,14 +155,13 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const description = card.querySelector('.step-description').value.trim();
                 
-                // Bygg sekvensen från de ibockade rutorna
                 const sequence = [];
                 card.querySelectorAll('.scoring-clicks-container input[type="checkbox"]:checked').forEach(checkbox => {
                     sequence.push(checkbox.value);
                 });
                 
                 if (!description || sequence.length === 0) {
-                    return; // Hoppa över ofullständiga delmoment
+                    return;
                 }
                 
                 const stepData = { description, sequence };
