@@ -7,24 +7,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="game-container">
         <h1 id="scenario-title">Laddar Scenario...</h1>
-        <p id="scenario-description">Vänligen vänta.</p>
-
+        <div id="scenario-description-wrapper">
+            <p id="scenario-description">Vänligen vänta.</p>
+        </div>
+        <div id="simulator-wrapper"></div>
         <div id="feedback-area">
             <p id="feedback-message">Väntar på din första åtgärd...</p>
         </div>
-
-        <div id="image-container">
-            <img src="handdator.png" alt="Handdator skärmbild" id="game-image">
-            <div id="navigation-overlay"></div>
-        </div>
-
-        
-        <button id="reset-button" class="reset-btn">Starta nytt slumpmässigt scenario</button>
+        <button id="reset-button" class="reset-btn">Nästa Scenario</button>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="menu-definitions.js"></script>
     <script src="simulator-engine.js"></script>
