@@ -35,3 +35,18 @@
     ]
   }
 ]
+,
+  {
+    "title": "Test ej lev",
+    "steps": [
+      {
+        "description": "Test",
+        "sequence": [
+          "Ej levererat",
+          "Togs ej emot av mottagaren",
+          "Bekräfta Orsak"
+        ]
+      }
+    ]
+  }
+]
