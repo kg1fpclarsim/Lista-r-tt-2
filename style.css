@@ -18,6 +18,8 @@ h1 { color: #333; }
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
 }
+
+/* --- Specifika Stilar för Behållare --- */
 .game-container {
     max-width: 600px;
     display: flex;
@@ -30,10 +32,17 @@ h1 { color: #333; }
 }
 
 /* --- Spelsidan (index.html) --- */
-#simulator-wrapper { width: 100%; }
+/* KORRIGERING: Vi använder Flexbox för att centrera bilden */
+#simulator-wrapper { 
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+/* KORRIGERING: Vi tar bort 'display: inline-block' som inte längre behövs */
 #image-container {
     position: relative;
-    display: inline-block;
+    /* display: inline-block; <-- BORTTAGEN */
+    margin: 20px 0;
     line-height: 0;
 }
 #image-container img {
@@ -111,6 +120,7 @@ input[type="text"], textarea {
     width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc;
     border-radius: 4px; box-sizing: border-box;
 }
+.button-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
 .sequence-display {
     padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6;
     border-radius: 4px; min-height: 40px;
