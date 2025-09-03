@@ -1,56 +1,86 @@
-// simulator-engine.js (version med förbättrad rullist-feedback)
+// simulator-engine.js (Korrekt version)
 
+// KORRIGERING: Hela filens innehåll är nu inlindat i denna funktion
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
-    // ... (all kod i toppen är oförändrad) ...
+    containerElement.innerHTML = `
+        <div id="image-container">
+            <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
+            <div id="navigation-overlay"></div>
+        </div>
+    `;
+
+    const gameImage = containerElement.querySelector('#game-image');
+    const imageContainer = containerElement.querySelector('#image-container');
+    const navOverlay = containerElement.querySelector('#navigation-overlay');
+    
+    let currentMenuViewKey = startMenuKey;
+    let menuHistory = [];
+
+    function switchMenuView(menuKey) {
+        const menuData = ALL_MENUS[menuKey];
+        if (!menuData) { console.error(`Hittade inte meny: ${menuKey}`); return; }
+        currentMenuViewKey = menuKey;
+        gameImage.src = menuData.image;
+        gameImage.onload = () => { createUIElements(menuData); scaleUIElements(); };
+        if (gameImage.complete) { gameImage.onload(); }
+    }
+
+    function createUIElements(menuData) {
+        imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay').forEach(el => el.remove());
+        navOverlay.innerHTML = '';
+        if (menuData.events) {
+            menuData.events.forEach(event => {
+                const area = createArea(event.coords);
+                area.addEventListener('click', () => {
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event, area);
+                    if (event.submenu) {
+                        menuHistory.push(currentMenuViewKey);
+                        switchMenuView(event.submenu);
+                    } else if (event.type === 'dropdown') {
+                        handleDropdown(event);
+                    }
+                });
+                imageContainer.appendChild(area);
+            });
+        }
+        if (menuData.backButtonCoords) {
+            const backArea = createArea(menuData.backButtonCoords);
+            backArea.addEventListener('click', () => {
+                if (menuHistory.length > 0) {
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: 'Tillbaka' }, backArea);
+                    const previousMenuKey = menuHistory.pop();
+                    switchMenuView(previousMenuKey);
+                }
+            });
+            navOverlay.appendChild(backArea);
+        }
+    }
 
     function handleDropdown(event) {
         const oldOverlay = imageContainer.querySelector('.custom-dropdown-overlay');
         if (oldOverlay) oldOverlay.remove();
-
         const overlay = document.createElement('div');
         overlay.className = 'custom-dropdown-overlay';
-        
         const panel = document.createElement('div');
         panel.className = `custom-dropdown-panel ${event.layout || 'radio-list'}`;
-
         const title = event.title || `Välj ${event.name}`;
         panel.innerHTML = `<h3>${title}</h3>`;
-
         const optionsContainer = document.createElement('div');
         optionsContainer.className = 'options-container';
-
         event.options.forEach(optText => {
             const optionBtn = document.createElement('button');
             optionBtn.className = 'custom-dropdown-option';
             optionBtn.textContent = optText;
-
-            // --- UPPDATERAD KLICK-LOGIK HÄR ---
             optionBtn.addEventListener('click', () => {
-                // 1. Markera den klickade knappen visuellt
-                // Ta bort 'selected' från alla andra knappar först
-                panel.querySelectorAll('.custom-dropdown-option').forEach(btn => btn.classList.remove('selected'));
-                optionBtn.classList.add('selected');
-
-                // 2. Skicka iväg valet till spellogiken direkt
                 onButtonClickCallback({ name: optText }, null);
-                
-                // 3. Vänta en kort stund innan panelen tas bort
-                setTimeout(() => {
-                    overlay.classList.add('fade-out'); // Tona ut snyggt
-                    // Ta bort elementet helt efter att animationen är klar
-                    setTimeout(() => overlay.remove(), 300);
-                }, 400); // Visa markeringen i 0.4 sekunder
+                overlay.remove();
             });
             optionsContainer.appendChild(optionBtn);
         });
-
         panel.appendChild(optionsContainer);
         overlay.appendChild(panel);
         imageContainer.appendChild(overlay);
     }
-    
-    // ... (resten av filen: createUIElements, switchMenuView, etc. är oförändrad) ...
-}
     
     function createArea(coords) {
         const area = document.createElement('div');
@@ -87,4 +117,4 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             switchMenuView(startMenuKey);
         }
     };
-}
+} // <-- KORRIGERING: Avslutande måsvinge för hela funktionen
