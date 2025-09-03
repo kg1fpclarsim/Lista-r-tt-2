@@ -1,10 +1,9 @@
 // menu-definitions.js
-
 const ALL_MENUS = {
     'main': {
         key: 'main',
         image: 'handdator.png',
-        originalWidth: 426, // VIKTIGT: Ange bildens verkliga bredd i pixlar
+        originalWidth: 426,
         events: [
             { name: "Lasta ut", coords: { top:  197, left: 71, width: 138, height: 76 } },
             { name: "Lossa in", coords: { top: 197, left: 221, width: 138, height: 76 } },
@@ -21,7 +20,7 @@ const ALL_MENUS = {
     'hamta': {
         key: 'hamta',
         image: 'handdator-hamta.png',
-        originalWidth: 426, // VIKTIGT: Ska vara samma som huvudbilden
+        originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
             { name: "Hämta åt annan bil", coords: { top: 295, left: 70, width: 185, height: 30 } },
@@ -31,7 +30,7 @@ const ALL_MENUS = {
     'flansa': {
         key: 'flansa',
         image: 'handdator-flansa.png',
-        originalWidth: 426, // VIKTIGT: Ska vara samma som huvudbilden
+        originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
             { name: "Flänsa på", coords: { top: 197, left: 71, width: 138, height: 76 } },
@@ -41,7 +40,7 @@ const ALL_MENUS = {
     'hem': {
         key: 'hem',
         image: 'handdator-hem.png',
-        originalWidth: 426, // VIKTIGT: Ska vara samma som huvudbilden
+        originalWidth: 426,
         backButtonCoords: { top: 655, left: 175, width: 80, height: 50 },
         events: [
             { name: "Synkronisera visa", coords: { top: 385, left: 70, width: 80, height: 25 }, submenu: 'senastehandelse' }
@@ -50,7 +49,7 @@ const ALL_MENUS = {
     'senastehandelse': {
         key: 'senastehandelse',
         image: 'handdator-senastehandelse.png',
-        originalWidth: 426, // VIKTIGT: Ska vara samma som huvudbilden
+        originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
             { name: "Ångra", coords: { top: 240, left: 300, width: 60, height: 30 } }
