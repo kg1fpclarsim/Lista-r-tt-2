@@ -82,7 +82,7 @@ const ALL_MENUS = {
     },
     'senastehandelse': {
         key: 'senastehandelse',
-        image: 'handdator-senastehandelse.png',
+        image: 'handdator-senaste-handelse.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
