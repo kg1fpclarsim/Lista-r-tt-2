@@ -1,17 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Referenser
+    // --- START PÅ FELSÖKNINGSKOD ---
+    const debugBox = document.createElement('div');
+    debugBox.style.position = 'fixed';
+    debugBox.style.top = '10px';
+    debugBox.style.left = '10px';
+    debugBox.style.padding = '10px';
+    debugBox.style.backgroundColor = '#333';
+    debugBox.style.color = 'white';
+    debugBox.style.zIndex = '1000';
+    debugBox.style.border = '2px solid red';
+    debugBox.style.fontFamily = 'monospace';
+    debugBox.innerHTML = '<h3>Diagnostik</h3><p id="debug-status">Väntar på interaktion...</p>';
+    document.body.appendChild(debugBox);
+    const debugStatus = document.getElementById('debug-status');
+    // --- SLUT PÅ FELSÖKNINGSKOD ---
+
     const paletteContainer = document.getElementById('palette-container');
     const canvasContainer = document.getElementById('canvas-container');
     const addGroupBtn = document.getElementById('add-group-btn');
-    const saveBtn = document.getElementById('save-btn');
-    const jsonOutput = document.getElementById('json-output');
+    
+    let activeGroup = null;
 
-    let activeGroup = null; // Håller koll på vilken grupp som är aktiv
-
-    // Bygg paletten med händelser
     function buildPalette() {
         if (typeof ANALYS_EVENTS === 'undefined' || !Array.isArray(ANALYS_EVENTS)) {
-            console.error("ANALYS_EVENTS är inte definierad eller är inte en lista. Se till att event-definitions.js är korrekt laddad.");
+            debugStatus.textContent = "FEL: ANALYS_EVENTS är inte definierad. Ladda event-definitions.js.";
             return;
         }
         ANALYS_EVENTS.forEach(eventDef => {
@@ -23,10 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Lägg till ett nytt grupp-block på arbetsytan
     function addGroupBlock() {
         const groupCard = document.createElement('div');
         groupCard.className = 'group-card-admin';
+        // ... (innerHTML är oförändrad från förra gången)
         groupCard.innerHTML = `
             <div class="group-card-header">
                 <textarea class="group-title-input" rows="2" placeholder="Grupprubrik (Markdown)..."></textarea>
@@ -56,27 +68,37 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.group-card-admin').forEach(card => card.classList.remove('active'));
             groupCard.classList.add('active');
             activeGroup = groupCard;
+            debugStatus.textContent = `Grupp ${groupCard.querySelector('h4')?.textContent || ''} är nu aktiv!`;
         });
         
         groupCard.click();
     }
 
-    // Lägg till ett händelse-block i den aktiva gruppen
     function addEventToActiveGroup(eventDef) {
+        debugStatus.textContent = `Försöker lägga till block: ${eventDef.name}`;
+        
         if (!activeGroup) {
+            debugStatus.textContent += "\nFEL: Ingen aktiv grupp hittades!";
             alert("Klicka på ett grupp-block för att aktivera det först.");
             return;
         }
+        
         activeGroup.querySelector('.empty-group-prompt')?.remove();
         
         const eventCanvas = activeGroup.querySelector('.group-events-canvas');
+        if (!eventCanvas) {
+            debugStatus.textContent += "\nFEL: Hittade inte .group-events-canvas inuti den aktiva gruppen!";
+            return;
+        }
+
         const blockWrapper = document.createElement('div');
         blockWrapper.className = 'canvas-block-wrapper';
         
         if (typeof ALL_OFFICES === 'undefined' || !Array.isArray(ALL_OFFICES)) {
-            console.error("ALL_OFFICES är inte definierad eller är inte en lista. Se till att office-definitions.js är korrekt laddad.");
+            debugStatus.textContent += "\nFEL: ALL_OFFICES är inte definierad. Ladda office-definitions.js.";
             return;
         }
+
         let optionsHtml = ALL_OFFICES.map(office => `<option value="${office}">${office}</option>`).join('');
         let selectHtml = `<select class="office-select"><option value="">Välj kontor...</option>${optionsHtml}</select>`;
 
@@ -92,11 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             blockWrapper.remove();
         });
+        
         eventCanvas.appendChild(blockWrapper);
+        debugStatus.textContent = `Block för ${eventDef.name} lades till!`;
     }
     
-    // Initiera sidan
     buildPalette();
     addGroupBtn.addEventListener('click', addGroupBlock);
-    addGroupBlock(); // Starta med ett tomt grupp-block
+    addGroupBlock();
 });
