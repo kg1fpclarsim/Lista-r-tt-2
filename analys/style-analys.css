@@ -64,3 +64,59 @@ body { font-family: sans-serif; background-color: #f0f2f5; padding: 20px; }
 .sequence-arrow { 
     font-size: 2em; color: #aaa; padding-top: 50px;
 }
+/* --- Stilar för Admin-sidan för Analys --- */
+.analysis-admin-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: auto;
+}
+.admin-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+.palette-column {
+    flex: 1;
+    position: sticky;
+    top: 20px;
+}
+.editor-column {
+    flex: 3;
+}
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.card h3 {
+    margin-top: 0;
+}
+#palette-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.palette-item {
+    border: 1px dashed #ccc;
+    padding: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.palette-item:hover {
+    border-style: solid;
+    border-color: #007bff;
+    background-color: #f0f8ff;
+}
+.palette-item img {
+    width: 100%;
+    pointer-events: none; /* Gör bilden oklickbar så klicket hamnar på föräldern */
+}
+#canvas-container {
+    background-color: #f0f2f5;
+    min-height: 200px;
+    border-radius: 8px;
+    padding: 15px;
+}
