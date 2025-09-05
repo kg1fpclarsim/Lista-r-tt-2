@@ -3,17 +3,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const paletteContainer = document.getElementById('palette-container');
     const canvasContainer = document.getElementById('canvas-container');
     const addGroupBtn = document.getElementById('add-group-btn');
-    const saveBtn = document.getElementById('save-btn');
-    const jsonOutput = document.getElementById('json-output');
+    // Vi kommer behöva spara-knappen och JSON-utdatan senare
+    // const saveBtn = document.getElementById('save-btn');
+    // const jsonOutput = document.getElementById('json-output');
 
     let activeGroup = null; // Håller koll på vilken grupp som är aktiv
 
     // Bygg paletten med händelser
     function buildPalette() {
+        if (typeof ANALYS_EVENTS === 'undefined') {
+            console.error("ANALYS_EVENTS är inte definierad. Se till att event-definitions.js är laddad.");
+            return;
+        }
         ANALYS_EVENTS.forEach(eventDef => {
             const item = document.createElement('div');
             item.className = 'palette-item';
-            item.innerHTML = `<div class="event-block"><img src="${eventDef.image}" alt="${eventDef.name}"><div class="event-type">${eventDef.name}</div></div>`;
+            // Använd event-block-styling direkt i paletten för igenkänning
+            item.innerHTML = `
+                <div class="event-block">
+                    <img src="${eventDef.image}" alt="${eventDef.name}">
+                    <div class="event-type">${eventDef.name}</div>
+                </div>`;
             item.addEventListener('click', () => addEventToActiveGroup(eventDef));
             paletteContainer.appendChild(item);
         });
@@ -40,10 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
         canvasContainer.appendChild(groupCard);
         
         groupCard.querySelector('.delete-btn').addEventListener('click', () => groupCard.remove());
-        groupCard.querySelector('.group-color-select').addEventListener('change', (e) => {
-            groupCard.dataset.color = e.target.value;
-            groupCard.className = `group-card-admin active ${e.target.value}`;
+        
+        const colorSelect = groupCard.querySelector('.group-color-select');
+        colorSelect.addEventListener('change', () => {
+            groupCard.classList.remove('green', 'blue', 'grey');
+            groupCard.classList.add(colorSelect.value);
         });
+        // Sätt defaultfärg
+        groupCard.classList.add(colorSelect.value);
+
         groupCard.addEventListener('click', () => {
             document.querySelectorAll('.group-card-admin').forEach(card => card.classList.remove('active'));
             groupCard.classList.add('active');
@@ -59,12 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Klicka på ett grupp-block för att aktivera det först.");
             return;
         }
+        // Ta bort platshållartexten
         activeGroup.querySelector('.empty-group-prompt')?.remove();
         
         const eventCanvas = activeGroup.querySelector('.group-events-canvas');
         const blockWrapper = document.createElement('div');
         blockWrapper.className = 'canvas-block-wrapper';
         
+        if (typeof ALL_OFFICES === 'undefined') {
+            console.error("ALL_OFFICES är inte definierad.");
+            return;
+        }
         let optionsHtml = ALL_OFFICES.map(office => `<option value="${office}">${office}</option>`).join('');
         let selectHtml = `<select class="office-select"><option value="">Välj kontor...</option>${optionsHtml}</select>`;
 
@@ -75,13 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <button class="delete-btn small-delete-btn">X</button>
         `;
-        blockWrapper.dataset.eventName = eventDef.name; // Spara namnet för att kunna spara
-        blockWrapper.querySelector('.delete-btn').addEventListener('click', (e) => { e.stopPropagation(); blockWrapper.remove(); });
+        blockWrapper.dataset.eventName = eventDef.name;
+        blockWrapper.querySelector('.delete-btn').addEventListener('click', (e) => { 
+            e.stopPropagation(); // Förhindra att klicket aktiverar kortet
+            blockWrapper.remove();
+        });
         eventCanvas.appendChild(blockWrapper);
     }
     
-    // Spara-funktionen kommer vi att bygga ut i nästa steg när vi gör facit-delen
-
     // Initiera sidan
     buildPalette();
     addGroupBtn.addEventListener('click', addGroupBlock);
