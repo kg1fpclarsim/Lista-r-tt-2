@@ -2,7 +2,7 @@
 const ALL_MENUS = {
     'main': {
         key: 'main',
-        image: 'handdator.png',
+        image: 'images/simulator-screens/handdator.png',
         originalWidth: 426,
         events: [
             { name: "Lasta ut", coords: { top:  197, left: 71, width: 138, height: 76 } },
@@ -19,7 +19,7 @@ const ALL_MENUS = {
     },
     'hamta': {
         key: 'hamta',
-        image: 'handdator-hamta.png',
+        image: 'images/simulator-screens/handdator-hamta.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
@@ -29,7 +29,7 @@ const ALL_MENUS = {
     },
     'ej-levererat': {
         key: 'ej-levererat',
-        image: 'handdator-ej-levererat.png',
+        image: 'images/simulator-screens/handdator-ej-levererat.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
@@ -63,7 +63,7 @@ const ALL_MENUS = {
     },
     'flansa': {
         key: 'flansa',
-        image: 'handdator-flansa.png',
+        image: 'images/simulator-screens/handdator-flansa.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
@@ -73,7 +73,7 @@ const ALL_MENUS = {
     },
     'hem': {
         key: 'hem',
-        image: 'handdator-hem.png',
+        image: 'images/simulator-screens/handdator-hem.png',
         originalWidth: 426,
         backButtonCoords: { top: 655, left: 175, width: 80, height: 50 },
         events: [
@@ -82,7 +82,7 @@ const ALL_MENUS = {
     },
     'senastehandelse': {
         key: 'senastehandelse',
-        image: 'handdator-senaste-handelse.png',
+        image: 'images/simulator-screens/handdator-senaste-handelse.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
