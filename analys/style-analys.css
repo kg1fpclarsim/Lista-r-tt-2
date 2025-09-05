@@ -120,3 +120,38 @@ body { font-family: sans-serif; background-color: #f0f2f5; padding: 20px; }
     border-radius: 8px;
     padding: 15px;
 }
+/* --- Stilar för block på arbetsytan (Canvas) --- */
+.canvas-block-wrapper {
+    position: relative;
+}
+
+/* Återanvänd stil från spel-vyn men gör den lite mindre */
+#canvas-container .event-block {
+    min-width: 120px;
+    padding-bottom: 5px;
+}
+#canvas-container .event-block img {
+    margin-bottom: 5px;
+}
+
+/* Stil för rullistan inuti ett block */
+.office-select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.8em;
+    box-sizing: border-box;
+}
+
+/* Positionera Ta bort-knappen i övre högra hörnet */
+#canvas-container .delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 2px 6px !important;
+    font-size: 12px !important;
+    line-height: 1;
+    border-radius: 50%; /* Gör den rund */
+    z-index: 5;
+}
