@@ -1,0 +1,36 @@
+[
+  {
+    "title": "Granskning av Fjärrtransport",
+    "type": "sequence-analysis",
+    "steps": [
+      {
+        "description": "Granska denna kedja från T1 till T2. En händelse är felaktig och bör tas bort. Vilken?",
+        "sequenceGroups": [
+          {
+            "title": "## T1\nAvsändande Kontor",
+            "color": "green",
+            "events": [
+              { "event": "Hämta", "office": "COL" },
+              { "event": "Lossa in", "office": "SE23" },
+              { "event": "Lasta ut", "office": "MAN" }
+            ]
+          },
+          {
+            "title": "## T2\nMottagande Kontor",
+            "color": "blue",
+            "events": [
+              { "event": "Lossa in", "office": "ENM" },
+              { "event": "Lasta ut", "office": "DOT" },
+              { "event": "Leverera", "office": "DLV" }
+            ]
+          }
+        ],
+        "correctAnswer": {
+          "type": "remove",
+          "index": 3,
+          "explanation": "Korrekt! Den andra 'Lossa in' (ENM Omex) är felaktig. Omex sker bara en gång på den ankommande terminalen."
+        }
+      }
+    ]
+  }
+]
