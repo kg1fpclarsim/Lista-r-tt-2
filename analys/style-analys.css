@@ -34,15 +34,11 @@ body { font-family: sans-serif; background-color: #f0f2f5; padding: 20px; }
 .palette-item .event-type { font-size: 0.8em; text-align: center; margin-top: 4px; color: #333; }
 #canvas-container { 
     background-color: #e9ecef; min-height: 250px; border-radius: 8px; padding: 15px; 
-    /* NYTT: Horisontell layout */
-    display: flex; 
-    gap: 10px; 
-    overflow-x: auto;
+    display: flex; gap: 10px; overflow-x: auto;
 }
 .group-card-admin { 
     border: 2px dashed #ccc; padding: 10px; border-radius: 8px; transition: all 0.2s ease; 
-    flex-shrink: 0; /* Förhindra att de kläms ihop */
-    width: 350px; /* Ge en standardbredd */
+    flex-shrink: 0; width: 350px;
 }
 .group-card-admin.active { border-style: solid; border-color: #007bff; box-shadow: 0 0 10px rgba(0, 123, 255, 0.4); }
 .group-card-admin.green { background-color: #e6f4ea; }
@@ -50,16 +46,10 @@ body { font-family: sans-serif; background-color: #f0f2f5; padding: 20px; }
 .group-card-admin.grey { background-color: #f1f1f1; }
 .group-card-header { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
 .group-card-header textarea { flex-grow: 1; margin-bottom: 0; }
-.group-events-canvas { display: flex; flex-wrap: wrap; gap: 10px; min-height: 50px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 4px; }
+.group-events-canvas { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; min-height: 50px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 4px; }
 .empty-group-prompt { color: #888; font-style: italic; width: 100%; text-align: center; padding: 20px 0; }
 .canvas-block-wrapper { position: relative; }
 #canvas-container .event-block { min-width: 120px; padding-bottom: 5px; }
 #canvas-container .event-block img { margin-bottom: 5px; }
 .office-select { width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.8em; box-sizing: border-box; }
 #canvas-container .delete-btn { position: absolute; top: -8px; right: -8px; padding: 2px 6px !important; font-size: 12px !important; line-height: 1; border-radius: 50%; z-index: 5; }
-/* Stil för ett aktivt grupp-block på adminsidan */
-.group-card-admin.active {
-    border-style: solid;
-    border-color: #007bff; /* Tydlig blå ram */
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.4); /* Mjuk blå skugga */
-}
