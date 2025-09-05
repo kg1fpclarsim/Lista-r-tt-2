@@ -9,17 +9,14 @@
 <body>
     <div class="analysis-admin-container">
         <h1>Redigerare för Analys-scenarier</h1>
-
         <div class="admin-layout">
             <div class="palette-column">
                 <div class="card">
                     <h3>Händelse-palett</h3>
                     <p>Klicka på en händelse för att lägga till den i det aktiva grupp-blocket.</p>
-                    <div id="palette-container">
-                        </div>
+                    <div id="palette-container"></div>
                 </div>
             </div>
-
             <div class="editor-column">
                 <div class="card">
                     <h3>Scenariodata</h3>
@@ -28,17 +25,26 @@
                     <label for="scenario-description">Beskrivning (Markdown):</label>
                     <textarea id="scenario-description" rows="4" placeholder="Beskriv uppgiften för spelaren..."></textarea>
                 </div>
-
                 <div class="card">
                     <h3>Händelsekedja (Arbetsyta)</h3>
-                    <div id="canvas-container">
-                        </div>
+                    <div id="canvas-container"></div>
                     <button id="add-group-btn" class="btn btn-secondary">Lägg till Grupp-block</button>
                 </div>
-                
                 <div class="card">
                     <h3>Facit (Definiera rätt svar)</h3>
+                    <div id="answer-editor">
+                        <div class="answer-type-selector">
+                            <label><input type="radio" name="answerType" value="correct" checked> Kedjan är korrekt</label>
+                            <label><input type="radio" name="answerType" value="remove"> Ett block ska tas bort</label>
+                            <label><input type="radio" name="answerType" value="add"> Ett block saknas</label>
+                            <label><input type="radio" name="answerType" value="correct_office"> Ett kontor är felaktigt</label>
+                        </div>
+                        <div id="answer-details">
+                            </div>
+                        <label for="answer-explanation">Förklaring till rätt svar (visas för spelaren):</label>
+                        <textarea id="answer-explanation" rows="3" placeholder="Skriv en pedagogisk förklaring..."></textarea>
                     </div>
+                </div>
                 <div class="card">
                     <button id="save-btn" class="btn btn-primary">Generera JSON</button>
                     <textarea id="json-output" readonly></textarea>
@@ -46,10 +52,9 @@
             </div>
         </div>
     </div>
-
-    <script src="event-definitions.js"></script> 
-    <script src="office-definitions.js"></script> 
-    <script src="admin-analys.js"></script>      
-
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="event-definitions.js"></script>
+    <script src="office-definitions.js"></script>
+    <script src="admin-analys.js"></script>
 </body>
 </html>
