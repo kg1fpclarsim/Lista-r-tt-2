@@ -9,17 +9,14 @@
 <body>
     <div class="analysis-admin-container">
         <h1>Redigerare för Analys-scenarier</h1>
-
         <div class="admin-layout">
             <div class="palette-column">
                 <div class="card">
                     <h3>Händelse-palett</h3>
-                    <p>Klicka på en händelse för att lägga till den i kedjan.</p>
-                    <div id="palette-container">
-                        </div>
+                    <p>Klicka på en händelse för att lägga till den i det aktiva grupp-blocket.</p>
+                    <div id="palette-container"></div>
                 </div>
             </div>
-
             <div class="editor-column">
                 <div class="card">
                     <h3>Scenariodata</h3>
@@ -28,20 +25,23 @@
                     <label for="scenario-description">Beskrivning (Markdown):</label>
                     <textarea id="scenario-description" rows="4" placeholder="Beskriv uppgiften för spelaren..."></textarea>
                 </div>
-
                 <div class="card">
                     <h3>Händelsekedja (Arbetsyta)</h3>
-                    <div id="canvas-container" class="sequence-chain">
-                        </div>
+                    <div id="canvas-container"></div>
+                    <button id="add-group-btn" class="btn btn-secondary">Lägg till Grupp-block</button>
                 </div>
-                
                 <div class="card">
                     <h3>Facit (Definiera rätt svar)</h3>
-                    </div>
+                    <div id="answer-editor"></div>
+                </div>
+                <div class="card">
+                    <button id="save-btn" class="btn btn-primary">Generera JSON</button>
+                    <textarea id="json-output" readonly></textarea>
+                </div>
             </div>
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="event-definitions.js"></script>
     <script src="office-definitions.js"></script>
     <script src="admin-analys.js"></script>
