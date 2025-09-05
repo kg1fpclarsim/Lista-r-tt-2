@@ -29,4 +29,4 @@ const ALL_OFFICES = [
     "JÖNKÖPING"[cite: 2],
     "HUDIKSVALL"[cite: 2],
     "KRISTIANSTAD" [cite: 2]
-];
+]
