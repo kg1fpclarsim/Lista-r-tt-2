@@ -1,18 +1,70 @@
-// admin-analys.js
 document.addEventListener('DOMContentLoaded', () => {
+    // Referenser
     const paletteContainer = document.getElementById('palette-container');
     const canvasContainer = document.getElementById('canvas-container');
+    const addGroupBtn = document.getElementById('add-group-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const jsonOutput = document.getElementById('json-output');
 
-    // Funktion för att bygga ett nytt redigerbart block på arbetsytan
-    function addEventBlockToCanvas(eventDef) {
-        if (typeof ALL_OFFICES === 'undefined') {
-            console.error("ALL_OFFICES är inte definierad. Se till att office-definitions.js är laddad.");
+    let activeGroup = null; // Håller koll på vilken grupp som är aktiv
+
+    // Bygg paletten med händelser
+    function buildPalette() {
+        ANALYS_EVENTS.forEach(eventDef => {
+            const item = document.createElement('div');
+            item.className = 'palette-item';
+            item.innerHTML = `<div class="event-block"><img src="${eventDef.image}" alt="${eventDef.name}"><div class="event-type">${eventDef.name}</div></div>`;
+            item.addEventListener('click', () => addEventToActiveGroup(eventDef));
+            paletteContainer.appendChild(item);
+        });
+    }
+
+    // Lägg till ett nytt grupp-block på arbetsytan
+    function addGroupBlock() {
+        const groupCard = document.createElement('div');
+        groupCard.className = 'group-card-admin';
+        groupCard.innerHTML = `
+            <div class="group-card-header">
+                <textarea class="group-title-input" rows="2" placeholder="Grupprubrik (Markdown)..."></textarea>
+                <select class="group-color-select">
+                    <option value="green">Grön</option>
+                    <option value="blue">Blå</option>
+                    <option value="grey">Grå</option>
+                </select>
+                <button class="delete-btn small-delete-btn">X</button>
+            </div>
+            <div class="group-events-canvas">
+                <p class="empty-group-prompt">Klicka här för att aktivera gruppen, lägg sedan till händelser från paletten.</p>
+            </div>
+        `;
+        canvasContainer.appendChild(groupCard);
+        
+        groupCard.querySelector('.delete-btn').addEventListener('click', () => groupCard.remove());
+        groupCard.querySelector('.group-color-select').addEventListener('change', (e) => {
+            groupCard.dataset.color = e.target.value;
+            groupCard.className = `group-card-admin active ${e.target.value}`;
+        });
+        groupCard.addEventListener('click', () => {
+            document.querySelectorAll('.group-card-admin').forEach(card => card.classList.remove('active'));
+            groupCard.classList.add('active');
+            activeGroup = groupCard;
+        });
+        
+        groupCard.click(); // Aktivera direkt
+    }
+
+    // Lägg till ett händelse-block i den aktiva gruppen
+    function addEventToActiveGroup(eventDef) {
+        if (!activeGroup) {
+            alert("Klicka på ett grupp-block för att aktivera det först.");
             return;
         }
-
+        activeGroup.querySelector('.empty-group-prompt')?.remove();
+        
+        const eventCanvas = activeGroup.querySelector('.group-events-canvas');
         const blockWrapper = document.createElement('div');
         blockWrapper.className = 'canvas-block-wrapper';
-
+        
         let optionsHtml = ALL_OFFICES.map(office => `<option value="${office}">${office}</option>`).join('');
         let selectHtml = `<select class="office-select"><option value="">Välj kontor...</option>${optionsHtml}</select>`;
 
@@ -23,52 +75,15 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <button class="delete-btn small-delete-btn">X</button>
         `;
-
-        blockWrapper.querySelector('.delete-btn').addEventListener('click', () => {
-            blockWrapper.remove();
-            updateArrows();
-        });
-
-        canvasContainer.appendChild(blockWrapper);
-        updateArrows();
+        blockWrapper.dataset.eventName = eventDef.name; // Spara namnet för att kunna spara
+        blockWrapper.querySelector('.delete-btn').addEventListener('click', (e) => { e.stopPropagation(); blockWrapper.remove(); });
+        eventCanvas.appendChild(blockWrapper);
     }
+    
+    // Spara-funktionen kommer vi att bygga ut i nästa steg när vi gör facit-delen
 
-    // Funktion för att rita ut pilar mellan blocken
-    function updateArrows() {
-        canvasContainer.querySelectorAll('.sequence-arrow').forEach(arrow => arrow.remove());
-        
-        const blocks = canvasContainer.querySelectorAll('.canvas-block-wrapper');
-        blocks.forEach((block, index) => {
-            if (index < blocks.length - 1) {
-                const arrow = document.createElement('div');
-                arrow.className = 'sequence-arrow';
-                arrow.textContent = '→';
-                block.after(arrow);
-            }
-        });
-    }
-
-    // Funktion för att bygga upp paletten med händelser
-    function buildPalette() {
-        if (typeof ANALYS_EVENTS === 'undefined') {
-            console.error("ANALYS_EVENTS är inte definierad. Se till att event-definitions.js är laddad.");
-            return;
-        }
-
-        ANALYS_EVENTS.forEach(eventDef => {
-            const paletteItem = document.createElement('div');
-            paletteItem.className = 'palette-item';
-            paletteItem.dataset.eventName = eventDef.name;
-            paletteItem.innerHTML = `<div class="event-block"><img src="${eventDef.image}" alt="${eventDef.name}"></div>`;
-            
-            paletteItem.addEventListener('click', () => {
-                addEventBlockToCanvas(eventDef);
-            });
-
-            paletteContainer.appendChild(paletteItem);
-        });
-    }
-
-    // Starta allt
+    // Initiera sidan
     buildPalette();
+    addGroupBtn.addEventListener('click', addGroupBlock);
+    addGroupBlock(); // Starta med ett tomt grupp-block
 });
