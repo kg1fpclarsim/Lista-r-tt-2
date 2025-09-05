@@ -1,3 +1,4 @@
+// admin-analys.js
 document.addEventListener('DOMContentLoaded', () => {
     const paletteContainer = document.getElementById('palette-container');
     const canvasContainer = document.getElementById('canvas-container');
@@ -12,11 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const blockWrapper = document.createElement('div');
         blockWrapper.className = 'canvas-block-wrapper';
 
-        // Skapa en rullista med alla kontor
         let optionsHtml = ALL_OFFICES.map(office => `<option value="${office}">${office}</option>`).join('');
         let selectHtml = `<select class="office-select"><option value="">Välj kontor...</option>${optionsHtml}</select>`;
 
-        // Bygg upp HTML-innehållet för blocket
         blockWrapper.innerHTML = `
             <div class="event-block">
                 <img src="${eventDef.image}" alt="${eventDef.name}">
@@ -25,19 +24,17 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="delete-btn small-delete-btn">X</button>
         `;
 
-        // Lägg till en lyssnare på Ta bort-knappen
         blockWrapper.querySelector('.delete-btn').addEventListener('click', () => {
             blockWrapper.remove();
-            updateArrows(); // Uppdatera pilarna när ett block tas bort
+            updateArrows();
         });
 
         canvasContainer.appendChild(blockWrapper);
-        updateArrows(); // Uppdatera pilarna när ett nytt block läggs till
+        updateArrows();
     }
 
     // Funktion för att rita ut pilar mellan blocken
     function updateArrows() {
-        // Ta bort alla gamla pilar
         canvasContainer.querySelectorAll('.sequence-arrow').forEach(arrow => arrow.remove());
         
         const blocks = canvasContainer.querySelectorAll('.canvas-block-wrapper');
@@ -46,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const arrow = document.createElement('div');
                 arrow.className = 'sequence-arrow';
                 arrow.textContent = '→';
-                // Infoga pilen efter det nuvarande blocket
                 block.after(arrow);
             }
         });
@@ -65,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             paletteItem.dataset.eventName = eventDef.name;
             paletteItem.innerHTML = `<div class="event-block"><img src="${eventDef.image}" alt="${eventDef.name}"></div>`;
             
-            // Uppdaterad klick-lyssnare som anropar vår nya funktion
             paletteItem.addEventListener('click', () => {
                 addEventBlockToCanvas(eventDef);
             });
