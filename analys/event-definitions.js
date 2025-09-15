@@ -41,6 +41,11 @@ const ANALYS_EVENTS = [
         image: "../images/analysis_buttons/hamta-obokad.png"
     },
     { 
+        name: "Hämta",
+        // Du behöver skapa en bild för denna knapp, t.ex. hamta-obokad.png
+        image: "../images/analysis_buttons/hamta.png"
+    },
+    { 
         name: "Flänsa på",
         // Du behöver skapa en bild för denna knapp, t.ex. flansa-pa.png
         image: "../images/analysis_buttons/flansa-pa.png"
