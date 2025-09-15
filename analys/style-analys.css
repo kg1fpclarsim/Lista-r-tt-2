@@ -32,14 +32,8 @@ body { font-family: sans-serif; background-color: #f0f2f5; padding: 20px; }
 .palette-item:hover { border-style: solid; border-color: #007bff; background-color: #f0f8ff; }
 .palette-item img { width: 100%; pointer-events: none; }
 .palette-item .event-type { font-size: 0.8em; text-align: center; margin-top: 4px; color: #333; }
-#canvas-container { 
-    background-color: #e9ecef; min-height: 250px; border-radius: 8px; padding: 15px; 
-    display: flex; gap: 10px; overflow-x: auto;
-}
-.group-card-admin { 
-    border: 2px dashed #ccc; padding: 10px; border-radius: 8px; transition: all 0.2s ease; 
-    flex-shrink: 0; width: 350px;
-}
+#canvas-container { background-color: #e9ecef; min-height: 250px; border-radius: 8px; padding: 15px; display: flex; gap: 10px; overflow-x: auto; }
+.group-card-admin { border: 2px dashed #ccc; padding: 10px; border-radius: 8px; transition: all 0.2s ease; flex-shrink: 0; width: 350px; }
 .group-card-admin.active { border-style: solid; border-color: #007bff; box-shadow: 0 0 10px rgba(0, 123, 255, 0.4); }
 .group-card-admin.green { background-color: #e6f4ea; }
 .group-card-admin.blue { background-color: #e7f3fe; }
@@ -51,5 +45,12 @@ body { font-family: sans-serif; background-color: #f0f2f5; padding: 20px; }
 .canvas-block-wrapper { position: relative; }
 #canvas-container .event-block { min-width: 120px; padding-bottom: 5px; }
 #canvas-container .event-block img { margin-bottom: 5px; }
-.office-select { width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.8em; box-sizing: border-box; }
+.office-input { width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.8em; box-sizing: border-box; text-align: center; }
 #canvas-container .delete-btn { position: absolute; top: -8px; right: -8px; padding: 2px 6px !important; font-size: 12px !important; line-height: 1; border-radius: 50%; z-index: 5; }
+
+/* NYTT: Stilar för Facit-sektionen */
+.answer-type-selector { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+.answer-type-selector label { font-weight: normal; }
+#answer-details .instruction-text { background-color: #fffbe6; border: 1px solid #ffe58f; padding: 10px; border-radius: 4px; margin-top: 0; }
+.canvas-block-wrapper.selectable-to-edit { border: 2px dashed #dc3545; border-radius: 8px; cursor: pointer; }
+.canvas-block-wrapper.selected-as-answer { box-shadow: 0 0 10px 4px #dc3545; }
