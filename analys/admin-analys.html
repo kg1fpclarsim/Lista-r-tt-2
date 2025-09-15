@@ -19,28 +19,31 @@
             </div>
             <div class="editor-column">
                 <div class="card">
-                    <h3>Scenariodata</h3>
+                    <h3>1. Scenariodata</h3>
                     <label for="scenario-title">Titel:</label>
                     <input type="text" id="scenario-title" placeholder="T.ex. Granskning av fjärrtransport">
                     <label for="scenario-description">Beskrivning (Markdown):</label>
                     <textarea id="scenario-description" rows="4" placeholder="Beskriv uppgiften för spelaren..."></textarea>
                 </div>
                 <div class="card">
-                    <h3>Händelsekedja (Arbetsyta)</h3>
+                    <h3>2. Bygg Händelsekedja (Arbetsyta)</h3>
+                    <p>Bygg upp den <strong>visuella kedjan</strong> som spelaren ska se från början, inklusive eventuella fel.</p>
                     <div id="canvas-container"></div>
                     <button id="add-group-btn" class="btn btn-secondary">Lägg till Grupp-block</button>
                 </div>
                 <div class="card">
-                    <h3>Facit (Definiera rätt svar)</h3>
+                    <h3>3. Facit (Definiera rätt svar)</h3>
                     <div id="answer-editor">
                         <div class="answer-type-selector">
+                            <strong>Typ av pussel:</strong>
                             <label><input type="radio" name="answerType" value="correct" checked> Kedjan är korrekt</label>
                             <label><input type="radio" name="answerType" value="remove"> Ett block ska tas bort</label>
                             <label><input type="radio" name="answerType" value="add"> Ett block saknas</label>
                             <label><input type="radio" name="answerType" value="correct_office"> Ett kontor är felaktigt</label>
                         </div>
                         <div id="answer-details">
-                            </div>
+                            <p class="instruction-text">Kedjan kommer att bedömas som korrekt.</p>
+                        </div>
                         <label for="answer-explanation">Förklaring till rätt svar (visas för spelaren):</label>
                         <textarea id="answer-explanation" rows="3" placeholder="Skriv en pedagogisk förklaring..."></textarea>
                     </div>
@@ -52,7 +55,6 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="event-definitions.js"></script>
     <script src="office-definitions.js"></script>
     <script src="admin-analys.js"></script>
