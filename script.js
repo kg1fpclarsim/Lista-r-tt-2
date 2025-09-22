@@ -1,9 +1,9 @@
-const SCRIPT_JS_VERSION = '3.0-FINAL';
+const SCRIPT_JS_VERSION = '3.1-FINAL';
 
 document.addEventListener('DOMContentLoaded', () => {
     const simulatorContainer = document.getElementById('simulator-wrapper');
     if (!simulatorContainer) {
-        console.error("FATALT FEL i script.js: Behållaren #simulator-wrapper hittades inte i HTML-koden.");
+        console.error("FATALT FEL i script.js: Behållaren #simulator-wrapper hittades inte.");
         return;
     }
 
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetActions = currentStepData.sequence;
         const isStepFinished = currentSequenceStep >= targetActions.length;
         if (isStepFinished && currentScenarioStepIndex >= loadedScenario.steps.length - 1) return;
-        if (isStepFinished) { return; }
+        if (isStepFinished) return;
 
         const nextTargetAction = targetActions[currentSequenceStep];
         if (clickedEvent.name === nextTargetAction) {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else if (!clickedEvent.submenu && clickedEvent.name !== 'Tillbaka') {
             let errorMessage = "Fel knapp för denna uppgift.";
-            if (currentStepData.customErrorMessage) { errorMessage = currentStepData.customErrorMessage; }
+            if (currentStepData.customErrorMessage) errorMessage = currentStepData.customErrorMessage;
             if (currentStepData.wrongClickMessages && currentStepData.wrongClickMessages[clickedEvent.name]) {
                 errorMessage = currentStepData.wrongClickMessages[clickedEvent.name];
             }
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackArea.className = 'feedback-incorrect';
             if (areaElement) {
                 areaElement.classList.add('area-incorrect-feedback');
-                setTimeout(() => { areaElement.classList.remove('area-incorrect-feedback'); }, 500);
+                setTimeout(() => areaElement.classList.remove('area-incorrect-feedback'), 500);
             }
         }
     }
@@ -72,12 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
                 if (!response.ok) throw new Error('Nätverksfel');
                 let allScenarios = await response.json();
-                if (!Array.isArray(allScenarios)) { throw new Error("scenarios.json är inte en giltig lista (array)."); }
-                const validScenarios = allScenarios.filter(scenario => scenario.steps && scenario.steps.length > 0);
-                if (!validScenarios || validScenarios.length === 0) {
+                if (!Array.isArray(allScenarios)) throw new Error("scenarios.json är inte en giltig lista.");
+                const validScenarios = allScenarios.filter(s => s.steps && s.steps.length > 0);
+                if (!validScenarios.length) {
                     scenarioTitle.textContent = "Inga giltiga scenarier hittades";
-                    document.getElementById('scenario-description-wrapper').style.display = 'none';
-                    simulatorContainer.style.display = 'none';
                     return;
                 }
                 for (let i = validScenarios.length - 1; i > 0; i--) {
@@ -110,17 +108,18 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSequenceStep = 0;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         scenarioTitle.textContent = loadedScenario.title;
-        
         nextScenarioButton.style.display = 'none';
         
-        // Återställ simulatorn TILL RÄTT MENY och skicka med start-texten
         const startMenu = currentStepData.startMenu || 'main';
         const overlayState = currentStepData.initialOverlayState || {};
-        simulator.reset(startMenu, overlayState);
-
-        animateTypewriter(scenarioDescription, currentStepData.description, () => {
-            feedbackMessage.textContent = 'Väntar på din första åtgärd...';
-            feedbackArea.className = 'feedback-neutral';
+        
+        // Återställ simulatorn och skicka med en callback-funktion
+        simulator.reset(startMenu, overlayState, () => {
+            // Denna kod körs först NÄR simulatorn är helt klar med att rita
+            animateTypewriter(scenarioDescription, currentStepData.description, () => {
+                feedbackMessage.textContent = 'Väntar på din första åtgärd...';
+                feedbackArea.className = 'feedback-neutral';
+            });
         });
     }
     
@@ -132,16 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
         element.classList.add('typing');
         typewriterInterval = setInterval(() => {
             if (currentTokenIndex < tokens.length) {
-                const currentSentence = tokens.slice(0, currentTokenIndex + 1).join('');
-                element.innerHTML = marked.parse(currentSentence);
+                element.innerHTML = marked.parse(tokens.slice(0, currentTokenIndex + 1).join(''));
                 currentTokenIndex++;
             } else {
                 clearInterval(typewriterInterval);
                 element.innerHTML = marked.parse(markdownText);
                 element.classList.remove('typing');
-                if (typeof onComplete === 'function') {
-                    onComplete();
-                }
+                if (typeof onComplete === 'function') onComplete();
             }
         }, 80);
     }
@@ -155,3 +151,4 @@ document.addEventListener('DOMContentLoaded', () => {
     const simulator = initializeSimulator(simulatorContainer, 'main', handlePlayerClick);
     initializeGame();
 });
+
