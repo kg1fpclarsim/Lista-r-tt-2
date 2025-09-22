@@ -18,7 +18,7 @@ const ALL_MENUS = {
     },
     'hamta-typ': {
         key: 'hamta-typ',
-        image: 'images/simulator-screens/handdator-hamta.png',
+        image: 'images/simulator-screens/handdator-hamta-typ.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
