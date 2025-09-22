@@ -1,4 +1,4 @@
-const SCRIPT_JS_VERSION = '2.31-FINAL'; // Versionsnummer
+const SCRIPT_JS_VERSION = '2.32-FINAL'; // Versionsnummer
 
 document.addEventListener('DOMContentLoaded', () => {
     const simulatorContainer = document.getElementById('simulator-wrapper');
