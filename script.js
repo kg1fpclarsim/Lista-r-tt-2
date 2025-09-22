@@ -113,7 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         nextScenarioButton.style.display = 'none';
         
-        simulator.reset(currentStepData.startMenu || 'main', currentStepData.initialOverlayState || {});
+        // Återställ simulatorn TILL RÄTT MENY och skicka med start-texten
+        const startMenu = currentStepData.startMenu || 'main';
+        const overlayState = currentStepData.initialOverlayState || {};
+        simulator.reset(startMenu, overlayState);
 
         animateTypewriter(scenarioDescription, currentStepData.description, () => {
             feedbackMessage.textContent = 'Väntar på din första åtgärd...';
