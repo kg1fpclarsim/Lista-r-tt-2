@@ -1,7 +1,25 @@
-// simulator-engine.js (Korrekt och komplett version)
+const SIMULATOR_ENGINE_VERSION = '2.0-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
+    // Diagnostik: Kontrollera om behållaren finns
+    if (!containerElement) {
+        console.error("FATALT FEL: Simulator-behållaren (containerElement) hittades inte! Kontrollera att din HTML har rätt ID och att skriptet körs efter att HTML har laddats.");
+        return null;
+    }
+
+    containerElement.innerHTML = `
+        <div id="image-container">
+            <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
+            <div id="navigation-overlay"></div>
+        </div>
+    `;
     const gameImage = containerElement.querySelector('#game-image');
+    // Diagnostik: Kontrollera om bild-elementet skapades
+    if (!gameImage) {
+        console.error("FATALT FEL: Kunde inte skapa <img>-elementet inuti simulator-behållaren.");
+        return null;
+    }
+
     const imageContainer = containerElement.querySelector('#image-container');
     const navOverlay = containerElement.querySelector('#navigation-overlay');
     let currentMenuViewKey = startMenuKey;
@@ -31,13 +49,10 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         if (menuData.events) {
             menuData.events.forEach(event => {
                 const triggerCoordinates = event.type === 'dropdown' ? event.triggerCoords : event.coords;
+                if (!triggerCoordinates) return; // Hoppa över om koordinater saknas
                 const area = createArea(triggerCoordinates);
                 area.addEventListener('click', () => {
-                    // KORRIGERING: Lade tillbaka denna viktiga rad
-                    if (typeof onButtonClickCallback === 'function') {
-                        onButtonClickCallback(event, area);
-                    }
-                    
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event, area);
                     if (event.submenu) {
                         menuHistory.push(currentMenuViewKey);
                         switchMenuView(event.submenu);
@@ -72,7 +87,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         panel.innerHTML = `<h3>${title}</h3>`;
         const optionsContainer = document.createElement('div');
         optionsContainer.className = 'options-container';
-        let optionsList = (typeof event.options === 'string' && event.options === 'ALL_OFFICES') ? ALL_OFFICES || [] : event.options || [];
+        let optionsList = (typeof event.options === 'string' && event.options === 'ALL_OFFICES') ? (ALL_OFFICES || []) : (event.options || []);
         optionsList.forEach(optText => {
             const optionBtn = document.createElement('button');
             optionBtn.className = 'custom-dropdown-option';
@@ -101,9 +116,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     function createArea(coords) {
         const area = document.createElement('div');
         area.classList.add('clickable-area');
-        if(coords) {
-            area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height];
-        }
+        if(coords) { area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height]; }
         return area;
     }
 
@@ -120,6 +133,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     function scaleUIElements() {
         containerElement.querySelectorAll('.clickable-area, .text-overlay').forEach(area => {
             const coordsArray = area.dataset.originalCoords.split(',');
+            if (coordsArray.length < 4) return;
             const coords = { top: coordsArray[0], left: coordsArray[1], width: coordsArray[2], height: coordsArray[3] };
             scaleSingleElement(area, coords);
         });
@@ -127,6 +141,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
 
     window.addEventListener('resize', scaleUIElements);
     switchMenuView(startMenuKey);
+
     return {
         reset: () => {
             menuHistory = [];
