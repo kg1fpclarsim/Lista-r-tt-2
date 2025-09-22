@@ -1,11 +1,5 @@
 // simulator-engine.js
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
-    containerElement.innerHTML = `
-        <div id="image-container">
-            <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
-            <div id="navigation-overlay"></div>
-        </div>
-    `;
     const gameImage = containerElement.querySelector('#game-image');
     const imageContainer = containerElement.querySelector('#image-container');
     const navOverlay = containerElement.querySelector('#navigation-overlay');
@@ -22,8 +16,19 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     }
 
     function createUIElements(menuData) {
-        imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay').forEach(el => el.remove());
+        imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
         navOverlay.innerHTML = '';
+
+        if (menuData.textOverlays) {
+            menuData.textOverlays.forEach(overlayData => {
+                const overlayDiv = document.createElement('div');
+                overlayDiv.id = overlayData.id;
+                overlayDiv.className = 'text-overlay';
+                overlayDiv.dataset.originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height];
+                imageContainer.appendChild(overlayDiv);
+            });
+        }
+
         if (menuData.events) {
             menuData.events.forEach(event => {
                 const area = createArea(event.coords);
@@ -63,20 +68,19 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         panel.innerHTML = `<h3>${title}</h3>`;
         const optionsContainer = document.createElement('div');
         optionsContainer.className = 'options-container';
-
-        let optionsList = [];
-        if (typeof event.options === 'string' && event.options === 'ALL_OFFICES') {
-            optionsList = (typeof ALL_OFFICES !== 'undefined') ? ALL_OFFICES : [];
-        } else if (Array.isArray(event.options)) {
-            optionsList = event.options;
-        }
-
+        let optionsList = Array.isArray(event.options) ? event.options : ALL_OFFICES || [];
         optionsList.forEach(optText => {
             const optionBtn = document.createElement('button');
             optionBtn.className = 'custom-dropdown-option';
             optionBtn.textContent = optText;
             optionBtn.addEventListener('click', () => {
                 onButtonClickCallback({ name: optText }, null);
+                if (event.updatesOverlay) {
+                    const overlayToUpdate = imageContainer.querySelector(`#${event.updatesOverlay}`);
+                    if (overlayToUpdate) {
+                        overlayToUpdate.textContent = optText;
+                    }
+                }
                 overlay.remove();
             });
             optionsContainer.appendChild(optionBtn);
@@ -85,7 +89,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         overlay.appendChild(panel);
         imageContainer.appendChild(overlay);
     }
-    
+
     function createArea(coords) {
         const area = document.createElement('div');
         area.classList.add('clickable-area');
@@ -104,7 +108,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     }
 
     function scaleUIElements() {
-        containerElement.querySelectorAll('.clickable-area').forEach(area => {
+        containerElement.querySelectorAll('.clickable-area, .text-overlay').forEach(area => {
             const coordsArray = area.dataset.originalCoords.split(',');
             const coords = { top: coordsArray[0], left: coordsArray[1], width: coordsArray[2], height: coordsArray[3] };
             scaleSingleElement(area, coords);
@@ -113,7 +117,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
 
     window.addEventListener('resize', scaleUIElements);
     switchMenuView(startMenuKey);
-
     return {
         reset: () => {
             menuHistory = [];
