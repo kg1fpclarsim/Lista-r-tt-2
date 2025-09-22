@@ -1,6 +1,7 @@
-const SCRIPT_JS_VERSION = '2.5-FINAL'; // Versionsnummer
+const SCRIPT_JS_VERSION = '2.51-FINAL'; // Versionsnummer
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Diagnostik: Kontrollera om behållaren finns vid start
     const simulatorContainer = document.getElementById('simulator-wrapper');
     if (!simulatorContainer) {
         console.error("FATALT FEL i script.js: Behållaren #simulator-wrapper hittades inte i HTML-koden.");
@@ -105,42 +106,50 @@ document.addEventListener('DOMContentLoaded', () => {
         setupCurrentScenarioStep();
     }
     
+    // KORRIGERAD FUNKTION
     function setupCurrentScenarioStep() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         currentSequenceStep = 0;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         scenarioTitle.textContent = loadedScenario.title;
+        nextScenarioButton.style.display = 'none'; // Dölj knappen
         
-        // KORRIGERING 2: Knappen döljs alltid när ett nytt delmoment startar.
-        nextScenarioButton.style.display = 'none';
+        // Återställ simulatorns vy. Detta ritar om menyn och de tomma textrutorna.
         simulator.reset();
 
+        // Anropa typewriter. Den kör sin egen logik för att återställa feedback-rutan NÄR den är klar.
         animateTypewriter(scenarioDescription, currentStepData.description, () => {
             feedbackMessage.textContent = 'Väntar på din första åtgärd...';
             feedbackArea.className = 'feedback-neutral';
         });
         
+        // Fyll i textrutorna EFTER att simulator.reset() har kört och ritat om dem.
+        // En timeout säkerställer att DOM-trädet hinner uppdateras.
         setTimeout(() => {
             if (currentStepData.initialOverlayState) {
                 for (const overlayId in currentStepData.initialOverlayState) {
                     const text = currentStepData.initialOverlayState[overlayId];
-                    // KORRIGERING 3: Letar efter textrutan INUTI simulator-behållaren.
                     const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
                     if (overlayElement) {
                         overlayElement.textContent = text;
+                    } else {
+                         console.warn(`Hittade inte text-overlay med id: '${overlayId}'`);
                     }
                 }
             }
         }, 100);
     }
     
-    // KORRIGERING 1: Den robusta "token-för-token"-animationen.
+    // KORRIGERAD FUNKTION
     function animateTypewriter(element, markdownText, onComplete) {
         if (typewriterInterval) clearInterval(typewriterInterval);
+        
+        // Dela upp texten i "tokens" (ord och mellanslag/radbrytningar)
         const tokens = markdownText.split(/(\s+)/);
         let currentTokenIndex = 0;
         element.innerHTML = '';
         element.classList.add('typing');
+
         typewriterInterval = setInterval(() => {
             if (currentTokenIndex < tokens.length) {
                 const currentSentence = tokens.slice(0, currentTokenIndex + 1).join('');
