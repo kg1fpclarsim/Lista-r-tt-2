@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nextScenarioButton.style.display = 'none'; // <-- DÖLJ KNAPPEN HÄR
         simulator.reset();
 
-        animateTypewriter(scenarioDescription, currentStepData.description, () => {
+        animateriter(scenarioDescription, currentStepData.description, () => {
             feedbackMessage.textContent = 'Väntar på din första åtgärd...';
             feedbackArea.className = 'feedback-neutral';
         });
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
     
-    function animateTypewriter(element, markdownText, onComplete) {
+   function animateTypewriter(element, markdownText, onComplete) {
     if (typewriterInterval) {
         clearInterval(typewriterInterval);
     }
@@ -141,26 +141,29 @@ document.addEventListener('DOMContentLoaded', () => {
     element.innerHTML = '';
     element.classList.add('typing');
 
-    // KORRIGERING: Dela upp texten i ord istället för tecken
-    const words = markdownText.split(' ');
-    let currentWordIndex = 0;
+    // NY, SMARTARE LOGIK: Dela upp texten i ord OCH avgränsare (mellanslag/radbrytningar)
+    const tokens = markdownText.split(/(\s+)/);
+    let currentTokenIndex = 0;
 
     typewriterInterval = setInterval(() => {
-        if (currentWordIndex < words.length) {
-            // Bygg upp meningen ord för ord
-            const currentSentence = words.slice(0, currentWordIndex + 1).join(' ');
-            element.innerHTML = marked.parse(currentSentence + ' '); // Lägg till ett mellanslag för markören
-            currentWordIndex++;
+        if (currentTokenIndex < tokens.length) {
+            // Bygg upp meningen token för token (ord, mellanslag, etc.)
+            const currentSentence = tokens.slice(0, currentTokenIndex + 1).join('');
+            element.innerHTML = marked.parse(currentSentence);
+            currentTokenIndex++;
         } else {
             // När texten är klar, avbryt animationen och ta bort markören
             clearInterval(typewriterInterval);
+            // Sätt den slutgiltiga texten en sista gång för att ta bort eventuell blinkande markör
+            element.innerHTML = marked.parse(markdownText);
             element.classList.remove('typing');
+            
             // Kör onComplete-funktionen om den finns
             if (typeof onComplete === 'function') {
                 onComplete();
             }
         }
-    }, 120); // Justerad hastighet för att passa ord (högre = långsammare)
+    }, 80); // Justerad hastighet för tokens (lägre = snabbare)
 }
 
     nextScenarioButton.addEventListener('click', () => {
