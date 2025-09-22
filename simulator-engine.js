@@ -1,8 +1,8 @@
-const SIMULATOR_ENGINE_VERSION = '3.1-FINAL';
+const SIMULATOR_ENGINE_VERSION = '3.2-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     if (!containerElement) {
-        console.error("FATALT FEL: Simulator-behållaren hittades inte!");
+        console.error("FATALT FEL: Simulator-behållaren (containerElement) hittades inte!");
         return null;
     }
     containerElement.innerHTML = `
@@ -43,7 +43,8 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
 
         gameImage.onload = renderUI;
         if (gameImage.complete) {
-            renderUI();
+            // Använd en liten timeout för att säkerställa att DOM hinner uppdateras
+            setTimeout(renderUI, 0);
         }
     }
 
