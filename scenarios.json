@@ -7,7 +7,7 @@
         "sequence": [ "Bekräfta Kontor" ],
         "startMenu": "hamta-valj-kontor",
         "initialOverlayState": {
-          "selected-office-display": "VÄXJÖ"
+          "selected-office-display": "Karlstad"
         }
       },
       {
