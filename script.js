@@ -1,12 +1,8 @@
-const SCRIPT_JS_VERSION = '2.51-FINAL'; // Versionsnummer
+const SCRIPT_JS_VERSION = '2.6-FINAL';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Diagnostik: Kontrollera om behållaren finns vid start
     const simulatorContainer = document.getElementById('simulator-wrapper');
-    if (!simulatorContainer) {
-        console.error("FATALT FEL i script.js: Behållaren #simulator-wrapper hittades inte i HTML-koden.");
-        return;
-    }
+    if (!simulatorContainer) { console.error("FATALT FEL: #simulator-wrapper hittades inte."); return; }
 
     const scenarioTitle = document.getElementById('scenario-title');
     const scenarioDescription = document.getElementById('scenario-description');
@@ -24,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetActions = currentStepData.sequence;
         const isStepFinished = currentSequenceStep >= targetActions.length;
         if (isStepFinished && currentScenarioStepIndex >= loadedScenario.steps.length - 1) return;
-        if (isStepFinished) { return; }
+        if (isStepFinished) return;
 
         const nextTargetAction = targetActions[currentSequenceStep];
         if (clickedEvent.name === nextTargetAction) {
@@ -40,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isLastStepOfScenario = currentScenarioStepIndex === loadedScenario.steps.length - 1;
                 if (isLastStepOfScenario) {
                     setTimeout(() => {
-                        feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
+                        feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario".';
                         nextScenarioButton.style.display = 'block';
                     }, 700);
                 } else {
@@ -52,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else if (!clickedEvent.submenu && clickedEvent.name !== 'Tillbaka') {
             let errorMessage = "Fel knapp för denna uppgift.";
-            if (currentStepData.customErrorMessage) { errorMessage = currentStepData.customErrorMessage; }
+            if (currentStepData.customErrorMessage) errorMessage = currentStepData.customErrorMessage;
             if (currentStepData.wrongClickMessages && currentStepData.wrongClickMessages[clickedEvent.name]) {
                 errorMessage = currentStepData.wrongClickMessages[clickedEvent.name];
             }
@@ -60,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackArea.className = 'feedback-incorrect';
             if (areaElement) {
                 areaElement.classList.add('area-incorrect-feedback');
-                setTimeout(() => { areaElement.classList.remove('area-incorrect-feedback'); }, 500);
+                setTimeout(() => areaElement.classList.remove('area-incorrect-feedback'), 500);
             }
         }
     }
@@ -73,12 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
                 if (!response.ok) throw new Error('Nätverksfel');
                 let allScenarios = await response.json();
-                if (!Array.isArray(allScenarios)) { throw new Error("scenarios.json är inte en giltig lista (array)."); }
-                const validScenarios = allScenarios.filter(scenario => scenario.steps && scenario.steps.length > 0);
-                if (!validScenarios || validScenarios.length === 0) {
+                if (!Array.isArray(allScenarios)) throw new Error("scenarios.json är inte en giltig lista.");
+                const validScenarios = allScenarios.filter(s => s.steps && s.steps.length > 0);
+                if (!validScenarios.length) {
                     scenarioTitle.textContent = "Inga giltiga scenarier hittades";
-                    document.getElementById('scenario-description-wrapper').style.display = 'none';
-                    simulatorContainer.style.display = 'none';
                     return;
                 }
                 for (let i = validScenarios.length - 1; i > 0; i--) {
@@ -106,25 +100,22 @@ document.addEventListener('DOMContentLoaded', () => {
         setupCurrentScenarioStep();
     }
     
-    // KORRIGERAD FUNKTION
     function setupCurrentScenarioStep() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         currentSequenceStep = 0;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         scenarioTitle.textContent = loadedScenario.title;
-        nextScenarioButton.style.display = 'none'; // Dölj knappen
+        nextScenarioButton.style.display = 'none';
         
-        // Återställ simulatorns vy. Detta ritar om menyn och de tomma textrutorna.
-        simulator.reset();
+        // Återställ simulatorn till rätt startmeny för detta delmoment
+        simulator.reset(currentStepData.startMenu || 'main');
 
-        // Anropa typewriter. Den kör sin egen logik för att återställa feedback-rutan NÄR den är klar.
         animateTypewriter(scenarioDescription, currentStepData.description, () => {
             feedbackMessage.textContent = 'Väntar på din första åtgärd...';
             feedbackArea.className = 'feedback-neutral';
         });
         
-        // Fyll i textrutorna EFTER att simulator.reset() har kört och ritat om dem.
-        // En timeout säkerställer att DOM-trädet hinner uppdateras.
+        // Fyll i textrutorna EFTER att simulatorn har ritat om
         setTimeout(() => {
             if (currentStepData.initialOverlayState) {
                 for (const overlayId in currentStepData.initialOverlayState) {
@@ -132,36 +123,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
                     if (overlayElement) {
                         overlayElement.textContent = text;
-                    } else {
-                         console.warn(`Hittade inte text-overlay med id: '${overlayId}'`);
                     }
                 }
             }
         }, 100);
     }
     
-    // KORRIGERAD FUNKTION
     function animateTypewriter(element, markdownText, onComplete) {
         if (typewriterInterval) clearInterval(typewriterInterval);
-        
-        // Dela upp texten i "tokens" (ord och mellanslag/radbrytningar)
         const tokens = markdownText.split(/(\s+)/);
         let currentTokenIndex = 0;
         element.innerHTML = '';
         element.classList.add('typing');
-
         typewriterInterval = setInterval(() => {
             if (currentTokenIndex < tokens.length) {
-                const currentSentence = tokens.slice(0, currentTokenIndex + 1).join('');
-                element.innerHTML = marked.parse(currentSentence);
+                element.innerHTML = marked.parse(tokens.slice(0, currentTokenIndex + 1).join(''));
                 currentTokenIndex++;
             } else {
                 clearInterval(typewriterInterval);
                 element.innerHTML = marked.parse(markdownText);
                 element.classList.remove('typing');
-                if (typeof onComplete === 'function') {
-                    onComplete();
-                }
+                if (typeof onComplete === 'function') onComplete();
             }
         }, 80);
     }
