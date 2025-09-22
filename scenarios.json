@@ -3,26 +3,13 @@
     "title": "Övning: Obokad Hämtning",
     "steps": [
       {
-        "description": "## Delmoment 1: Bekräfta Kontor\n\nDu ska göra en **obokad hämtning**. Kontoret för avsändaren är redan ifyllt på skärmen.\n\n**Uppgift:** Bekräfta att kontoret stämmer för att fortsätta.",
-        "sequence": [
-          "Bekräfta Kontor"
-        ],
-        "initialOverlayState": {
-          "selected-office-display": "VÄXJÖ"
-        },
-        "wrongClickMessages": {
-          "VÄXJÖ": "Detta är bara en visning av det valda kontoret. Du måste klicka på 'Bekräfta Kontor' för att gå vidare.",
-          "STOCKHOLM": "Fel, du ska inte ändra kontor. Du ska bekräfta det som redan är valt."
-        }
+        "description": "## Delmoment 1: Bekräfta Kontor\n\nDu ska göra en **obokad hämtning**. Kontoret för avsändaren är redan ifyllt på skärmen.\n\n**Uppgift:** Klicka på Hämta och bekräfta sedan att kontoret stämmer för att fortsätta.",
+        "sequence": [ "Bekräfta Kontor" ],
+        "initialOverlayState": { "selected-office-display": "VÄXJÖ" }
       },
       {
-        "description": "## Delmoment 2: Välj Typ av Hämtning\n\nBra! Nu när du har bekräftat kontoret har du kommit till menyn för att specificera typ av hämtning.\n\n**Uppgift:** Välj rätt alternativ för en obokad hämtning.",
-        "sequence": [
-          "Hämta obokad hämtning"
-        ],
-        "wrongClickMessages": {
-            "Hämta åt annan bil": "Fel, detta är en obokad hämtning som du själv ska utföra."
-        }
+        "description": "## Delmoment 2: Välj Typ av Hämtning\n\n**Uppgift:** Välj rätt alternativ för en obokad hämtning.",
+        "sequence": [ "Hämta obokad hämtning" ]
       }
     ]
   }
