@@ -1,10 +1,11 @@
-const SCRIPT_JS_VERSION = '2.1-FINAL';
+const SCRIPT_JS_VERSION = '2.2-FINAL'; // Versionsnummer
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Diagnostik: Kontrollera om behållaren finns vid start
     const simulatorContainer = document.getElementById('simulator-wrapper');
     if (!simulatorContainer) {
         console.error("FATALT FEL i script.js: Behållaren #simulator-wrapper hittades inte i HTML-koden.");
-        return;
+        return; // Stoppa all exekvering om behållaren saknas
     }
 
     const scenarioTitle = document.getElementById('scenario-title');
@@ -40,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isLastStepOfScenario) {
                     setTimeout(() => {
                         feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
-                        nextScenarioButton.style.display = 'block';
+                        nextScenarioButton.style.display = 'block'; // <-- VISA KNAPPEN HÄR
                     }, 700);
                 } else {
                     setTimeout(() => {
@@ -110,7 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSequenceStep = 0;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         scenarioTitle.textContent = loadedScenario.title;
+        
+        // Återställ simulatorns vy och knappar
+        nextScenarioButton.style.display = 'none'; // <-- DÖLJ KNAPPEN HÄR
         simulator.reset();
+
         animateTypewriter(scenarioDescription, currentStepData.description, () => {
             feedbackMessage.textContent = 'Väntar på din första åtgärd...';
             feedbackArea.className = 'feedback-neutral';
