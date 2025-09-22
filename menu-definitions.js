@@ -11,7 +11,7 @@ const ALL_MENUS = {
             { name: "Leverera", coords: { top: 287, left: 221, width: 138, height: 76 } },
             { name: "Bomhämtning", coords: { top: 374, left: 71, width: 138, height: 76 } },
             { name: "Ej levererat", coords: { top: 374, left: 221, width: 138, height: 76 }, submenu: 'ej-levererat' },
-            { name: "Hämta utan sändnings-ID", coords: { top: 463, left: 71, width: 138, height: 76 } },
+            { name: "Hämtning utan sändnings-ID", coords: { top: 463, left: 71, width: 138, height: 76 } },
             { name: "Åter terminal", coords: { top: 463, left: 221, width: 138, height: 76 } },
             { name: "Flänsa", coords: { top: 552, left: 71, width: 138, height: 76 }, submenu: 'flansa' },
             { name: "Hem", coords: { top: 655, left: 90, width: 35, height: 50 }, submenu: 'hem' }
@@ -19,7 +19,7 @@ const ALL_MENUS = {
     },
     'hamta-typ': {
         key: 'hamta-typ',
-        image: 'images/simulator-screens/handdator-hamta-typ.png',
+        image: 'images/simulator-screens/handdator-hamta.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
@@ -31,22 +31,17 @@ const ALL_MENUS = {
         key: 'hamta-valj-kontor',
         image: 'images/simulator-screens/handdator-hamta-valj-kontor.png',
         originalWidth: 426,
-        backButtonCoords: {top: 145, left: 70, width: 20, height: 25 },
-        textOverlays: [
-            {
-                id: 'selected-office-display',
-                coords: { top: 185, left: 140, width: 170, height: 25 } // Fyll i dina koordinater
-            }
-        ],
+        backButtonCoords: { top: 145, left: 70, width: 20, height: 25  },
         events: [
             {
                 name: "Kontor",
                 type: "dropdown",
-                coords: { top: 180, left: 55, width: 315, height: 460 }, // Fyll i dina koordinater
+                // UPPDATERAD: 'coords' är nu uppdelad
+                triggerCoords: { top: 180, left: 55, width: 315, height: 30 },
+                panelCoords: { top: 180, left: 55, width: 315, height: 520 },
                 title: "Välj kontor i lista",
                 layout: "radio-list",
-                options: "ALL_OFFICES",
-                updatesOverlay: 'selected-office-display'
+                options: "ALL_OFFICES"
             },
             { name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 }, submenu: 'hamta-typ' }
         ]
@@ -57,11 +52,16 @@ const ALL_MENUS = {
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
-            { name: "Orsakskod",
-             type: "dropdown",
-             coords: { top: 180, left: 55, width: 315, height: 460 },
-             title: "Välj orsakskod", layout: "radio-list",
-             options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ] },
+            { 
+                name: "Orsakskod",
+                type: "dropdown", 
+                // UPPDATERAD: 'coords' är nu uppdelad med samma värden
+                triggerCoords: { top: 180, left: 55, width: 315, height: 460 },
+                panelCoords: { top: 180, left: 55, width: 315, height: 460 },
+                title: "Välj orsakskod",
+                layout: "radio-list",
+                options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ]
+            },
             { name: "Bekräfta Orsak", coords: { top: 640, left: 67, width: 288, height: 40 } }
         ]
     },
