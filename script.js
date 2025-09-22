@@ -1,4 +1,4 @@
-const SCRIPT_JS_VERSION = '4.0-FINAL';
+const SCRIPT_JS_VERSION = '5.0-FINAL';
 
 document.addEventListener('DOMContentLoaded', () => {
     const simulatorContainer = document.getElementById('simulator-wrapper');
@@ -16,6 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let loadedScenario = null;
     let currentScenarioStepIndex = 0;
     let currentSequenceStep = 0;
+
+    // --- NY "VAKT" SOM UPPDATERAR TEXTRUTOR ---
+    const observer = new MutationObserver(() => {
+        if (!loadedScenario) return;
+        const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
+        if (currentStepData.initialOverlayState) {
+            for (const overlayId in currentStepData.initialOverlayState) {
+                const text = currentStepData.initialOverlayState[overlayId];
+                const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
+                if (overlayElement && overlayElement.textContent !== text) {
+                    overlayElement.textContent = text;
+                }
+            }
+        }
+    });
+    observer.observe(simulatorContainer, { childList: true, subtree: true });
+    // --- SLUT PÅ NY VAKT ---
 
     function handlePlayerClick(clickedEvent, areaElement) {
         if (!loadedScenario) return;
@@ -39,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isLastStepOfScenario = currentScenarioStepIndex === loadedScenario.steps.length - 1;
                 if (isLastStepOfScenario) {
                     setTimeout(() => {
-                        feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
+                        feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario".';
                         nextScenarioButton.style.display = 'block';
                     }, 700);
                 } else {
@@ -111,13 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
         nextScenarioButton.style.display = 'none';
         
         const startMenu = currentStepData.startMenu || 'main';
-        const overlayState = currentStepData.initialOverlayState || {};
-        
-        simulator.reset(startMenu, overlayState, () => {
-            animateTypewriter(scenarioDescription, currentStepData.description, () => {
-                feedbackMessage.textContent = 'Väntar på din första åtgärd...';
-                feedbackArea.className = 'feedback-neutral';
-            });
+        // Vi behöver inte längre skicka med state här, vakten sköter det
+        simulator.reset(startMenu);
+
+        animateTypewriter(scenarioDescription, currentStepData.description, () => {
+            feedbackMessage.textContent = 'Väntar på din första åtgärd...';
+            feedbackArea.className = 'feedback-neutral';
         });
     }
     
