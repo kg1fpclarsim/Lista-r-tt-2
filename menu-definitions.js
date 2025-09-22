@@ -31,18 +31,18 @@ const ALL_MENUS = {
         key: 'hamta-valj-kontor',
         image: 'images/simulator-screens/handdator-hamta-valj-kontor.png',
         originalWidth: 426,
-        backButtonCoords: { top: 0, left: 0, width: 0, height: 0 },
+        backButtonCoords: {top: 145, left: 70, width: 20, height: 25 },
         textOverlays: [
             {
                 id: 'selected-office-display',
-                coords: { top: 100, left: 50, width: 200, height: 30 } // Fyll i dina koordinater
+                coords: { top: 185, left: 140, width: 170, height: 25 } // Fyll i dina koordinater
             }
         ],
         events: [
             {
                 name: "Kontor",
                 type: "dropdown",
-                coords: { top: 200, left: 50, width: 300, height: 40 }, // Fyll i dina koordinater
+                coords: { top: 180, left: 55, width: 315, height: 460 }, // Fyll i dina koordinater
                 title: "Välj kontor i lista",
                 layout: "radio-list",
                 options: "ALL_OFFICES",
@@ -57,7 +57,11 @@ const ALL_MENUS = {
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
-            { name: "Orsakskod", type: "dropdown", coords: { top: 180, left: 55, width: 315, height: 460 }, title: "Välj orsakskod", layout: "radio-list", options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ] },
+            { name: "Orsakskod",
+             type: "dropdown",
+             coords: { top: 180, left: 55, width: 315, height: 460 },
+             title: "Välj orsakskod", layout: "radio-list",
+             options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ] },
             { name: "Bekräfta Orsak", coords: { top: 640, left: 67, width: 288, height: 40 } }
         ]
     },
