@@ -27,22 +27,28 @@ const ALL_MENUS = {
             { name: "Hämta obokad hämtning", coords: { top: 240, left: 70, width: 185, height: 30 } }
         ]
     },
-    // NYTT TILLÄGG: Definitionen för den nya undermenyn
     'hamta-valj-kontor': {
         key: 'hamta-valj-kontor',
-        image: 'images/simulator-screens/handdator-hamta-valj-kontor.png', // <-- DU BEHÖVER SKAPA DENNA BILD
+        image: 'images/simulator-screens/handdator-hamta-valj-kontor.png',
         originalWidth: 426,
-        backButtonCoords: { top: 0, left: 0, width: 0, height: 0 }, // <-- FYLL I DINA KOORDINATER
+        backButtonCoords: { top: 0, left: 0, width: 0, height: 0 },
+        textOverlays: [
+            {
+                id: 'selected-office-display',
+                coords: { top: 100, left: 50, width: 200, height: 30 } // Fyll i dina koordinater
+            }
+        ],
         events: [
             {
                 name: "Kontor",
                 type: "dropdown",
-                coords: { top: 0, left: 0, width: 0, height: 0 }, // <-- FYLL I DINA KOORDINATER
+                coords: { top: 200, left: 50, width: 300, height: 40 }, // Fyll i dina koordinater
                 title: "Välj kontor i lista",
                 layout: "radio-list",
-                options: "ALL_OFFICES" // Använder genvägen till din kontorslista
+                options: "ALL_OFFICES",
+                updatesOverlay: 'selected-office-display'
             },
-            {name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 },submenu: 'hamta-typ' }
+            { name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 }, submenu: 'hamta-typ' }
         ]
     },
     'ej-levererat': {
@@ -51,14 +57,7 @@ const ALL_MENUS = {
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
-            { 
-                name: "Orsakskod",
-                type: "dropdown", 
-                coords: { top: 180, left: 55, width: 315, height: 460 },
-                title: "Välj orsakskod",
-                layout: "radio-list",
-                options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ]
-            },
+            { name: "Orsakskod", type: "dropdown", coords: { top: 180, left: 55, width: 315, height: 460 }, title: "Välj orsakskod", layout: "radio-list", options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ] },
             { name: "Bekräfta Orsak", coords: { top: 640, left: 67, width: 288, height: 40 } }
         ]
     },
