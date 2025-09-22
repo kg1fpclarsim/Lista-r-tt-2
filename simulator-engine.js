@@ -1,21 +1,14 @@
-const SIMULATOR_ENGINE_VERSION = '2.1';
+const SIMULATOR_ENGINE_VERSION = '2.2-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
-    if (!containerElement) {
-        console.error("FATALT FEL: Behållaren för simulatorn hittades inte! Kontrollera att din HTML har rätt ID.");
-        return null;
-    }
+    if (!containerElement) { console.error("FATALT FEL: Simulator-behållaren hittades inte!"); return null; }
     containerElement.innerHTML = `
         <div id="image-container">
             <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
             <div id="navigation-overlay"></div>
-        </div>
-    `;
+        </div>`;
     const gameImage = containerElement.querySelector('#game-image');
-    if (!gameImage) {
-        console.error("FATALT FEL: Kunde inte skapa <img>-elementet inuti simulator-behållaren.");
-        return null;
-    }
+    if (!gameImage) { console.error("FATALT FEL: Kunde inte skapa <img>-elementet."); return null; }
     const imageContainer = containerElement.querySelector('#image-container');
     const navOverlay = containerElement.querySelector('#navigation-overlay');
     let currentMenuViewKey = startMenuKey;
@@ -27,7 +20,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         currentMenuViewKey = menuKey;
         gameImage.src = menuData.image;
         gameImage.onload = () => { createUIElements(menuData); scaleUIElements(); };
-        if (gameImage.complete) { gameImage.onload(); }
+        if (gameImage.complete) gameImage.onload();
     }
 
     function createUIElements(menuData) {
@@ -112,7 +105,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     function createArea(coords) {
         const area = document.createElement('div');
         area.classList.add('clickable-area');
-        if(coords) { area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height]; }
+        if(coords) area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height];
         return area;
     }
 
@@ -136,11 +129,12 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     }
 
     window.addEventListener('resize', scaleUIElements);
-    switchMenuView(startMenuKey);
+    
+    // KORRIGERING: Returnera reset-funktionen
     return {
-        reset: () => {
+        reset: (menuKey = startMenuKey) => {
             menuHistory = [];
-            switchMenuView(startMenuKey);
+            switchMenuView(menuKey);
         }
     };
 }
