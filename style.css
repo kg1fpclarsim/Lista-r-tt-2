@@ -1,43 +1,128 @@
-/* --- Stilar för anpassad rullista (dropdown) --- */
-
-.custom-dropdown-overlay {
-    /* NYTT: Positioneras nu av JavaScript, inte centrerad med flexbox */
-    position: absolute; 
-    background-color: white; /* Byt från halvgenomskinlig till solid vit */
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    display: flex; /* Använd flexbox för att hantera innehållet inuti */
-    flex-direction: column;
-    overflow: hidden; /* Dölj allt som går utanför */
-    opacity: 1;
-    transition: opacity 0.3s ease;
+/* style.css (Komplett version för alla delar) */
+body {
+    font-family: sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
 }
-.custom-dropdown-overlay.fade-out { 
-    opacity: 0; 
-}
-
-.custom-dropdown-panel {
-    /* NYTT: Panelen fyller nu bara sin förälder */
+h1 { color: #333; }
+.game-container, .admin-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    height: 100%;
+}
+.game-container {
+    max-width: 600px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+.admin-container {
+    max-width: 1200px;
+    text-align: left;
+}
+.card {
+    background: white; padding: 20px; border-radius: 8px;
+    margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+label { display: block; margin-bottom: 5px; font-weight: bold; }
+input[type="text"], textarea {
+    width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc;
+    border-radius: 4px; box-sizing: border-box;
+}
+.btn {
+    padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px;
+    cursor: pointer; margin-right: 10px; margin-bottom: 5px;
+}
+.btn-primary { background-color: #007bff; color: white; }
+.btn-secondary { background-color: #6c757d; color: white; }
+.delete-btn { background-color: #dc3545; color: white; padding: 5px 10px; font-size: 12px; margin-left: auto; }
+.small-delete-btn { padding: 2px 6px !important; font-size: 12px !important; line-height: 1; }
+
+/* --- SIMULATOR-SPELET --- */
+#simulator-wrapper { 
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+#image-container {
+    position: relative; 
+    margin: 20px 0;
+    line-height: 0;
+}
+#image-container img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+.clickable-area {
+    position: absolute;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    pointer-events: all;
+}
+.clickable-area:hover { background-color: rgba(0, 123, 255, 0.4); }
+.area-correct-feedback { background-color: rgba(40, 167, 69, 0.5); }
+.area-incorrect-feedback { background-color: rgba(220, 53, 69, 0.5); }
+.text-overlay {
+    position: absolute; background-color: rgba(255, 255, 255, 0.9); border: 1px solid #b0b0b0;
+    padding: 5px 10px; font-family: sans-serif; font-size: 16px; color: #333;
+    display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#navigation-overlay {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+}
+#feedback-area { margin-top: 20px; padding: 15px; border-radius: 5px; width: 100%; box-sizing: border-box; }
+.feedback-correct { background-color: #d4edda; color: #155724; }
+.feedback-incorrect { background-color: #f8d7da; color: #721c24; }
+.feedback-neutral { background-color: #e2e3e5; color: #383d41; }
+.reset-btn {
+    padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px;
+    cursor: pointer; background-color: #6c757d; color: white; margin-top: 20px;
+}
+.reset-btn:hover { background-color: #5a6268; }
+#scenario-description-wrapper { width: 100%; }
+#scenario-description {
+    background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;
+    padding: 20px; margin: 20px 0; text-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    text-align: left; width: 100%; min-height: 100px; box-sizing: border-box;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+#scenario-description h2 { margin-top: 0; color: #333; }
+#scenario-description.typing::after {
+    content: '▋'; position: relative; top: -0.05em;
+    animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+    from, to { color: transparent; }
+    50% { color: black; }
 }
 
+/* --- RULLISTOR (DROPDOWNS) --- */
+.custom-dropdown-overlay {
+    position: absolute; background-color: white; border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex;
+    flex-direction: column; overflow: hidden; opacity: 1;
+    transition: opacity 0.3s ease;
+}
+.custom-dropdown-overlay.fade-out { opacity: 0; }
+.custom-dropdown-panel { width: 100%; height: 100%; display: flex; flex-direction: column; }
 .custom-dropdown-panel h3 {
-    font-size: 1em;
-    padding: 10px 20px;
-    margin: 0 0 10px 0;
-    border-bottom: 1px solid #eee;
-    color: #333;
-    flex-shrink: 0;
+    font-size: 1em; padding: 10px 20px; margin: 0 0 10px 0;
+    border-bottom: 1px solid #eee; color: #333; flex-shrink: 0;
 }
-
-.options-container {
-    overflow-y: auto;
-}
-
-/* --- Layout 1: radio-list --- */
+.options-container { overflow-y: auto; }
 .radio-list .custom-dropdown-option {
     display: block; width: 100%; padding: 15px 20px 15px 50px;
     border: none; background: none; text-align: left; font-size: 1em;
@@ -52,13 +137,12 @@
 }
 .radio-list .custom-dropdown-option.selected::before { background-color: #007bff; border-color: #007bff; }
 
-/* --- Layout 2: button-grid --- */
-.button-grid .options-container {
-    padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+/* --- CERTIFIKAT & VERSION --- */
+#certificate-wrapper { /* ... */ }
+#certificate { /* ... */ }
+/* ... (alla andra stilar för certifikat) */
+#version-info {
+    position: fixed; bottom: 5px; right: 10px; background-color: rgba(0, 0, 0, 0.7);
+    color: white; padding: 3px 8px; font-family: monospace; font-size: 10px;
+    border-radius: 4px; z-index: 9999;
 }
-.button-grid .custom-dropdown-option {
-    border: 1px solid #007bff; background-color: #f8f9fa; color: #007bff;
-    padding: 15px 10px; border-radius: 5px; font-size: 1em; cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-}
-.button-grid .custom-dropdown-option:hover { background-color: #007bff; color: white; }
