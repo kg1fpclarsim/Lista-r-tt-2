@@ -3,9 +3,12 @@
     "title": "Övning: Obokad Hämtning",
     "steps": [
       {
-        "description": "## Delmoment 1: Bekräfta Kontor\n\nDu ska göra en **obokad hämtning**. Kontoret för avsändaren är redan ifyllt på skärmen.\n\n**Uppgift:** Klicka på Hämta och bekräfta sedan att kontoret stämmer för att fortsätta.",
+        "description": "## Delmoment 1: Bekräfta Kontor\n\nKontoret för avsändaren är redan ifyllt på skärmen.\n\n**Uppgift:** Bekräfta att kontoret stämmer för att fortsätta.",
         "sequence": [ "Bekräfta Kontor" ],
-        "initialOverlayState": { "selected-office-display": "STOCKHOLM" }
+        "startMenu": "hamta-valj-kontor",
+        "initialOverlayState": {
+          "selected-office-display": "VÄXJÖ"
+        }
       },
       {
         "description": "## Delmoment 2: Välj Typ av Hämtning\n\n**Uppgift:** Välj rätt alternativ för en obokad hämtning.",
