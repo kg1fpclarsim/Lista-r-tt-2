@@ -1,6 +1,4 @@
-// simulator-engine.js (Korrekt version)
-
-// KORRIGERING: Hela filens innehåll är nu inlindat i denna funktion
+// simulator-engine.js
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     containerElement.innerHTML = `
         <div id="image-container">
@@ -8,11 +6,9 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             <div id="navigation-overlay"></div>
         </div>
     `;
-
     const gameImage = containerElement.querySelector('#game-image');
     const imageContainer = containerElement.querySelector('#image-container');
     const navOverlay = containerElement.querySelector('#navigation-overlay');
-    
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
 
@@ -67,7 +63,15 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         panel.innerHTML = `<h3>${title}</h3>`;
         const optionsContainer = document.createElement('div');
         optionsContainer.className = 'options-container';
-        event.options.forEach(optText => {
+
+        let optionsList = [];
+        if (typeof event.options === 'string' && event.options === 'ALL_OFFICES') {
+            optionsList = (typeof ALL_OFFICES !== 'undefined') ? ALL_OFFICES : [];
+        } else if (Array.isArray(event.options)) {
+            optionsList = event.options;
+        }
+
+        optionsList.forEach(optText => {
             const optionBtn = document.createElement('button');
             optionBtn.className = 'custom-dropdown-option';
             optionBtn.textContent = optText;
@@ -108,7 +112,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     }
 
     window.addEventListener('resize', scaleUIElements);
-    
     switchMenuView(startMenuKey);
 
     return {
@@ -117,4 +120,4 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             switchMenuView(startMenuKey);
         }
     };
-} // <-- KORRIGERING: Avslutande måsvinge för hela funktionen
+}
