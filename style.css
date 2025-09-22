@@ -75,10 +75,20 @@ input[type="text"], textarea {
 .area-correct-feedback { background-color: rgba(40, 167, 69, 0.5); }
 .area-incorrect-feedback { background-color: rgba(220, 53, 69, 0.5); }
 .text-overlay {
-    position: absolute; background-color: #EFF3F6(255, 255, 255, 0.9); border: 1px solid #b0b0b0;
-    padding: 5px 10px; font-family: sans-serif; font-size: 16px; color: #333;
-    display: flex; align-items: center; justify-content: center; box-sizing: border-box;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    position: absolute;
+    background-color: #E4E8EB; /* Uppdaterad bakgrundsfärg */
+    border: 1px solid #E4E8EB;  /* Uppdaterad ramfärg */
+    padding: 5px 10px;
+    font-family: sans-serif;
+    font-size: 16px;
+    color: #091E6D; /* Uppdaterad textfärg */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 #navigation-overlay {
     position: absolute; top: 0; left: 0;
