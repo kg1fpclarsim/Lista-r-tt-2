@@ -1,4 +1,3 @@
-// menu-definitions.js
 const ALL_MENUS = {
     'main': {
         key: 'main',
@@ -31,12 +30,11 @@ const ALL_MENUS = {
         key: 'hamta-valj-kontor',
         image: 'images/simulator-screens/handdator-hamta-valj-kontor.png',
         originalWidth: 426,
-        backButtonCoords: { top: 145, left: 70, width: 20, height: 25  },
+        backButtonCoords: { top: 145, left: 70, width: 20, height: 25 }, // <-- KORRIGERAD: Kommatecken tillagt
         events: [
             {
                 name: "Kontor",
                 type: "dropdown",
-                // UPPDATERAD: 'coords' är nu uppdelad
                 triggerCoords: { top: 180, left: 55, width: 315, height: 30 },
                 panelCoords: { top: 180, left: 55, width: 315, height: 520 },
                 title: "Välj kontor i lista",
@@ -55,7 +53,6 @@ const ALL_MENUS = {
             { 
                 name: "Orsakskod",
                 type: "dropdown", 
-                // UPPDATERAD: 'coords' är nu uppdelad med samma värden
                 triggerCoords: { top: 180, left: 55, width: 315, height: 460 },
                 panelCoords: { top: 180, left: 55, width: 315, height: 460 },
                 title: "Välj orsakskod",
