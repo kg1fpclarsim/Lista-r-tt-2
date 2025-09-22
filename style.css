@@ -76,7 +76,7 @@ input[type="text"], textarea {
 .area-incorrect-feedback { background-color: rgba(220, 53, 69, 0.5); }
 .text-overlay {
     position: absolute; background-color: rgba(255, 255, 255, 0.9); border: 1px solid #b0b0b0;
-    padding: 5px 10px; font-family: sans-serif; font-size: 16px; color: #333;
+    padding: 5px 10px; font-family: sans-serif; font-size: 16px; color: #262F5F;
     display: flex; align-items: center; justify-content: center; box-sizing: border-box;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
