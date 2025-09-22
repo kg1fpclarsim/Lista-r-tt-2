@@ -1,4 +1,4 @@
-const SCRIPT_JS_VERSION = '3.2-FINAL';
+const SCRIPT_JS_VERSION = '4.0-FINAL';
 
 document.addEventListener('DOMContentLoaded', () => {
     const simulatorContainer = document.getElementById('simulator-wrapper');
@@ -113,9 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const startMenu = currentStepData.startMenu || 'main';
         const overlayState = currentStepData.initialOverlayState || {};
         
-        // Återställ simulatorn och vänta på att den blir klar
         simulator.reset(startMenu, overlayState, () => {
-            // Denna kod körs först NÄR simulatorn är helt klar med att rita
             animateTypewriter(scenarioDescription, currentStepData.description, () => {
                 feedbackMessage.textContent = 'Väntar på din första åtgärd...';
                 feedbackArea.className = 'feedback-neutral';
