@@ -11,7 +11,7 @@ const ALL_MENUS = {
             { name: "Leverera", coords: { top: 287, left: 221, width: 138, height: 76 } },
             { name: "Bomhämtning", coords: { top: 374, left: 71, width: 138, height: 76 } },
             { name: "Ej levererat", coords: { top: 374, left: 221, width: 138, height: 76 }, submenu: 'ej-levererat' },
-            { name: "Hämtning utan sändnings-ID", coords: { top: 463, left: 71, width: 138, height: 76 } },
+            { name: "Hämta utan sändnings-ID", coords: { top: 463, left: 71, width: 138, height: 76 } },
             { name: "Åter terminal", coords: { top: 463, left: 221, width: 138, height: 76 } },
             { name: "Flänsa", coords: { top: 552, left: 71, width: 138, height: 76 }, submenu: 'flansa' },
             { name: "Hem", coords: { top: 655, left: 90, width: 35, height: 50 }, submenu: 'hem' }
@@ -24,17 +24,19 @@ const ALL_MENUS = {
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
             { name: "Hämta åt annan bil", coords: { top: 295, left: 70, width: 185, height: 30 } },
+            // KORRIGERING: Denna knapp leder nu till en ny undermeny
             { name: "Hämta obokad hämtning", coords: { top: 240, left: 70, width: 185, height: 30 }, submenu: 'hamta-obokad' }
         ]
     },
+    // NYTT TILLÄGG: Definitionen för den nya undermenyn
     'hamta-obokad': {
         key: 'hamta-obokad',
-        image: 'images/simulator-screens/handdator-hamta-obokad.png', // <-- SKAPA DENNA BILD
+        image: 'images/simulator-screens/handdator-hamta-obokad.png', // <-- DU BEHÖVER SKAPA DENNA BILD
         originalWidth: 426,
         backButtonCoords: { top: 0, left: 0, width: 0, height: 0 }, // <-- FYLL I DINA KOORDINATER
         events: [
             {
-                name: "Avsändare",
+                name: "Kontor",
                 type: "dropdown",
                 coords: { top: 0, left: 0, width: 0, height: 0 }, // <-- FYLL I DINA KOORDINATER
                 title: "Välj avsändare från lista",
