@@ -1,65 +1,10 @@
-[
-  {
-    "title": "Övning 1",
-    "steps": [
-      {
-        "description": "Du påbörjar ditt arbetspass som lots.\n\nDu blir tilldelad ett ekipage och får fraktsedlar på gods som står på vår egen terminal som du ska lasta på.\n\nHur registrerar du dessa sändningar i handdatorn?",
-        "sequence": [
-          "Flänsa på"
-        ],
-        "wrongClickMessages": {
-          "Lasta ut": "Lasta ut används bara på gods som lastas på Schenkers terminal"
+{
+    "title": "Test av förifylld text",
+    "steps": [{
+        "description": "## Uppgift\nKontoret är förifyllt med STOCKHOLM. Navigera vidare genom att bekräfta.",
+        "sequence": ["Bekräfta Kontor"],
+        "initialOverlayState": {
+            "selected-office-display": "STOCKHOLM"
         }
-      },
-      {
-        "description": "Du får också sedlar på gods som redan är lastat på ekipaget, hur ska du registrera dem i handdatorn?",
-        "sequence": [
-          "Flänsa på"
-        ]
-      },
-      {
-        "description": "Du kommer fram till första mottagaren.\n\nDet finns ingen på plats som kan ta emot godset, vilken registrering ska du göra i handdatorn?",
-        "sequence": [
-          "Ej levererat"
-        ]
-      },
-      {
-        "description": "Du kommer till Schenkers terminal för att lossa sändningen som mottagaren inte kunde ta emot, hur registrerar du det i handdatorn?",
-        "sequence": [
-          "Åter terminal"
-        ],
-        "wrongClickMessages": {
-          "Lossa in": "Om du registrerar Lossa in blir det ett omex på sändningen och vi får mindre betalt för sändningen, än om vi hade levererat den till mottagaren. Och vi får inte betalt för att vi kört in den till Schenker."
-        }
-      }
-    ]
-  },
-  {
-    "title": "Test ej lev",
-    "steps": [
-      {
-        "description": "Test",
-        "sequence": [
-          "Ej levererat",
-          "Togs ej emot av mottagaren",
-          "Bekräfta Orsak"
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Övning 2",
-    "steps": [
-      {
-        "description": "Du är lots och får en hämtning till handdatorn, hur ska du registrera den?",
-        "sequence": [
-          "Hämta",
-          "Hämta åt annan bil"
-        ],
-        "wrongClickMessages": {
-          "Hämta obokad hämtning": "Som lots ska alltid hämta åt annan bil!"
-        }
-      }
-    ]
-  }
-]
+    }]
+}
