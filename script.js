@@ -64,41 +64,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function initializeGame() {
-        let scenarioPlaylist = JSON.parse(sessionStorage.getItem('scenarioPlaylist'));
-        let currentPlaylistIndex = parseInt(sessionStorage.getItem('currentPlaylistIndex') || '0', 10);
-        if (!scenarioPlaylist) {
-            try {
-                const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
-                if (!response.ok) throw new Error('Nätverksfel');
-                let allScenarios = await response.json();
-                const validScenarios = allScenarios.filter(scenario => scenario.steps && scenario.steps.length > 0);
-                if (!validScenarios || validScenarios.length === 0) {
-                    scenarioTitle.textContent = "Inga giltiga scenarier hittades";
-                    return;
-                }
-                for (let i = validScenarios.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [validScenarios[i], validScenarios[j]] = [validScenarios[j], validScenarios[i]];
-                }
-                scenarioPlaylist = validScenarios;
-                sessionStorage.setItem('scenarioPlaylist', JSON.stringify(scenarioPlaylist));
-                sessionStorage.setItem('currentPlaylistIndex', '0');
-            } catch (error) {
-                console.error("Fel vid laddning av scenarios.json:", error);
+   async function initializeGame() {
+    let scenarioPlaylist = JSON.parse(sessionStorage.getItem('scenarioPlaylist'));
+    let currentPlaylistIndex = parseInt(sessionStorage.getItem('currentPlaylistIndex') || '0', 10);
+
+    if (!scenarioPlaylist) {
+        try {
+            const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
+            if (!response.ok) throw new Error('Nätverksfel');
+            let allScenarios = await response.json();
+
+            // NY SÄKERHETSKONTROLL: Se till att datan är en lista (array)
+            if (!Array.isArray(allScenarios)) {
+                throw new Error("scenarios.json är inte en giltig lista (array). Den måste börja med [ och sluta med ].");
+            }
+
+            const validScenarios = allScenarios.filter(scenario => scenario.steps && scenario.steps.length > 0);
+
+            if (!validScenarios || validScenarios.length === 0) {
+                 scenarioTitle.textContent = "Inga giltiga scenarier hittades";
+                document.getElementById('scenario-description-wrapper').style.display = 'none';
+                simulatorContainer.style.display = 'none';
                 return;
             }
-        }
-        if (currentPlaylistIndex >= scenarioPlaylist.length) {
-            sessionStorage.removeItem('scenarioPlaylist');
-            sessionStorage.removeItem('currentPlaylistIndex');
-            window.location.href = 'certifikat.html';
+
+            for (let i = validScenarios.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [validScenarios[i], validScenarios[j]] = [validScenarios[j], validScenarios[i]];
+            }
+            
+            scenarioPlaylist = validScenarios;
+            sessionStorage.setItem('scenarioPlaylist', JSON.stringify(scenarioPlaylist));
+            sessionStorage.setItem('currentPlaylistIndex', '0');
+
+        } catch (error) {
+            console.error("Fel vid laddning av scenarios.json:", error);
+            scenarioTitle.textContent = "Ett fel uppstod";
+            // Visa felet för användaren så de förstår vad som är fel
+            document.getElementById('scenario-description').innerHTML = `<p style="color: red;"><strong>Fel:</strong> ${error.message}</p>`;
             return;
         }
-        loadedScenario = scenarioPlaylist[currentPlaylistIndex];
-        currentScenarioStepIndex = 0;
-        setupCurrentScenarioStep();
     }
+
+    if (currentPlaylistIndex >= scenarioPlaylist.length) {
+        sessionStorage.removeItem('scenarioPlaylist');
+        sessionStorage.removeItem('currentPlaylistIndex');
+        window.location.href = 'certifikat.html';
+        return;
+    }
+
+    loadedScenario = scenarioPlaylist[currentPlaylistIndex];
+    currentScenarioStepIndex = 0;
+    setupCurrentScenarioStep();
+}
     
     function setupCurrentScenarioStep() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
