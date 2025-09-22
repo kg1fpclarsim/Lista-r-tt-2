@@ -1,6 +1,7 @@
-const SCRIPT_JS_VERSION = '2.32-FINAL'; // Versionsnummer
+const SCRIPT_JS_VERSION = '2.4-FINAL'; // Versionsnummer
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Diagnostik: Kontrollera om behållaren finns vid start
     const simulatorContainer = document.getElementById('simulator-wrapper');
     if (!simulatorContainer) {
         console.error("FATALT FEL i script.js: Behållaren #simulator-wrapper hittades inte i HTML-koden.");
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isLastStepOfScenario) {
                     setTimeout(() => {
                         feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
+                        // KORRIGERING 2: Knappen visas BARA när hela scenariot är klart.
                         nextScenarioButton.style.display = 'block';
                     }, 700);
                 } else {
@@ -111,7 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         scenarioTitle.textContent = loadedScenario.title;
         
-        // Återställer simulatorns vy OCH tar bort eventuella gamla textrutor
+        // KORRIGERING 2: Knappen döljs alltid när ett nytt delmoment startar.
+        nextScenarioButton.style.display = 'none';
         simulator.reset();
 
         animateTypewriter(scenarioDescription, currentStepData.description, () => {
@@ -119,23 +122,21 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackArea.className = 'feedback-neutral';
         });
         
-        // KORRIGERING: Hela denna sektion är nu omskriven för att vara mer robust
         setTimeout(() => {
             if (currentStepData.initialOverlayState) {
                 for (const overlayId in currentStepData.initialOverlayState) {
                     const text = currentStepData.initialOverlayState[overlayId];
-                    // Leta efter elementet INUTI simulator-behållaren
+                    // KORRIGERING 3: Letar efter textrutan INUTI simulator-behållaren.
                     const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
                     if (overlayElement) {
                         overlayElement.textContent = text;
-                    } else {
-                        console.warn(`Försökte sätta text på en overlay med id '${overlayId}', men den hittades inte.`);
                     }
                 }
             }
         }, 100);
     }
     
+    // KORRIGERING 1: Den robusta "token-för-token"-animationen.
     function animateTypewriter(element, markdownText, onComplete) {
         if (typewriterInterval) clearInterval(typewriterInterval);
         const tokens = markdownText.split(/(\s+)/);
