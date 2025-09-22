@@ -1,12 +1,10 @@
-const SIMULATOR_ENGINE_VERSION = '2.0-FINAL';
+const SIMULATOR_ENGINE_VERSION = '2.1';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
-    // Diagnostik: Kontrollera om behållaren finns
     if (!containerElement) {
-        console.error("FATALT FEL: Simulator-behållaren (containerElement) hittades inte! Kontrollera att din HTML har rätt ID och att skriptet körs efter att HTML har laddats.");
+        console.error("FATALT FEL: Behållaren för simulatorn hittades inte! Kontrollera att din HTML har rätt ID.");
         return null;
     }
-
     containerElement.innerHTML = `
         <div id="image-container">
             <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
@@ -14,12 +12,10 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         </div>
     `;
     const gameImage = containerElement.querySelector('#game-image');
-    // Diagnostik: Kontrollera om bild-elementet skapades
     if (!gameImage) {
         console.error("FATALT FEL: Kunde inte skapa <img>-elementet inuti simulator-behållaren.");
         return null;
     }
-
     const imageContainer = containerElement.querySelector('#image-container');
     const navOverlay = containerElement.querySelector('#navigation-overlay');
     let currentMenuViewKey = startMenuKey;
@@ -49,7 +45,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         if (menuData.events) {
             menuData.events.forEach(event => {
                 const triggerCoordinates = event.type === 'dropdown' ? event.triggerCoords : event.coords;
-                if (!triggerCoordinates) return; // Hoppa över om koordinater saknas
+                if (!triggerCoordinates) return;
                 const area = createArea(triggerCoordinates);
                 area.addEventListener('click', () => {
                     if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event, area);
@@ -141,7 +137,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
 
     window.addEventListener('resize', scaleUIElements);
     switchMenuView(startMenuKey);
-
     return {
         reset: () => {
             menuHistory = [];
