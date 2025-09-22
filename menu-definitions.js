@@ -7,7 +7,7 @@ const ALL_MENUS = {
         events: [
             { name: "Lasta ut", coords: { top:  197, left: 71, width: 138, height: 76 } },
             { name: "Lossa in", coords: { top: 197, left: 221, width: 138, height: 76 } },
-            { name: "Hämta", coords: { top: 287, left: 71, width: 138, height: 76 }, submenu: 'hamta' },
+            { name: "Hämta", coords: { top: 287, left: 71, width: 138, height: 76 }, submenu: 'hamta-valj-kontor' },
             { name: "Leverera", coords: { top: 287, left: 221, width: 138, height: 76 } },
             { name: "Bomhämtning", coords: { top: 374, left: 71, width: 138, height: 76 } },
             { name: "Ej levererat", coords: { top: 374, left: 221, width: 138, height: 76 }, submenu: 'ej-levererat' },
@@ -17,21 +17,20 @@ const ALL_MENUS = {
             { name: "Hem", coords: { top: 655, left: 90, width: 35, height: 50 }, submenu: 'hem' }
         ]
     },
-    'hamta': {
-        key: 'hamta',
+    'hamta-typ': {
+        key: 'hamta-typ',
         image: 'images/simulator-screens/handdator-hamta.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
             { name: "Hämta åt annan bil", coords: { top: 295, left: 70, width: 185, height: 30 } },
-            // KORRIGERING: Denna knapp leder nu till en ny undermeny
-            { name: "Hämta obokad hämtning", coords: { top: 240, left: 70, width: 185, height: 30 }, submenu: 'hamta-obokad' }
+            { name: "Hämta obokad hämtning", coords: { top: 240, left: 70, width: 185, height: 30 } }
         ]
     },
     // NYTT TILLÄGG: Definitionen för den nya undermenyn
-    'hamta-obokad': {
-        key: 'hamta-obokad',
-        image: 'images/simulator-screens/handdator-hamta-obokad.png', // <-- DU BEHÖVER SKAPA DENNA BILD
+    'hamta-valj-kontor': {
+        key: 'hamta-valj-kontor',
+        image: 'images/simulator-screens/handdator-hamta-valj-kontor.png', // <-- DU BEHÖVER SKAPA DENNA BILD
         originalWidth: 426,
         backButtonCoords: { top: 0, left: 0, width: 0, height: 0 }, // <-- FYLL I DINA KOORDINATER
         events: [
@@ -39,10 +38,11 @@ const ALL_MENUS = {
                 name: "Kontor",
                 type: "dropdown",
                 coords: { top: 0, left: 0, width: 0, height: 0 }, // <-- FYLL I DINA KOORDINATER
-                title: "Välj avsändare från lista",
+                title: "Välj kontor i lista",
                 layout: "radio-list",
                 options: "ALL_OFFICES" // Använder genvägen till din kontorslista
-            }
+            },
+            {name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 },submenu: 'hamta-typ' }
         ]
     },
     'ej-levererat': {
