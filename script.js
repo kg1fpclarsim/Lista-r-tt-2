@@ -1,4 +1,4 @@
-const SCRIPT_JS_VERSION = '2.2-FINAL'; // Versionsnummer
+const SCRIPT_JS_VERSION = '2.3-FINAL'; // Versionsnummer
 
 document.addEventListener('DOMContentLoaded', () => {
     // Diagnostik: Kontrollera om behållaren finns vid start
