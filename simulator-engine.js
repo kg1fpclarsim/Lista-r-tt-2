@@ -1,4 +1,5 @@
-// simulator-engine.js (Version med separata trigger- och panel-ytor)
+// simulator-engine.js (Korrekt och komplett version)
+
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     const gameImage = containerElement.querySelector('#game-image');
     const imageContainer = containerElement.querySelector('#image-container');
@@ -18,16 +19,25 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     function createUIElements(menuData) {
         imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
         navOverlay.innerHTML = '';
-        if (menuData.textOverlays) { /* ... (oförändrad) ... */ }
-
+        if (menuData.textOverlays) {
+            menuData.textOverlays.forEach(overlayData => {
+                const overlayDiv = document.createElement('div');
+                overlayDiv.id = overlayData.id;
+                overlayDiv.className = 'text-overlay';
+                overlayDiv.dataset.originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height];
+                imageContainer.appendChild(overlayDiv);
+            });
+        }
         if (menuData.events) {
             menuData.events.forEach(event => {
-                // KORRIGERING: Använd triggerCoords för dropdowns, annars vanliga coords
                 const triggerCoordinates = event.type === 'dropdown' ? event.triggerCoords : event.coords;
                 const area = createArea(triggerCoordinates);
-                
                 area.addEventListener('click', () => {
-                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event, area);
+                    // KORRIGERING: Lade tillbaka denna viktiga rad
+                    if (typeof onButtonClickCallback === 'function') {
+                        onButtonClickCallback(event, area);
+                    }
+                    
                     if (event.submenu) {
                         menuHistory.push(currentMenuViewKey);
                         switchMenuView(event.submenu);
@@ -38,7 +48,17 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 imageContainer.appendChild(area);
             });
         }
-        if (menuData.backButtonCoords) { /* ... (oförändrad) ... */ }
+        if (menuData.backButtonCoords) {
+            const backArea = createArea(menuData.backButtonCoords);
+            backArea.addEventListener('click', () => {
+                if (menuHistory.length > 0) {
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: 'Tillbaka' }, backArea);
+                    const previousMenuKey = menuHistory.pop();
+                    switchMenuView(previousMenuKey);
+                }
+            });
+            navOverlay.appendChild(backArea);
+        }
     }
 
     function handleDropdown(event) {
@@ -53,7 +73,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         const optionsContainer = document.createElement('div');
         optionsContainer.className = 'options-container';
         let optionsList = (typeof event.options === 'string' && event.options === 'ALL_OFFICES') ? ALL_OFFICES || [] : event.options || [];
-        
         optionsList.forEach(optText => {
             const optionBtn = document.createElement('button');
             optionBtn.className = 'custom-dropdown-option';
@@ -63,35 +82,47 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 panel.querySelectorAll('.custom-dropdown-option').forEach(btn => btn.classList.remove('selected'));
                 optionBtn.classList.add('selected');
                 setTimeout(() => {
-                    onButtonClickCallback({ name: optText }, null);
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: optText }, null);
+                    if (event.updatesOverlay) {
+                        const overlayToUpdate = imageContainer.querySelector(`#${event.updatesOverlay}`);
+                        if (overlayToUpdate) overlayToUpdate.textContent = optText;
+                    }
                     overlay.classList.add('fade-out');
                     setTimeout(() => overlay.remove(), 300);
                 }, 400);
             });
             optionsContainer.appendChild(optionBtn);
         });
-
         panel.appendChild(optionsContainer);
         overlay.appendChild(panel);
-        imageContainer.appendChild(overlay);
-
-        // KORRIGERING: Använd panelCoords för att positionera och skala panelen
         scaleSingleElement(overlay, event.panelCoords);
     }
     
     function createArea(coords) {
         const area = document.createElement('div');
         area.classList.add('clickable-area');
-        area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height];
+        if(coords) {
+            area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height];
+        }
         return area;
     }
 
     function scaleSingleElement(element, coords) {
-        // ... (denna funktion är oförändrad) ...
+        const menuData = ALL_MENUS[currentMenuViewKey];
+        if (!gameImage.offsetWidth || !menuData || !menuData.originalWidth || !coords) return;
+        const scaleRatio = gameImage.offsetWidth / menuData.originalWidth;
+        element.style.top = `${coords.top * scaleRatio}px`;
+        element.style.left = `${coords.left * scaleRatio}px`;
+        element.style.width = `${coords.width * scaleRatio}px`;
+        element.style.height = `${coords.height * scaleRatio}px`;
     }
 
     function scaleUIElements() {
-        // ... (denna funktion är oförändrad) ...
+        containerElement.querySelectorAll('.clickable-area, .text-overlay').forEach(area => {
+            const coordsArray = area.dataset.originalCoords.split(',');
+            const coords = { top: coordsArray[0], left: coordsArray[1], width: coordsArray[2], height: coordsArray[3] };
+            scaleSingleElement(area, coords);
+        });
     }
 
     window.addEventListener('resize', scaleUIElements);
