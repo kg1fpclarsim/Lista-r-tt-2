@@ -1,19 +1,18 @@
-const SIMULATOR_ENGINE_VERSION = '3.0-FINAL';
+const SIMULATOR_ENGINE_VERSION = '3.1-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     if (!containerElement) {
-        console.error("FATALT FEL: Simulator-behållaren (containerElement) hittades inte! Kontrollera att din HTML har rätt ID.");
+        console.error("FATALT FEL: Simulator-behållaren hittades inte!");
         return null;
     }
     containerElement.innerHTML = `
         <div id="image-container">
             <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
             <div id="navigation-overlay"></div>
-        </div>
-    `;
+        </div>`;
     const gameImage = containerElement.querySelector('#game-image');
     if (!gameImage) {
-        console.error("FATALT FEL: Kunde inte skapa <img>-elementet inuti simulator-behållaren.");
+        console.error("FATALT FEL: Kunde inte skapa <img>-elementet.");
         return null;
     }
     const imageContainer = containerElement.querySelector('#image-container');
@@ -21,15 +20,14 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
 
-    function switchMenuView(menuKey, overlayState = {}) {
+    function switchMenuView(menuKey, overlayState = {}, onCompleteCallback) {
         const menuData = ALL_MENUS[menuKey];
         if (!menuData) { console.error(`Hittade inte meny: ${menuKey}`); return; }
         currentMenuViewKey = menuKey;
         gameImage.src = menuData.image;
-        gameImage.onload = () => {
+        
+        const renderUI = () => {
             createUIElements(menuData);
-            
-            // Fyll i textrutorna EFTER att de har skapats
             for (const overlayId in overlayState) {
                 const text = overlayState[overlayId];
                 const overlayElement = imageContainer.querySelector(`#${overlayId}`);
@@ -37,16 +35,21 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                     overlayElement.textContent = text;
                 }
             }
-            
             scaleUIElements();
+            if (typeof onCompleteCallback === 'function') {
+                onCompleteCallback();
+            }
         };
-        if (gameImage.complete) { gameImage.onload(); }
+
+        gameImage.onload = renderUI;
+        if (gameImage.complete) {
+            renderUI();
+        }
     }
 
     function createUIElements(menuData) {
         imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
         navOverlay.innerHTML = '';
-
         if (menuData.textOverlays) {
             menuData.textOverlays.forEach(overlayData => {
                 const overlayDiv = document.createElement('div');
@@ -152,9 +155,10 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     window.addEventListener('resize', scaleUIElements);
     
     return {
-        reset: (menuKey = startMenuKey, initialOverlayState = {}) => {
+        reset: (menuKey = startMenuKey, initialOverlayState = {}, onResetComplete) => {
             menuHistory = [];
-            switchMenuView(menuKey, initialOverlayState);
+            switchMenuView(menuKey, initialOverlayState, onResetComplete);
         }
     };
 }
+
