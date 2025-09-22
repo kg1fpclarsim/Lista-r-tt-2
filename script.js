@@ -1,11 +1,10 @@
 const SCRIPT_JS_VERSION = '2.3-FINAL'; // Versionsnummer
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Diagnostik: Kontrollera om behållaren finns vid start
     const simulatorContainer = document.getElementById('simulator-wrapper');
     if (!simulatorContainer) {
         console.error("FATALT FEL i script.js: Behållaren #simulator-wrapper hittades inte i HTML-koden.");
-        return; // Stoppa all exekvering om behållaren saknas
+        return;
     }
 
     const scenarioTitle = document.getElementById('scenario-title');
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isLastStepOfScenario) {
                     setTimeout(() => {
                         feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
-                        nextScenarioButton.style.display = 'block'; // <-- VISA KNAPPEN HÄR
+                        nextScenarioButton.style.display = 'block';
                     }, 700);
                 } else {
                     setTimeout(() => {
@@ -112,59 +111,52 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         scenarioTitle.textContent = loadedScenario.title;
         
-        // Återställ simulatorns vy och knappar
-        nextScenarioButton.style.display = 'none'; // <-- DÖLJ KNAPPEN HÄR
+        // Återställer simulatorns vy OCH tar bort eventuella gamla textrutor
         simulator.reset();
 
-        animateriter(scenarioDescription, currentStepData.description, () => {
+        animateTypewriter(scenarioDescription, currentStepData.description, () => {
             feedbackMessage.textContent = 'Väntar på din första åtgärd...';
             feedbackArea.className = 'feedback-neutral';
         });
+        
+        // KORRIGERING: Hela denna sektion är nu omskriven för att vara mer robust
         setTimeout(() => {
             if (currentStepData.initialOverlayState) {
                 for (const overlayId in currentStepData.initialOverlayState) {
                     const text = currentStepData.initialOverlayState[overlayId];
-                    const overlayElement = document.getElementById(overlayId);
+                    // Leta efter elementet INUTI simulator-behållaren
+                    const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
                     if (overlayElement) {
                         overlayElement.textContent = text;
+                    } else {
+                        console.warn(`Försökte sätta text på en overlay med id '${overlayId}', men den hittades inte.`);
                     }
                 }
             }
         }, 100);
     }
     
-   function animateTypewriter(element, markdownText, onComplete) {
-    if (typewriterInterval) {
-        clearInterval(typewriterInterval);
-    }
-
-    element.innerHTML = '';
-    element.classList.add('typing');
-
-    // NY, SMARTARE LOGIK: Dela upp texten i ord OCH avgränsare (mellanslag/radbrytningar)
-    const tokens = markdownText.split(/(\s+)/);
-    let currentTokenIndex = 0;
-
-    typewriterInterval = setInterval(() => {
-        if (currentTokenIndex < tokens.length) {
-            // Bygg upp meningen token för token (ord, mellanslag, etc.)
-            const currentSentence = tokens.slice(0, currentTokenIndex + 1).join('');
-            element.innerHTML = marked.parse(currentSentence);
-            currentTokenIndex++;
-        } else {
-            // När texten är klar, avbryt animationen och ta bort markören
-            clearInterval(typewriterInterval);
-            // Sätt den slutgiltiga texten en sista gång för att ta bort eventuell blinkande markör
-            element.innerHTML = marked.parse(markdownText);
-            element.classList.remove('typing');
-            
-            // Kör onComplete-funktionen om den finns
-            if (typeof onComplete === 'function') {
-                onComplete();
+    function animateTypewriter(element, markdownText, onComplete) {
+        if (typewriterInterval) clearInterval(typewriterInterval);
+        const tokens = markdownText.split(/(\s+)/);
+        let currentTokenIndex = 0;
+        element.innerHTML = '';
+        element.classList.add('typing');
+        typewriterInterval = setInterval(() => {
+            if (currentTokenIndex < tokens.length) {
+                const currentSentence = tokens.slice(0, currentTokenIndex + 1).join('');
+                element.innerHTML = marked.parse(currentSentence);
+                currentTokenIndex++;
+            } else {
+                clearInterval(typewriterInterval);
+                element.innerHTML = marked.parse(markdownText);
+                element.classList.remove('typing');
+                if (typeof onComplete === 'function') {
+                    onComplete();
+                }
             }
-        }
-    }, 80); // Justerad hastighet för tokens (lägre = snabbare)
-}
+        }, 80);
+    }
 
     nextScenarioButton.addEventListener('click', () => {
         let currentIndex = parseInt(sessionStorage.getItem('currentPlaylistIndex') || '0', 10);
