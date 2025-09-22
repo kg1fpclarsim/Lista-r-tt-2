@@ -134,23 +134,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function animateTypewriter(element, markdownText, onComplete) {
-        if (typewriterInterval) clearInterval(typewriterInterval);
-        let i = 0;
-        element.innerHTML = '';
-        element.classList.add('typing');
-        typewriterInterval = setInterval(() => {
-            if (i < markdownText.length) {
-                element.innerHTML = marked.parse(markdownText.substring(0, i + 1));
-                i++;
-            } else {
-                clearInterval(typewriterInterval);
-                element.classList.remove('typing');
-                if (typeof onComplete === 'function') {
-                    onComplete();
-                }
-            }
-        }, 30);
+    if (typewriterInterval) {
+        clearInterval(typewriterInterval);
     }
+
+    element.innerHTML = '';
+    element.classList.add('typing');
+
+    // KORRIGERING: Dela upp texten i ord istället för tecken
+    const words = markdownText.split(' ');
+    let currentWordIndex = 0;
+
+    typewriterInterval = setInterval(() => {
+        if (currentWordIndex < words.length) {
+            // Bygg upp meningen ord för ord
+            const currentSentence = words.slice(0, currentWordIndex + 1).join(' ');
+            element.innerHTML = marked.parse(currentSentence + ' '); // Lägg till ett mellanslag för markören
+            currentWordIndex++;
+        } else {
+            // När texten är klar, avbryt animationen och ta bort markören
+            clearInterval(typewriterInterval);
+            element.classList.remove('typing');
+            // Kör onComplete-funktionen om den finns
+            if (typeof onComplete === 'function') {
+                onComplete();
+            }
+        }
+    }, 120); // Justerad hastighet för att passa ord (högre = långsammare)
+}
 
     nextScenarioButton.addEventListener('click', () => {
         let currentIndex = parseInt(sessionStorage.getItem('currentPlaylistIndex') || '0', 10);
