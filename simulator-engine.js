@@ -1,5 +1,13 @@
-// simulator-engine.js
+// simulator-engine.js // 2025-09-22 07:20
+const SIMULATOR_ENGINE_VERSION = '1.2'; // Versionsnummer
+
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
+    containerElement.innerHTML = `
+        <div id="image-container">
+            <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
+            <div id="navigation-overlay"></div>
+        </div>
+    `;
     const gameImage = containerElement.querySelector('#game-image');
     const imageContainer = containerElement.querySelector('#image-container');
     const navOverlay = containerElement.querySelector('#navigation-overlay');
@@ -18,7 +26,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     function createUIElements(menuData) {
         imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
         navOverlay.innerHTML = '';
-
         if (menuData.textOverlays) {
             menuData.textOverlays.forEach(overlayData => {
                 const overlayDiv = document.createElement('div');
@@ -28,7 +35,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 imageContainer.appendChild(overlayDiv);
             });
         }
-
         if (menuData.events) {
             menuData.events.forEach(event => {
                 const area = createArea(event.coords);
@@ -68,20 +74,19 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         panel.innerHTML = `<h3>${title}</h3>`;
         const optionsContainer = document.createElement('div');
         optionsContainer.className = 'options-container';
-        let optionsList = Array.isArray(event.options) ? event.options : ALL_OFFICES || [];
+        let optionsList = (typeof event.options === 'string' && event.options === 'ALL_OFFICES') ? ALL_OFFICES || [] : event.options || [];
         optionsList.forEach(optText => {
             const optionBtn = document.createElement('button');
             optionBtn.className = 'custom-dropdown-option';
             optionBtn.textContent = optText;
             optionBtn.addEventListener('click', () => {
-                onButtonClickCallback({ name: optText }, null);
+                if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: optText }, null);
                 if (event.updatesOverlay) {
                     const overlayToUpdate = imageContainer.querySelector(`#${event.updatesOverlay}`);
-                    if (overlayToUpdate) {
-                        overlayToUpdate.textContent = optText;
-                    }
+                    if (overlayToUpdate) overlayToUpdate.textContent = optText;
                 }
-                overlay.remove();
+                overlay.classList.add('fade-out');
+                setTimeout(() => overlay.remove(), 300);
             });
             optionsContainer.appendChild(optionBtn);
         });
@@ -89,7 +94,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         overlay.appendChild(panel);
         imageContainer.appendChild(overlay);
     }
-
+    
     function createArea(coords) {
         const area = document.createElement('div');
         area.classList.add('clickable-area');
