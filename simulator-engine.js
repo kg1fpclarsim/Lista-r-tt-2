@@ -1,4 +1,4 @@
-const SIMULATOR_ENGINE_VERSION = '3.2-FINAL';
+const SIMULATOR_ENGINE_VERSION = '4.0-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     if (!containerElement) {
@@ -43,7 +43,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
 
         gameImage.onload = renderUI;
         if (gameImage.complete) {
-            // Använd en liten timeout för att säkerställa att DOM hinner uppdateras
             setTimeout(renderUI, 0);
         }
     }
