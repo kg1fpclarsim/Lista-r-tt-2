@@ -18,7 +18,7 @@ const ALL_MENUS = {
     },
     'hamta-typ': {
         key: 'hamta-typ',
-        image: 'images/simulator-screens/handdator-hamta-typ.png',
+        image: 'images/simulator-screens/handdator-hamta.png',
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
@@ -30,17 +30,12 @@ const ALL_MENUS = {
         key: 'hamta-valj-kontor',
         image: 'images/simulator-screens/handdator-hamta-valj-kontor.png',
         originalWidth: 426,
-        backButtonCoords: { top: 145, left: 70, width: 20, height: 25 }, // <-- KORRIGERAD: Kommatecken tillagt
+        backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
+        textOverlays: [
+            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
+        ],
         events: [
-            {
-                name: "Kontor",
-                type: "dropdown",
-                triggerCoords: { top: 180, left: 55, width: 315, height: 30 },
-                panelCoords: { top: 180, left: 55, width: 315, height: 520 },
-                title: "Välj kontor i lista",
-                layout: "radio-list",
-                options: "ALL_OFFICES"
-            },
+            { name: "Kontor", type: "dropdown", triggerCoords: { top: 180, left: 55, width: 315, height: 30 }, panelCoords: { top: 180, left: 55, width: 315, height: 520 }, title: "Välj kontor i lista", layout: "radio-list", options: "ALL_OFFICES", updatesOverlay: 'selected-office-display' },
             { name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 }, submenu: 'hamta-typ' }
         ]
     },
@@ -50,15 +45,7 @@ const ALL_MENUS = {
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
-            { 
-                name: "Orsakskod",
-                type: "dropdown", 
-                triggerCoords: { top: 180, left: 55, width: 315, height: 460 },
-                panelCoords: { top: 180, left: 55, width: 315, height: 460 },
-                title: "Välj orsakskod",
-                layout: "radio-list",
-                options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ]
-            },
+            { name: "Orsakskod", type: "dropdown", triggerCoords: { top: 180, left: 55, width: 315, height: 460 }, panelCoords: { top: 180, left: 55, width: 315, height: 460 }, title: "Välj orsakskod", layout: "radio-list", options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ] },
             { name: "Bekräfta Orsak", coords: { top: 640, left: 67, width: 288, height: 40 } }
         ]
     },
