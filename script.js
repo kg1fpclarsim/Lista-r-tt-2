@@ -1,4 +1,4 @@
-const SCRIPT_JS_VERSION = '5.0-FINAL';
+const SCRIPT_JS_VERSION = '5.1-FINAL';
 
 document.addEventListener('DOMContentLoaded', () => {
     const simulatorContainer = document.getElementById('simulator-wrapper');
@@ -16,24 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let loadedScenario = null;
     let currentScenarioStepIndex = 0;
     let currentSequenceStep = 0;
-
-    // --- NY "VAKT" SOM UPPDATERAR TEXTRUTOR ---
-    const observer = new MutationObserver(() => {
-        if (!loadedScenario) return;
-        const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
-        if (currentStepData.initialOverlayState) {
-            for (const overlayId in currentStepData.initialOverlayState) {
-                const text = currentStepData.initialOverlayState[overlayId];
-                const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
-                if (overlayElement && overlayElement.textContent !== text) {
-                    overlayElement.textContent = text;
-                }
-            }
-        }
-    });
-    observer.observe(simulatorContainer, { childList: true, subtree: true });
-    // --- SLUT PÅ NY VAKT ---
-
+    
     function handlePlayerClick(clickedEvent, areaElement) {
         if (!loadedScenario) return;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
@@ -128,12 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
         nextScenarioButton.style.display = 'none';
         
         const startMenu = currentStepData.startMenu || 'main';
-        // Vi behöver inte längre skicka med state här, vakten sköter det
-        simulator.reset(startMenu);
-
-        animateTypewriter(scenarioDescription, currentStepData.description, () => {
-            feedbackMessage.textContent = 'Väntar på din första åtgärd...';
-            feedbackArea.className = 'feedback-neutral';
+        const overlayState = currentStepData.initialOverlayState || {};
+        
+        // Återställ simulatorn och vänta på att den blir klar
+        simulator.reset(startMenu, overlayState, () => {
+            // Denna kod körs först NÄR simulatorn är helt klar med att rita
+            animateTypewriter(scenarioDescription, currentStepData.description, () => {
+                feedbackMessage.textContent = 'Väntar på din första åtgärd...';
+                feedbackArea.className = 'feedback-neutral';
+            });
         });
     }
     
