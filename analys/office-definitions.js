@@ -28,4 +28,4 @@ const ALL_OFFICES = [
     "JÖNKÖPING",
     "HUDIKSVALL",
     "KRISTIANSTAD"
-];
+]
