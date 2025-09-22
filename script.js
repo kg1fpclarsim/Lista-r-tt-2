@@ -1,4 +1,4 @@
-const SCRIPT_JS_VERSION = '2.41-FINAL'; // Versionsnummer
+const SCRIPT_JS_VERSION = '2.4-FINAL'; // Versionsnummer
 
 document.addEventListener('DOMContentLoaded', () => {
     // Diagnostik: Kontrollera om behållaren finns vid start
@@ -137,26 +137,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // KORRIGERING 1: Den robusta "token-för-token"-animationen.
-        function animateTypewriter(element, markdownText, onComplete) {
-        if (typewriterInterval) {
-            clearInterval(typewriterInterval);
-        }
-        let i = 0;
+    function animateTypewriter(element, markdownText, onComplete) {
+        if (typewriterInterval) clearInterval(typewriterInterval);
+        const tokens = markdownText.split(/(\s+)/);
+        let currentTokenIndex = 0;
         element.innerHTML = '';
         element.classList.add('typing');
         typewriterInterval = setInterval(() => {
-            if (i < markdownText.length) {
-                element.innerHTML = marked.parse(markdownText.substring(0, i + 1));
-                i++;
+            if (currentTokenIndex < tokens.length) {
+                const currentSentence = tokens.slice(0, currentTokenIndex + 1).join('');
+                element.innerHTML = marked.parse(currentSentence);
+                currentTokenIndex++;
             } else {
                 clearInterval(typewriterInterval);
+                element.innerHTML = marked.parse(markdownText);
                 element.classList.remove('typing');
-                // KÖR CALLBACK-FUNKTIONEN NÄR ANIMATIONEN ÄR KLAR
                 if (typeof onComplete === 'function') {
                     onComplete();
                 }
             }
-        }, 30);
+        }, 80);
     }
 
     nextScenarioButton.addEventListener('click', () => {
