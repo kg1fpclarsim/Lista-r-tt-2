@@ -20,7 +20,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
 
-    function switchMenuView(menuKey) {
+    function switchMenuView(menuKey, stateToApply = overlayState) {
         return new Promise((resolve) => {
             const menuData = ALL_MENUS[menuKey];
             if (!menuData) {
@@ -32,7 +32,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             gameImage.src = menuData.image;
             
             const onImageLoad = () => {
-                createUIElements(menuData);
+                createUIElements(menuData, stateToApply);
                 scaleUIElements();
                 resolve(true);
             };
@@ -49,7 +49,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         });
     }
 
-    function createUIElements(menuData) {
+     function createUIElements(menuData, stateToApply = overlayState) {
         imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
         navOverlay.innerHTML = '';
         if (menuData.textOverlays) {
@@ -58,6 +58,9 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 overlayDiv.id = overlayData.id;
                 overlayDiv.className = 'text-overlay';
                 overlayDiv.dataset.originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height];
+                if (stateToApply && Object.prototype.hasOwnProperty.call(stateToApply, overlayData.id)) {
+                    overlayDiv.textContent = stateToApply[overlayData.id];
+                }
                 imageContainer.appendChild(overlayDiv);
             });
         }
@@ -115,6 +118,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                     if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: optText }, null);
                     if (event.updatesOverlay) {
                         const overlayToUpdate = imageContainer.querySelector(`#${event.updatesOverlay}`);
+                        overlayState[event.updatesOverlay] = optText;
                         if (overlayToUpdate) overlayToUpdate.textContent = optText;
                     }
                     overlay.classList.add('fade-out');
@@ -158,9 +162,10 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     window.addEventListener('resize', scaleUIElements);
     
     return {
-        reset: async (menuKey = startMenuKey) => {
+        reset: async (menuKey = startMenuKey, newOverlayState) => {
             menuHistory = [];
-            return await switchMenuView(menuKey);
+             overlayState = newOverlayState ? { ...newOverlayState } : {};
+            return await switchMenuView(menuKey, overlayState);
         }
     };
 }
