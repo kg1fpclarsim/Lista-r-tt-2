@@ -1,4 +1,4 @@
-const SIMULATOR_ENGINE_VERSION = '5.1-FINAL';
+const SIMULATOR_ENGINE_VERSION = '5.2-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     if (!containerElement) {
@@ -20,8 +20,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
 
-    // UPPDATERAD: Tar nu emot overlayState och en callback-funktion
-    function switchMenuView(menuKey, overlayState = {}, onCompleteCallback) {
+    function switchMenuView(menuKey) {
         const menuData = ALL_MENUS[menuKey];
         if (!menuData) { console.error(`Hittade inte meny: ${menuKey}`); return; }
         currentMenuViewKey = menuKey;
@@ -29,23 +28,12 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         
         const renderUI = () => {
             createUIElements(menuData);
-            // Fyller i textrutorna EFTER att de har skapats
-            for (const overlayId in overlayState) {
-                const text = overlayState[overlayId];
-                const overlayElement = imageContainer.querySelector(`#${overlayId}`);
-                if (overlayElement) {
-                    overlayElement.textContent = text;
-                }
-            }
             scaleUIElements();
-            if (typeof onCompleteCallback === 'function') {
-                onCompleteCallback();
-            }
         };
 
         gameImage.onload = renderUI;
         if (gameImage.complete) {
-            setTimeout(renderUI, 0);
+            setTimeout(renderUI, 0); // Fördröjning för att säkerställa att DOM är redo
         }
     }
 
@@ -157,9 +145,9 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     window.addEventListener('resize', scaleUIElements);
     
     return {
-        reset: (menuKey = startMenuKey, initialOverlayState = {}, onResetComplete) => {
+        reset: (menuKey = startMenuKey) => {
             menuHistory = [];
-            switchMenuView(menuKey, initialOverlayState, onResetComplete);
+            switchMenuView(menuKey);
         }
     };
 }
