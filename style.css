@@ -76,17 +76,17 @@ input[type="text"], textarea {
 .area-incorrect-feedback { background-color: rgba(220, 53, 69, 0.5); }
 .text-overlay {
     position: absolute;
-    padding: 4px 14px;
-    background: linear-gradient(to bottom, #eef1f8 0%, #d7dbe6 100%);
-    border: 1px solid #9fa9bf;
-    border-top: 3px solid #0f2a7a;
+    padding: 4px 0px;
+    background: linear-gradient(to bottom, #f0f4f7 0%, #f0f4f7 100%);
+    border: none;    
     color: #091E6D;
     font-family: sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.4px;
     display: flex;
     align-items: center;
+    padding-top: 8px;
     justify-content: flex-start;
     box-sizing: border-box;
     white-space: nowrap;
