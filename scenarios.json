@@ -1,37 +1,18 @@
 [
   {
-    "title": "Övning: Obokad Hämtning",
+    "title": "test värde i kontor",
     "steps": [
       {
-        "description": "## Delmoment 1: Bekräfta Kontor\n\nKontoret för avsändaren är redan ifyllt på skärmen.\n\n**Uppgift:** Bekräfta att kontoret stämmer för att fortsätta.",
-        "sequence": [
-          "Bekräfta Kontor"
-        ],
-        "startMenu": "hamta-valj-kontor",
-        "initialOverlayState": {
-          "selected-office-display": "Karlstad"
-        }
-      },
-      {
-        "description": "## Delmoment 2: Välj Typ av Hämtning\n\n**Uppgift:** Välj rätt alternativ för en obokad hämtning.",
-        "sequence": [
-          "Hämta obokad hämtning"
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Test 1",
-    "steps": [
-      {
-        "description": "Test välj visby",
+        "description": "välj borås",
         "sequence": [
           "Hämta",
           "Kontor",
-          "VISBY"
+          "BORÅS",
+          "Bekräfta Kontor",
+          "Hämta obokad hämtning"
         ],
-        "wrongClickMessages": {
-          "Leverera": "fel"
+        "initialOverlayState": {
+          "selected-office-display": "VÄXJÖ"
         }
       }
     ]
