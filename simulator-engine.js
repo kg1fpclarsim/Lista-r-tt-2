@@ -125,6 +125,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         });
         panel.appendChild(optionsContainer);
         overlay.appendChild(panel);
+        imageContainer.appendChild(overlay);
         scaleSingleElement(overlay, event.panelCoords);
     }
     
