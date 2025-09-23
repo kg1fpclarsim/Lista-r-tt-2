@@ -1,4 +1,4 @@
-const SIMULATOR_ENGINE_VERSION = '5.2-FINAL';
+const SIMULATOR_ENGINE_VERSION = '5.3-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     if (!containerElement) {
@@ -19,6 +19,28 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     const navOverlay = containerElement.querySelector('#navigation-overlay');
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
+
+    // --- "VAKT" SOM UPPDATERAR TEXTRUTOR ---
+    const observer = new MutationObserver((mutationsList, observer) => {
+        if (!loadedScenario) return;
+        const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
+        
+        for(const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                if (currentStepData.initialOverlayState) {
+                    for (const overlayId in currentStepData.initialOverlayState) {
+                        const text = currentStepData.initialOverlayState[overlayId];
+                        const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
+                        if (overlayElement && overlayElement.textContent !== text) {
+                            overlayElement.textContent = text;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    observer.observe(containerElement, { childList: true, subtree: true });
+    // --- SLUT PÅ VAKT ---
 
     function switchMenuView(menuKey) {
         const menuData = ALL_MENUS[menuKey];
