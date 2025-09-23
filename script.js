@@ -1,114 +1,66 @@
-const SIMULATOR_ENGINE_VERSION = '7.0-FINAL';
+const SCRIPT_JS_VERSION = '7.0-FINAL';
 
-function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
-    if (!containerElement) {
-        console.error("FATALT FEL: Simulator-behållaren (containerElement) hittades inte!");
-        return null;
+document.addEventListener('DOMContentLoaded', () => {
+    const simulatorContainer = document.getElementById('simulator-wrapper');
+    if (!simulatorContainer) { console.error("FATALT FEL: #simulator-wrapper hittades inte."); return; }
+
+    const scenarioTitle = document.getElementById('scenario-title');
+    const scenarioDescription = document.getElementById('scenario-description');
+    const feedbackMessage = document.getElementById('feedback-message');
+    const feedbackArea = document.getElementById('feedback-area');
+    const nextScenarioButton = document.getElementById('reset-button');
+    let typewriterInterval = null;
+    let loadedScenario = null;
+    let currentScenarioStepIndex = 0;
+    let currentSequenceStep = 0;
+
+    function handlePlayerClick(clickedEvent, areaElement) {
+        // ... (denna funktion är oförändrad) ...
     }
-    containerElement.innerHTML = `
-        <div id="image-container">
-            <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
-            <div id="navigation-overlay"></div>
-        </div>`;
-    const gameImage = containerElement.querySelector('#game-image');
-    if (!gameImage) {
-        console.error("FATALT FEL: Kunde inte skapa <img>-elementet.");
-        return null;
+
+    async function initializeGame() {
+        // ... (denna funktion är oförändrad) ...
     }
-    const imageContainer = containerElement.querySelector('#image-container');
-    const navOverlay = containerElement.querySelector('#navigation-overlay');
-    let currentMenuViewKey = startMenuKey;
-    let menuHistory = [];
+    
+    // KORRIGERAD: Denna funktion är nu 'async' för att kunna använda 'await'
+    async function setupCurrentScenarioStep() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        currentSequenceStep = 0;
+        const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
+        scenarioTitle.textContent = loadedScenario.title;
+        nextScenarioButton.style.display = 'none';
+        
+        const startMenu = currentStepData.startMenu || 'main';
+        
+        // Steg 1: Säg åt motorn att rita om och VÄNTA tills den är klar
+        await simulator.reset(startMenu);
 
-    function switchMenuView(menuKey) {
-        // Returnerar ett Promise som löses när bilden är laddad och UI är ritat
-        return new Promise((resolve) => {
-            const menuData = ALL_MENUS[menuKey];
-            if (!menuData) {
-                console.error(`Hittade inte meny: ${menuKey}`);
-                resolve(false); // Signalerar att det misslyckades
-                return;
+        // Steg 2: Fyll i textrutorna. Detta körs först när reset är helt färdig.
+        const overlayState = currentStepData.initialOverlayState || {};
+        for (const overlayId in overlayState) {
+            const text = overlayState[overlayId];
+            const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
+            if (overlayElement) {
+                overlayElement.textContent = text;
             }
-            currentMenuViewKey = menuKey;
-            gameImage.src = menuData.image;
-            
-            const onImageLoad = () => {
-                createUIElements(menuData);
-                scaleUIElements();
-                resolve(true); // Signalerar att allt är klart!
-            };
-
-            if (gameImage.complete) {
-                onImageLoad();
-            } else {
-                gameImage.onload = onImageLoad;
-            }
+        }
+        
+        // Steg 3: Starta typewriter-animationen
+        animateTypewriter(scenarioDescription, currentStepData.description, () => {
+            feedbackMessage.textContent = 'Väntar på din första åtgärd...';
+            feedbackArea.className = 'feedback-neutral';
         });
     }
-
-    function createUIElements(menuData) {
-        imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
-        navOverlay.innerHTML = '';
-        if (menuData.textOverlays) {
-            menuData.textOverlays.forEach(overlayData => {
-                const overlayDiv = document.createElement('div');
-                overlayDiv.id = overlayData.id;
-                overlayDiv.className = 'text-overlay';
-                overlayDiv.dataset.originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height];
-                imageContainer.appendChild(overlayDiv);
-            });
-        }
-        if (menuData.events) {
-            menuData.events.forEach(event => {
-                const triggerCoordinates = event.type === 'dropdown' ? event.triggerCoords : event.coords;
-                if (!triggerCoordinates) return;
-                const area = createArea(triggerCoordinates);
-                area.addEventListener('click', () => {
-                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event, area);
-                    if (event.submenu) {
-                        menuHistory.push(currentMenuViewKey);
-                        switchMenuView(event.submenu);
-                    } else if (event.type === 'dropdown') {
-                        handleDropdown(event);
-                    }
-                });
-                imageContainer.appendChild(area);
-            });
-        }
-        if (menuData.backButtonCoords) {
-            const backArea = createArea(menuData.backButtonCoords);
-            backArea.addEventListener('click', () => {
-                if (menuHistory.length > 0) {
-                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: 'Tillbaka' }, backArea);
-                    const previousMenuKey = menuHistory.pop();
-                    switchMenuView(previousMenuKey);
-                }
-            });
-            navOverlay.appendChild(backArea);
-        }
-    }
-
-    function handleDropdown(event) {
-        // ... (denna funktion är oförändrad från den senaste kompletta versionen) ...
-    }
-    function createArea(coords) {
-        // ... (denna funktion är oförändrad) ...
-    }
-    function scaleSingleElement(element, coords) {
-        // ... (denna funktion är oförändrad) ...
-    }
-    function scaleUIElements() {
-        // ... (denna funktion är oförändrad) ...
-    }
-
-    window.addEventListener('resize', scaleUIElements);
     
-    // Returnera en async reset-funktion
-    return {
-        reset: async (menuKey = startMenuKey) => {
-            menuHistory = [];
-            return await switchMenuView(menuKey); // Vänta tills menyn är helt klar
-        }
-    };
-}
+    function animateTypewriter(element, markdownText, onComplete) {
+        // ... (denna funktion är oförändrad) ...
+    }
+
+    nextScenarioButton.addEventListener('click', () => {
+        // ... (denna funktion är oförändrad) ...
+    });
+
+    const simulator = initializeSimulator(simulatorContainer, 'main', handlePlayerClick);
+    initializeGame();
+});
 
