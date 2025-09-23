@@ -5,10 +5,7 @@
       {
         "description": "välj borås",
         "sequence": [
-          "Hämta",
-          "Kontor",
           "BORÅS",
-          "Bekräfta Kontor",
           "Hämta obokad hämtning"
         ],
         "initialOverlayState": {
