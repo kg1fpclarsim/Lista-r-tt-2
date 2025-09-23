@@ -35,7 +35,8 @@ const ALL_MENUS = {
             { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
         ],
         events: [
-            { name: "Kontor", type: "dropdown", triggerCoords: { top: 180, left: 55, width: 315, height: 30 },
+            { name: "Kontor", type: "dropdown",
+             triggerCoords: { top: 180, left: 55, width: 315, height: 30 },
              panelCoords: { top: 180, left: 55, width: 315, height: 520 }, 
              title: "Välj kontor i lista", layout: "radio-list",
              options: "ALL_OFFICES",
