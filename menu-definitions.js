@@ -35,7 +35,11 @@ const ALL_MENUS = {
             { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
         ],
         events: [
-            { name: "Kontor", type: "dropdown", triggerCoords: { top: 180, left: 55, width: 315, height: 30 }, panelCoords: { top: 180, left: 55, width: 315, height: 520 }, title: "Välj kontor i lista", layout: "radio-list", options: "ALL_OFFICES", updatesOverlay: 'selected-office-display' },
+            { name: "Kontor", type: "dropdown", triggerCoords: { top: 180, left: 55, width: 315, height: 30 },
+             panelCoords: { top: 180, left: 55, width: 315, height: 520 }, 
+             title: "Välj kontor i lista", layout: "radio-list",
+             options: "ALL_OFFICES",
+             updatesOverlay: 'selected-office-display' },
             { name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 }, submenu: 'hamta-typ' }
         ]
     },
