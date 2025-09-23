@@ -1,4 +1,5 @@
-// admin.js (Komplett version med redigeringsfunktion)
+const ADMIN_JS_VERSION = '10.0-STABLE';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Referenser till HTML-element
     const simulatorContainer = document.getElementById('simulator-container');
@@ -13,8 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let scenarios = [];
     let stepCounter = 0;
     let activeStepCard = null;
-    let adminMode = 'idle';
-    let editingScenarioIndex = null; // Håller reda på vilket scenario vi redigerar
+    let adminMode = 'idle'; // Lägen: 'idle', 'sequence', 'errors'
 
     // Huvudfunktion som tar emot klick från simulatorn
     function recordSimulatorClick(clickedEvent) {
@@ -29,40 +29,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Spelar in ett klick som en del av den korrekta sekvensen
     function recordCorrectStep(clickedEvent) {
         const eventName = clickedEvent.name;
         const sequenceDisplay = activeStepCard.querySelector('.step-sequence-display');
         const scoringContainer = activeStepCard.querySelector('.scoring-clicks-container');
         const clickCounter = sequenceDisplay.children.length;
+
         sequenceDisplay.innerHTML += `<span class="sequence-step">${eventName}</span>`;
         const checkboxDiv = document.createElement('div');
         checkboxDiv.className = 'scoring-checkbox';
         const uniqueId = `scoring_${activeStepCard.dataset.stepId}_${clickCounter}`;
         checkboxDiv.innerHTML = `<input type="checkbox" id="${uniqueId}" value="${eventName}" checked><label for="${uniqueId}">${eventName}</label>`;
+        
+        // Stoppa klicket från att "bubbla" upp till kortet och orsaka problem
         checkboxDiv.addEventListener('click', (e) => e.stopPropagation());
+        
         scoringContainer.appendChild(checkboxDiv);
     }
 
+    // Öppnar en dialogruta för att definiera ett felmeddelande
     function defineErrorMessage(clickedEvent) {
-        if (clickedEvent.name === 'Tillbaka') return;
+        if (clickedEvent.name === 'Tillbaka') return; // Ignorera tillbaka-knappen i detta läge
+        
         const buttonName = clickedEvent.name;
         const dataStore = activeStepCard.querySelector('.wrong-messages-datastore');
         let wrongMessages = JSON.parse(dataStore.value || '{}');
         const currentMessage = wrongMessages[buttonName] || '';
+        
         const message = prompt(`Ange felmeddelande för klick på '${buttonName}':`, currentMessage);
-        if (message !== null) {
+
+        if (message !== null) { // Användaren klickade OK
             wrongMessages[buttonName] = message.trim();
             dataStore.value = JSON.stringify(wrongMessages);
             renderDefinedErrors(activeStepCard);
         }
     }
     
+    // Ritar upp listan med definierade felmeddelanden på det aktiva kortet
     function renderDefinedErrors(stepCard) {
         if (!stepCard) return;
         const container = stepCard.querySelector('.defined-errors-list');
         const dataStore = stepCard.querySelector('.wrong-messages-datastore');
         const wrongMessages = JSON.parse(dataStore.value || '{}');
         container.innerHTML = '';
+        
         for (const buttonName in wrongMessages) {
             const message = wrongMessages[buttonName];
             if (message) {
@@ -70,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.className = 'defined-error-row';
                 row.innerHTML = `<strong>${buttonName}:</strong> <em>"${message}"</em> <button class="delete-btn small-delete-btn" data-button-name="${buttonName}">X</button>`;
                 container.appendChild(row);
+
                 row.querySelector('.small-delete-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
                     delete wrongMessages[buttonName];
@@ -80,7 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function addStep(stepData = null) {
+    // Skapar ett nytt, tomt delmoment-kort
+    function addStep() {
         const stepId = stepCounter++;
         const stepDiv = document.createElement('div');
         stepDiv.className = 'step-card';
@@ -97,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="sequence-editor" style="display: none;">
                 <label>Inspelad sekvens:</label>
                 <div class="sequence-header"><div class="sequence-display step-sequence-display"></div><button class="btn btn-secondary btn-clear-sequence">Rensa</button></div>
-                <label>Poänggivande klick:</label>
+                <label>Poänggivande klick (bocka ur navigationsklick):</label>
                 <div class="scoring-clicks-container"></div>
             </div>
             <div class="errors-editor" style="display: none;">
@@ -107,25 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         stepsContainer.appendChild(stepDiv);
-
-        if (stepData) {
-            stepDiv.querySelector('.step-description').value = stepData.description;
-            const wrongMessages = stepData.wrongClickMessages || {};
-            stepDiv.querySelector('.wrong-messages-datastore').value = JSON.stringify(wrongMessages);
-            renderDefinedErrors(stepDiv);
-            
-            const scoringContainer = stepDiv.querySelector('.scoring-clicks-container');
-            if (stepData.sequence) {
-                stepData.sequence.forEach((eventName, index) => {
-                    const checkboxDiv = document.createElement('div');
-                    checkboxDiv.className = 'scoring-checkbox';
-                    const uniqueId = `scoring_${stepId}_${index}`;
-                    checkboxDiv.innerHTML = `<input type="checkbox" id="${uniqueId}" value="${eventName}" checked><label for="${uniqueId}">${eventName}</label>`;
-                    checkboxDiv.addEventListener('click', e => e.stopPropagation());
-                    scoringContainer.appendChild(checkboxDiv);
-                });
-            }
-        }
 
         const activateCard = () => {
             document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
@@ -157,53 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activateCard();
     }
     
-    function resetEditorToCreateMode() {
-        scenarioTitleInput.value = '';
-        stepsContainer.innerHTML = '';
-        editingScenarioIndex = null;
-        saveScenarioBtn.textContent = 'Spara Scenario & Generera JSON';
-        addStep();
-        simulator.reset();
-    }
-
-    function populateEditorForEditing(index) {
-        const scenarioToEdit = scenarios[index];
-        if (!scenarioToEdit) return;
-        editingScenarioIndex = index;
-        scenarioTitleInput.value = scenarioToEdit.title;
-        stepsContainer.innerHTML = '';
-        saveScenarioBtn.textContent = 'Uppdatera Scenario & Generera JSON';
-        if(scenarioToEdit.steps) {
-            scenarioToEdit.steps.forEach(stepData => addStep(stepData));
-        }
-        simulator.reset();
-    }
-
-    function renderScenariosList() {
-        scenariosList.innerHTML = '';
-        scenarios.forEach((scenario, index) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span>${scenario.title} (${(scenario.steps || []).length} steg)</span> 
-                <div>
-                    <button data-index="${index}" class="btn-edit">Redigera</button>
-                    <button data-index="${index}" class="delete-btn">Ta bort</button>
-                </div>`;
-            scenariosList.appendChild(li);
-        });
-        scenariosList.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                scenarios.splice(e.target.dataset.index, 1);
-                renderScenariosList();
-                jsonOutput.value = JSON.stringify(scenarios, null, 2);
-            });
-        });
-        scenariosList.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                populateEditorForEditing(parseInt(e.target.dataset.index, 10));
-            });
-        });
-    }
-
+    // Sparar alla scenarier till JSON
     saveScenarioBtn.addEventListener('click', () => {
         const title = scenarioTitleInput.value.trim();
         if (!title) { alert("Du måste ange en titel."); return; }
@@ -216,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sequence.push(checkbox.value);
             });
             if (!description || sequence.length === 0) return;
+            
             const stepData = { description, sequence };
             const wrongMessages = JSON.parse(card.querySelector('.wrong-messages-datastore').value || '{}');
             if (Object.keys(wrongMessages).length > 0) {
@@ -224,36 +173,54 @@ document.addEventListener('DOMContentLoaded', () => {
             newScenario.steps.push(stepData);
         });
 
-        if (newScenario.steps.length === 0) {
-            alert("Kunde inte spara. Se till att minst ett delmoment har en beskrivning och en poänggivande sekvens.");
-            return;
-        }
-
-        if (editingScenarioIndex !== null) {
-            scenarios[editingScenarioIndex] = newScenario;
-            alert(`Scenariot "${title}" har uppdaterats!`);
-        } else {
+        if (newScenario.steps.length > 0) {
             scenarios.push(newScenario);
             alert(`Scenariot "${title}" har sparats!`);
+            scenarioTitleInput.value = '';
+            stepsContainer.innerHTML = '';
+            addStep();
+            renderScenariosList();
+            jsonOutput.value = JSON.stringify(scenarios, null, 2);
+        } else {
+            alert("Kunde inte spara. Se till att minst ett delmoment har en beskrivning och en poänggivande sekvens.");
         }
-        
-        resetEditorToCreateMode();
-        renderScenariosList();
-        jsonOutput.value = JSON.stringify(scenarios, null, 2);
     });
 
+    // Laddar befintliga scenarier från scenarios.json
     async function loadExistingScenarios() {
         try {
             const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
             if (response.ok) { 
                 const data = await response.json();
-                if (Array.isArray(data)) { scenarios = data; renderScenariosList(); }
+                if (Array.isArray(data)) {
+                    scenarios = data;
+                    renderScenariosList();
+                }
             }
         } catch (error) { console.warn("Kunde inte ladda scenarios.json", error); }
     }
 
+    // Ritar upp listan med sparade scenarier
+    function renderScenariosList() {
+        scenariosList.innerHTML = '';
+        scenarios.forEach((scenario, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${scenario.title} (${scenario.steps.length} steg)</span> <button data-index="${index}" class="delete-btn">Ta bort</button>`;
+            scenariosList.appendChild(li);
+        });
+        scenariosList.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                scenarios.splice(e.target.dataset.index, 1);
+                renderScenariosList();
+                jsonOutput.value = JSON.stringify(scenarios, null, 2);
+            });
+        });
+    }
+
+    // Starta allt
     const simulator = initializeSimulator(simulatorContainer, 'main', recordSimulatorClick);
     addStepBtn.addEventListener('click', () => { addStep(); simulator.reset(); });
     loadExistingScenarios();
     addStep();
 });
+
