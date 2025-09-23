@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stepDiv.innerHTML = `
             <div class="step-header"><h4>Delmoment ${stepsContainer.children.length + 1}</h4><button class="delete-btn step-delete-btn">Ta bort</button></div>
             <textarea class="step-description" rows="3" placeholder="Skriv beskrivning/fråga här..."></textarea>
-            div class="initial-overlay-selector">
+            <div class="initial-overlay-selector">
                 <label>Val för startvy:</label>
                 <select class="initial-office-select"></select>
                 <input type="hidden" class="initial-overlay-datastore">
