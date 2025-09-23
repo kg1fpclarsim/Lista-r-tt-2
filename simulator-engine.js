@@ -1,4 +1,4 @@
-const SIMULATOR_ENGINE_VERSION = '5.4-FINAL';
+const SIMULATOR_ENGINE_VERSION = '5.5-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     if (!containerElement) {
@@ -20,21 +20,30 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
 
-    function switchMenuView(menuKey) {
+    // UPPDATERAD: Tar nu emot overlayState för att hantera start-text
+    function switchMenuView(menuKey, overlayState = {}) {
         const menuData = ALL_MENUS[menuKey];
         if (!menuData) { console.error(`Hittade inte meny: ${menuKey}`); return; }
         currentMenuViewKey = menuKey;
         gameImage.src = menuData.image;
         
-        const renderUI = () => {
-            createUIElements(menuData);
-            scaleUIElements();
+        gameImage.onload = () => {
+            createUIElements(menuData); // Skapar alla element, inklusive tomma textrutor
+            
+            // Fyller i textrutorna EFTER att de har skapats, men INNAN de visas
+            if (menuData.textOverlays && overlayState) {
+                for (const overlayId in overlayState) {
+                    const text = overlayState[overlayId];
+                    const overlayElement = imageContainer.querySelector(`#${overlayId}`);
+                    if (overlayElement) {
+                        overlayElement.textContent = text;
+                    }
+                }
+            }
+            
+            scaleUIElements(); // Skalar allt till rätt storlek
         };
-
-        gameImage.onload = renderUI;
-        if (gameImage.complete) {
-            setTimeout(renderUI, 0);
-        }
+        if (gameImage.complete) gameImage.onload();
     }
 
     function createUIElements(menuData) {
@@ -145,9 +154,9 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     window.addEventListener('resize', scaleUIElements);
     
     return {
-        reset: (menuKey = startMenuKey) => {
+        reset: (menuKey = startMenuKey, initialOverlayState = {}) => {
             menuHistory = [];
-            switchMenuView(menuKey);
+            switchMenuView(menuKey, initialOverlayState);
         }
     };
 }
