@@ -45,7 +45,13 @@ const ALL_MENUS = {
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         events: [
-            { name: "Orsakskod", type: "dropdown", triggerCoords: { top: 180, left: 55, width: 315, height: 460 }, panelCoords: { top: 180, left: 55, width: 315, height: 460 }, title: "Välj orsakskod", layout: "radio-list", options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ] },
+            { 
+                name: "Orsakskod", type: "dropdown", 
+                triggerCoords: { top: 180, left: 55, width: 315, height: 460 },
+                panelCoords: { top: 180, left: 55, width: 315, height: 460 },
+                title: "Välj orsakskod", layout: "radio-list",
+                options: [ "Felaktigt lastad", "Togs ej emot av mottagaren", "Stängt/Semester", "Hittar ej mottagaren", "Portkod", "Ej komplett", "Ej lastat", "Fel adress", "Försenad" ]
+            },
             { name: "Bekräfta Orsak", coords: { top: 640, left: 67, width: 288, height: 40 } }
         ]
     },
