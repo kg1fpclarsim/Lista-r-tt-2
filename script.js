@@ -1,4 +1,4 @@
-const SCRIPT_JS_VERSION = '5.3-FINAL';
+const SCRIPT_JS_VERSION = '5.4-FINAL';
 
 document.addEventListener('DOMContentLoaded', () => {
     const simulatorContainer = document.getElementById('simulator-wrapper');
@@ -17,27 +17,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentScenarioStepIndex = 0;
     let currentSequenceStep = 0;
 
-    // --- "VAKT" SOM UPPDATERAR TEXTRUTOR ---
-    const observer = new MutationObserver((mutationsList, observer) => {
+    // "VAKT" SOM UPPDATERAR TEXTRUTOR - NU PÅ RÄTT PLATS
+    const observer = new MutationObserver(() => {
         if (!loadedScenario) return;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         
-        for(const mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                if (currentStepData.initialOverlayState) {
-                    for (const overlayId in currentStepData.initialOverlayState) {
-                        const text = currentStepData.initialOverlayState[overlayId];
-                        const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
-                        if (overlayElement && overlayElement.textContent !== text) {
-                            overlayElement.textContent = text;
-                        }
-                    }
+        if (currentStepData && currentStepData.initialOverlayState) {
+            for (const overlayId in currentStepData.initialOverlayState) {
+                const text = currentStepData.initialOverlayState[overlayId];
+                const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
+                if (overlayElement && overlayElement.textContent !== text) {
+                    overlayElement.textContent = text;
                 }
             }
         }
     });
     observer.observe(simulatorContainer, { childList: true, subtree: true });
-    // --- SLUT PÅ VAKT ---
 
     function handlePlayerClick(clickedEvent, areaElement) {
         if (!loadedScenario) return;
@@ -133,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
         nextScenarioButton.style.display = 'none';
         
         const startMenu = currentStepData.startMenu || 'main';
-        // Vakten sköter nu ifyllningen av text, så vi behöver inte skicka med state här.
         simulator.reset(startMenu);
 
         animateTypewriter(scenarioDescription, currentStepData.description, () => {
