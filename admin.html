@@ -1,49 +1,32 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - WYSIWYG Scenarioredigerare</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="admin-container wysiwyg-layout">
-        <div class="simulator-column">
-            <h2>Simulator</h2>
-            <div id="simulator-container">
-                </div>
-        </div>
-
-        <div class="editor-column-main">
-            <h1>Scenarioredigerare</h1>
-            <div class="card">
-                <h2>Skapa Nytt Scenario</h2>
-                <label for="scenario-title">Scenariots Titel:</label>
-                <input type="text" id="scenario-title" placeholder="Ex: Fullständig Leverans med Hinder">
-                <h3>Delmoment i Scenariot:</h3>
-                <p>Klicka på ett delmoment för att aktivera det. Använd sedan simulatorn för att bygga scenariot.</p>
-                <div id="steps-container"></div>
-                <button id="add-step-btn" class="btn btn-secondary">Lägg till Delmoment</button>
-            </div>
-            <div class="card export-container">
-                <h3>Spara & Exportera</h3>
-                <button id="save-scenario-btn" class="btn btn-primary">Spara Scenarier & Generera JSON</button>
-                <textarea id="json-output" readonly></textarea>
-            </div>
-            <div class="card">
-                <h2>Befintlig Scenarielista</h2>
-                <ul id="scenarios-list"></ul>
-            </div>
-        </div>
-    </div>
+const ADMIN_JS_VERSION = '10.0-STABLE';
+document.addEventListener('DOMContentLoaded', () => {
+    // ... (alla const-deklarationer och globala variabler) ...
     
-    <div id="version-info"></div>
+    function recordSimulatorClick(clickedEvent) {
+        if (!activeStepCard) {
+            alert("Klicka i ett delmoment för att aktivera det först.");
+            return;
+        }
+        if (adminMode === 'sequence') {
+            recordCorrectStep(clickedEvent);
+        } else if (adminMode === 'errors') {
+            defineErrorMessage(clickedEvent);
+        }
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="office-definitions.js"></script>
-    <script src="menu-definitions.js"></script>
-    <script src="simulator-engine.js"></script>
-    <script src="admin.js"></script>
-    <script src="version-checker.js"></script>
-</body>
-</html>
+    function recordCorrectStep(clickedEvent) {
+        const eventName = clickedEvent.name;
+        const sequenceDisplay = activeStepCard.querySelector('.step-sequence-display');
+        const scoringContainer = activeStepCard.querySelector('.scoring-clicks-container');
+        const clickCounter = sequenceDisplay.children.length;
+        sequenceDisplay.innerHTML += `<span class="sequence-step">${eventName}</span>`;
+        const checkboxDiv = document.createElement('div');
+        checkboxDiv.className = 'scoring-checkbox';
+        const uniqueId = `scoring_${activeStepCard.dataset.stepId}_${clickCounter}`;
+        checkboxDiv.innerHTML = `<input type="checkbox" id="${uniqueId}" value="${eventName}" checked><label for="${uniqueId}">${eventName}</label>`;
+        checkboxDiv.addEventListener('click', (e) => e.stopPropagation());
+        scoringContainer.appendChild(checkboxDiv);
+    }
+    
+    // ... (resten av funktionerna från den fungerande versionen) ...
+});
