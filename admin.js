@@ -1,8 +1,10 @@
-const ADMIN_JS_VERSION = '10.0-STABLE';
+const ADMIN_JS_VERSION = '10.1-STABLE';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Referenser till HTML-element
     const simulatorContainer = document.getElementById('simulator-container');
+    if (!simulatorContainer) { console.error("FATALT FEL: #simulator-container hittades inte i admin.html!"); return; }
+
     const scenarioTitleInput = document.getElementById('scenario-title');
     const stepsContainer = document.getElementById('steps-container');
     const addStepBtn = document.getElementById('add-step-btn');
@@ -17,20 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let adminMode = 'idle'; // Lägen: 'idle', 'sequence', 'errors'
 
     // Huvudfunktion som tar emot klick från simulatorn
-    function recordSimulatorClick(clickedEvent) {
+    function recordSimulatorClick(clickedEvent, areaElement) {
         if (!activeStepCard) {
             alert("Klicka i ett delmoment för att aktivera det först.");
             return;
         }
         if (adminMode === 'sequence') {
-            recordCorrectStep(clickedEvent);
+            recordCorrectStep(clickedEvent, areaElement);
         } else if (adminMode === 'errors') {
-            defineErrorMessage(clickedEvent);
+            defineErrorMessage(clickedEvent, areaElement);
         }
     }
 
     // Spelar in ett klick som en del av den korrekta sekvensen
-    function recordCorrectStep(clickedEvent) {
+    function recordCorrectStep(clickedEvent, areaElement) {
         const eventName = clickedEvent.name;
         const sequenceDisplay = activeStepCard.querySelector('.step-sequence-display');
         const scoringContainer = activeStepCard.querySelector('.scoring-clicks-container');
@@ -42,15 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const uniqueId = `scoring_${activeStepCard.dataset.stepId}_${clickCounter}`;
         checkboxDiv.innerHTML = `<input type="checkbox" id="${uniqueId}" value="${eventName}" checked><label for="${uniqueId}">${eventName}</label>`;
         
-        // Stoppa klicket från att "bubbla" upp till kortet och orsaka problem
         checkboxDiv.addEventListener('click', (e) => e.stopPropagation());
         
         scoringContainer.appendChild(checkboxDiv);
     }
 
     // Öppnar en dialogruta för att definiera ett felmeddelande
-    function defineErrorMessage(clickedEvent) {
-        if (clickedEvent.name === 'Tillbaka') return; // Ignorera tillbaka-knappen i detta läge
+    function defineErrorMessage(clickedEvent, areaElement) {
+        if (clickedEvent.name === 'Tillbaka') return;
         
         const buttonName = clickedEvent.name;
         const dataStore = activeStepCard.querySelector('.wrong-messages-datastore');
@@ -59,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const message = prompt(`Ange felmeddelande för klick på '${buttonName}':`, currentMessage);
 
-        if (message !== null) { // Användaren klickade OK
+        if (message !== null) {
             wrongMessages[buttonName] = message.trim();
             dataStore.value = JSON.stringify(wrongMessages);
             renderDefinedErrors(activeStepCard);
@@ -110,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="sequence-editor" style="display: none;">
                 <label>Inspelad sekvens:</label>
                 <div class="sequence-header"><div class="sequence-display step-sequence-display"></div><button class="btn btn-secondary btn-clear-sequence">Rensa</button></div>
-                <label>Poänggivande klick (bocka ur navigationsklick):</label>
+                <label>Poänggivande klick:</label>
                 <div class="scoring-clicks-container"></div>
             </div>
             <div class="errors-editor" style="display: none;">
