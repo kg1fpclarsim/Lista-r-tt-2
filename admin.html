@@ -8,13 +8,16 @@
 </head>
 <body>
     <div class="admin-container wysiwyg-layout">
+        <!-- Vänster kolumn för simulatorn -->
         <div class="simulator-column">
             <h2>Simulator</h2>
+            <!-- VIKTIGT: Denna behållare är nödvändig för simulatorn -->
             <div id="simulator-container">
-                <!-- Simulator-motorn bygger gränssnittet här -->
+                <!-- Simulator-motorn kommer att bygga gränssnittet här -->
             </div>
         </div>
 
+        <!-- Höger kolumn för redigeringsverktyg -->
         <div class="editor-column-main">
             <h1>Scenarioredigerare</h1>
             <div class="card">
@@ -40,6 +43,7 @@
     
     <div id="version-info"></div>
 
+    <!-- Se till att alla JS-filer laddas i rätt ordning -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="office-definitions.js"></script>
     <script src="menu-definitions.js"></script>
@@ -48,3 +52,4 @@
     <script src="version-checker.js"></script>
 </body>
 </html>
+
