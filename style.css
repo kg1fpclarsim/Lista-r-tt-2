@@ -167,7 +167,31 @@ input[type="text"], textarea {
 
 /* --- ANALYS-SPEL & ADMIN --- */
 .analysis-admin-container { max-width: 1400px; }
+.wysiwyg-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+.simulator-column {
+    flex: 1 1 0;
+    max-width: 40%;
+}
+.editor-column-main {
+    flex: 2 1 0;
+    max-width: 60%;
+}
 .admin-layout { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+
+@media (max-width: 900px) {
+    .wysiwyg-layout {
+        flex-direction: column;
+    }
+
+    .simulator-column,
+    .editor-column-main {
+        max-width: 100%;
+    }
+}
 .palette-column { flex: 1; min-width: 300px; position: sticky; top: 20px; }
 .editor-column { flex: 3; min-width: 500px; }
 .sequence-chain-container { display: flex; gap: 15px; overflow-x: auto; padding: 15px; background-color: #f0f2f5; border-radius: 8px; min-height: 250px; }
