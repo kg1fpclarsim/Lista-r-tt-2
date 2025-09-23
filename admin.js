@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function addStep() {
+     function addStep(existingStepData = null) {
         const stepId = stepCounter++;
         const stepDiv = document.createElement('div');
         stepDiv.className = 'step-card';
@@ -92,6 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
         stepDiv.innerHTML = `
             <div class="step-header"><h4>Delmoment ${stepsContainer.children.length + 1}</h4><button class="delete-btn step-delete-btn">Ta bort</button></div>
             <textarea class="step-description" rows="3" placeholder="Skriv beskrivning/fråga här..."></textarea>
+            div class="initial-overlay-selector">
+                <label>Val för startvy:</label>
+                <select class="initial-office-select"></select>
+                <input type="hidden" class="initial-overlay-datastore">
+            </div>
             <div class="mode-toggle">
                 <p>2. Välj vad du vill göra (klicka i simulatorn efter val):</p>
                 <button class="btn btn-mode" data-mode="sequence">Spela in poänggivande sekvens</button>
@@ -110,6 +115,39 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         stepsContainer.appendChild(stepDiv);
+ const initialOfficeValue = existingStepData?.initialOverlayState?.['selected-office-display'] || '';
+        const overlayDatastore = stepDiv.querySelector('.initial-overlay-datastore');
+        const officeSelect = stepDiv.querySelector('.initial-office-select');
+
+        if (overlayDatastore) {
+            overlayDatastore.value = initialOfficeValue;
+        }
+        if (officeSelect) {
+            const offices = (typeof ALL_OFFICES !== 'undefined' && Array.isArray(ALL_OFFICES)) ? ALL_OFFICES : [];
+            officeSelect.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Välj kontor…';
+            officeSelect.appendChild(defaultOption);
+            offices.forEach(officeName => {
+                const option = document.createElement('option');
+                option.value = officeName;
+                option.textContent = officeName;
+                officeSelect.appendChild(option);
+            });
+            officeSelect.value = initialOfficeValue;
+            if (officeSelect.value !== initialOfficeValue) {
+                officeSelect.value = '';
+                if (overlayDatastore) {
+                    overlayDatastore.value = '';
+                }
+            }
+            officeSelect.addEventListener('change', (event) => {
+                if (overlayDatastore) {
+                    overlayDatastore.value = event.target.value;
+                }
+            });
+        }
 
         const activateCard = () => {
             document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
@@ -137,6 +175,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 stepDiv.querySelector('.errors-editor').style.display = adminMode === 'errors' ? 'block' : 'none';
             });
         });
+         
+        if (existingStepData?.description) {
+            const descriptionField = stepDiv.querySelector('.step-description');
+            if (descriptionField) {
+                descriptionField.value = existingStepData.description;
+            }
+        }
         activateCard();
     }
     
@@ -156,6 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const wrongMessages = JSON.parse(card.querySelector('.wrong-messages-datastore').value || '{}');
             if (Object.keys(wrongMessages).length > 0) {
                 stepData.wrongClickMessages = wrongMessages;
+            }
+            const initialOverlayValue = (card.querySelector('.initial-overlay-datastore')?.value || '').trim();
+            if (initialOverlayValue) {
+                stepData.initialOverlayState = { 'selected-office-display': initialOverlayValue };
             }
             newScenario.steps.push(stepData);
         });
