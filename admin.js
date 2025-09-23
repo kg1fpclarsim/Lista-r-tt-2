@@ -1,4 +1,4 @@
-const ADMIN_JS_VERSION = '8.0-FINAL';
+const ADMIN_JS_VERSION = '10.0-STABLE';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Referenser till HTML-element
@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const jsonOutput = document.getElementById('json-output');
     const scenariosList = document.getElementById('scenarios-list');
     
-    // Globala variabler för att hålla koll på tillstånd
+    // Globala variabler
     let scenarios = [];
     let stepCounter = 0;
     let activeStepCard = null;
-    let adminMode = 'idle'; // Lägen: 'idle', 'sequence', 'errors'
+    let adminMode = 'idle';
 
     // Huvudfunktion som tar emot klick från simulatorn
     function recordSimulatorClick(clickedEvent, areaElement) {
@@ -27,13 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         if (adminMode === 'sequence') {
-            recordCorrectStep(clickedEvent, areaElement);
+            recordCorrectStep(clickedEvent);
         } else if (adminMode === 'errors') {
-            defineErrorMessage(clickedEvent, areaElement);
+            defineErrorMessage(clickedEvent);
         }
     }
 
-    function recordCorrectStep(clickedEvent, areaElement) {
+    function recordCorrectStep(clickedEvent) {
         const eventName = clickedEvent.name;
         const sequenceDisplay = activeStepCard.querySelector('.step-sequence-display');
         const scoringContainer = activeStepCard.querySelector('.scoring-clicks-container');
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scoringContainer.appendChild(checkboxDiv);
     }
 
-    function defineErrorMessage(clickedEvent, areaElement) {
+    function defineErrorMessage(clickedEvent) {
         if (clickedEvent.name === 'Tillbaka') return;
         const buttonName = clickedEvent.name;
         const dataStore = activeStepCard.querySelector('.wrong-messages-datastore');
@@ -89,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const stepDiv = document.createElement('div');
         stepDiv.className = 'step-card';
         stepDiv.dataset.stepId = stepId;
-        
         stepDiv.innerHTML = `
             <div class="step-header"><h4>Delmoment ${stepsContainer.children.length + 1}</h4><button class="delete-btn step-delete-btn">Ta bort</button></div>
             <textarea class="step-description" rows="3" placeholder="Skriv beskrivning/fråga här..."></textarea>
@@ -138,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 stepDiv.querySelector('.errors-editor').style.display = adminMode === 'errors' ? 'block' : 'none';
             });
         });
-        
         activateCard();
     }
     
