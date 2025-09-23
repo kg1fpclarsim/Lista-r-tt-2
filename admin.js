@@ -1,10 +1,12 @@
-const ADMIN_JS_VERSION = '10.1-STABLE';
+const ADMIN_JS_VERSION = '8.0-FINAL';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Referenser till HTML-element
     const simulatorContainer = document.getElementById('simulator-container');
-    if (!simulatorContainer) { console.error("FATALT FEL: #simulator-container hittades inte i admin.html!"); return; }
-
+    if (!simulatorContainer) {
+        console.error("FATALT FEL i admin.js: Behållaren #simulator-container hittades inte i HTML-koden.");
+        return;
+    }
     const scenarioTitleInput = document.getElementById('scenario-title');
     const stepsContainer = document.getElementById('steps-container');
     const addStepBtn = document.getElementById('add-step-btn');
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Huvudfunktion som tar emot klick från simulatorn
     function recordSimulatorClick(clickedEvent, areaElement) {
         if (!activeStepCard) {
-            alert("Klicka i ett delmoment för att aktivera det först.");
+            alert("Klicka på ett delmoment för att aktivera det först.");
             return;
         }
         if (adminMode === 'sequence') {
@@ -31,35 +33,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Spelar in ett klick som en del av den korrekta sekvensen
     function recordCorrectStep(clickedEvent, areaElement) {
         const eventName = clickedEvent.name;
         const sequenceDisplay = activeStepCard.querySelector('.step-sequence-display');
         const scoringContainer = activeStepCard.querySelector('.scoring-clicks-container');
         const clickCounter = sequenceDisplay.children.length;
-
         sequenceDisplay.innerHTML += `<span class="sequence-step">${eventName}</span>`;
         const checkboxDiv = document.createElement('div');
         checkboxDiv.className = 'scoring-checkbox';
         const uniqueId = `scoring_${activeStepCard.dataset.stepId}_${clickCounter}`;
         checkboxDiv.innerHTML = `<input type="checkbox" id="${uniqueId}" value="${eventName}" checked><label for="${uniqueId}">${eventName}</label>`;
-        
         checkboxDiv.addEventListener('click', (e) => e.stopPropagation());
-        
         scoringContainer.appendChild(checkboxDiv);
     }
 
-    // Öppnar en dialogruta för att definiera ett felmeddelande
     function defineErrorMessage(clickedEvent, areaElement) {
         if (clickedEvent.name === 'Tillbaka') return;
-        
         const buttonName = clickedEvent.name;
         const dataStore = activeStepCard.querySelector('.wrong-messages-datastore');
         let wrongMessages = JSON.parse(dataStore.value || '{}');
         const currentMessage = wrongMessages[buttonName] || '';
-        
         const message = prompt(`Ange felmeddelande för klick på '${buttonName}':`, currentMessage);
-
         if (message !== null) {
             wrongMessages[buttonName] = message.trim();
             dataStore.value = JSON.stringify(wrongMessages);
@@ -67,14 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Ritar upp listan med definierade felmeddelanden på det aktiva kortet
     function renderDefinedErrors(stepCard) {
         if (!stepCard) return;
         const container = stepCard.querySelector('.defined-errors-list');
         const dataStore = stepCard.querySelector('.wrong-messages-datastore');
         const wrongMessages = JSON.parse(dataStore.value || '{}');
         container.innerHTML = '';
-        
         for (const buttonName in wrongMessages) {
             const message = wrongMessages[buttonName];
             if (message) {
@@ -82,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.className = 'defined-error-row';
                 row.innerHTML = `<strong>${buttonName}:</strong> <em>"${message}"</em> <button class="delete-btn small-delete-btn" data-button-name="${buttonName}">X</button>`;
                 container.appendChild(row);
-
                 row.querySelector('.small-delete-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
                     delete wrongMessages[buttonName];
@@ -93,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Skapar ett nytt, tomt delmoment-kort
     function addStep() {
         const stepId = stepCounter++;
         const stepDiv = document.createElement('div');
@@ -111,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="sequence-editor" style="display: none;">
                 <label>Inspelad sekvens:</label>
                 <div class="sequence-header"><div class="sequence-display step-sequence-display"></div><button class="btn btn-secondary btn-clear-sequence">Rensa</button></div>
-                <label>Poänggivande klick:</label>
+                <label>Poänggivande klick (bocka ur navigationsklick):</label>
                 <div class="scoring-clicks-container"></div>
             </div>
             <div class="errors-editor" style="display: none;">
@@ -152,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
         activateCard();
     }
     
-    // Sparar alla scenarier till JSON
     saveScenarioBtn.addEventListener('click', () => {
         const title = scenarioTitleInput.value.trim();
         if (!title) { alert("Du måste ange en titel."); return; }
@@ -165,7 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 sequence.push(checkbox.value);
             });
             if (!description || sequence.length === 0) return;
-            
             const stepData = { description, sequence };
             const wrongMessages = JSON.parse(card.querySelector('.wrong-messages-datastore').value || '{}');
             if (Object.keys(wrongMessages).length > 0) {
@@ -187,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Laddar befintliga scenarier från scenarios.json
     async function loadExistingScenarios() {
         try {
             const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
@@ -201,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.warn("Kunde inte ladda scenarios.json", error); }
     }
 
-    // Ritar upp listan med sparade scenarier
     function renderScenariosList() {
         scenariosList.innerHTML = '';
         scenarios.forEach((scenario, index) => {
@@ -218,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Starta allt
     const simulator = initializeSimulator(simulatorContainer, 'main', recordSimulatorClick);
     addStepBtn.addEventListener('click', () => { addStep(); simulator.reset(); });
     loadExistingScenarios();
