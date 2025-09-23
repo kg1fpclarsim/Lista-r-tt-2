@@ -1,170 +1,166 @@
-const SCRIPT_JS_VERSION = '5.0-FIXED';
+const SIMULATOR_ENGINE_VERSION = '10.0-STABLE';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // ####################################################################
-    // ### KONFIGURATION                                                ###
-    // ####################################################################
-    const ORIGINAL_IMAGE_WIDTH = 426;
-    const START_MENU_KEY = 'main';
-    // ####################################################################
-
-    // Variabler för spellogiken
-    let loadedScenario = null;
-    let currentScenarioStepIndex = 0;
-    let currentSequenceStep = 0;
-    let typewriterInterval = null;
-
-    // HTML-element referenser
-    const simulatorContainer = document.getElementById('simulator-wrapper');
-    const scenarioTitle = document.getElementById('scenario-title');
-    const scenarioDescription = document.getElementById('scenario-description');
-    const feedbackMessage = document.getElementById('feedback-message');
-    const feedbackArea = document.getElementById('feedback-area');
-    const nextScenarioButton = document.getElementById('reset-button');
-    
-    // --- FUNKTIONER ---
-
-    // Denna funktion är nu baserad på din fungerande version
-    function animateTypewriter(element, markdownText, onComplete) {
-        if (typewriterInterval) {
-            clearInterval(typewriterInterval);
-        }
-        const tokens = markdownText.split(/(\s+)/);
-        let currentTokenIndex = 0;
-        element.innerHTML = '';
-        element.classList.add('typing');
-        typewriterInterval = setInterval(() => {
-            if (currentTokenIndex < tokens.length) {
-                const currentSentence = tokens.slice(0, currentTokenIndex + 1).join('');
-                element.innerHTML = marked.parse(currentSentence);
-                currentTokenIndex++;
-            } else {
-                clearInterval(typewriterInterval);
-                element.innerHTML = marked.parse(markdownText);
-                element.classList.remove('typing');
-                if (typeof onComplete === 'function') {
-                    onComplete();
-                }
-            }
-        }, 80);
+function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
+    if (!containerElement) {
+        console.error("FATALT FEL: Simulator-behållaren (containerElement) hittades inte!");
+        return null;
     }
+    containerElement.innerHTML = `
+        <div id="image-container">
+            <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
+            <div id="navigation-overlay"></div>
+        </div>`;
+    const gameImage = containerElement.querySelector('#game-image');
+    if (!gameImage) {
+        console.error("FATALT FEL: Kunde inte skapa <img>-elementet.");
+        return null;
+    }
+    const imageContainer = containerElement.querySelector('#image-container');
+    const navOverlay = containerElement.querySelector('#navigation-overlay');
+    let currentMenuViewKey = startMenuKey;
+    let menuHistory = [];
 
-    async function initializeGame() {
-        let scenarioPlaylist = JSON.parse(sessionStorage.getItem('scenarioPlaylist'));
-        let currentPlaylistIndex = parseInt(sessionStorage.getItem('currentPlaylistIndex') || '0', 10);
-        if (!scenarioPlaylist) {
-            try {
-                const response = await fetch('scenarios.json?cachebust=' + new Date().getTime());
-                if (!response.ok) throw new Error('Nätverksfel');
-                let allScenarios = await response.json();
-                if (!Array.isArray(allScenarios)) { throw new Error("scenarios.json är inte en giltig lista (array)."); }
-                const validScenarios = allScenarios.filter(scenario => scenario.steps && scenario.steps.length > 0);
-                if (!validScenarios || validScenarios.length === 0) {
-                    scenarioTitle.textContent = "Inga giltiga scenarier hittades";
-                    document.getElementById('scenario-description-wrapper').style.display = 'none';
-                    simulatorContainer.style.display = 'none';
-                    return;
-                }
-                for (let i = validScenarios.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [validScenarios[i], validScenarios[j]] = [validScenarios[j], validScenarios[i]];
-                }
-                scenarioPlaylist = validScenarios;
-                sessionStorage.setItem('scenarioPlaylist', JSON.stringify(scenarioPlaylist));
-                sessionStorage.setItem('currentPlaylistIndex', '0');
-            } catch (error) {
-                console.error("Fel vid laddning av scenarios.json:", error);
-                scenarioTitle.textContent = "Ett fel uppstod";
-                document.getElementById('scenario-description').innerHTML = `<p style="color: red;"><strong>Fel:</strong> ${error.message}</p>`;
+    function switchMenuView(menuKey) {
+        return new Promise((resolve) => {
+            const menuData = ALL_MENUS[menuKey];
+            if (!menuData) {
+                console.error(`Hittade inte meny: ${menuKey}`);
+                resolve(false);
                 return;
             }
-        }
-        if (currentPlaylistIndex >= scenarioPlaylist.length) {
-            sessionStorage.removeItem('scenarioPlaylist');
-            sessionStorage.removeItem('currentPlaylistIndex');
-            window.location.href = 'certifikat.html';
-            return;
-        }
-        loadedScenario = scenarioPlaylist[currentPlaylistIndex];
-        currentScenarioStepIndex = 0;
-        setupCurrentScenarioStep();
-    }
-    
-    // UPPDATERAD FUNKTION: Använder den nya, smarta reset-funktionen
-    function setupCurrentScenarioStep() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        currentSequenceStep = 0;
-        const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
-        scenarioTitle.textContent = loadedScenario.title;
-        nextScenarioButton.style.display = 'none';
-        
-        // Här skickar vi med startmeny och starttext till motorn
-        const startMenu = currentStepData.startMenu || 'main';
-        const overlayState = currentStepData.initialOverlayState || {};
-        simulator.reset(startMenu, overlayState);
+            currentMenuViewKey = menuKey;
+            gameImage.src = menuData.image;
+            
+            const onImageLoad = () => {
+                createUIElements(menuData);
+                scaleUIElements();
+                resolve(true);
+            };
 
-        animateTypewriter(scenarioDescription, currentStepData.description, () => {
-            feedbackMessage.textContent = 'Väntar på din första åtgärd...';
-            feedbackArea.className = 'feedback-neutral';
-        });
-    }
-    
-    // Den gamla resetGameState behövs inte längre
-    
-    function handlePlayerClick(clickedEvent, areaElement) {
-        if (!loadedScenario) return;
-        const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
-        const targetActions = currentStepData.sequence;
-        const isStepFinished = currentSequenceStep >= targetActions.length;
-        if (isStepFinished && currentScenarioStepIndex >= loadedScenario.steps.length - 1) return;
-        if (isStepFinished) { return; }
-
-        const nextTargetAction = targetActions[currentSequenceStep];
-        if (clickedEvent.name === nextTargetAction) {
-            feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt steg.`;
-            feedbackArea.className = 'feedback-correct';
-            if (areaElement) {
-                areaElement.classList.add('area-correct-feedback');
-                areaElement.style.pointerEvents = 'none';
-            }
-            currentSequenceStep++;
-            const isStepComplete = currentSequenceStep === targetActions.length;
-            if (isStepComplete) {
-                const isLastStepOfScenario = currentScenarioStepIndex === loadedScenario.steps.length - 1;
-                if (isLastStepOfScenario) {
-                    setTimeout(() => {
-                        feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
-                        nextScenarioButton.style.display = 'block';
-                    }, 700);
-                } else {
-                    setTimeout(() => {
-                        currentScenarioStepIndex++;
-                        setupCurrentScenarioStep();
-                    }, 1200);
+            if (gameImage.complete && gameImage.src.endsWith(menuData.image)) {
+                onImageLoad();
+            } else {
+                gameImage.onload = onImageLoad;
+                gameImage.onerror = () => {
+                    console.error(`Kunde inte ladda bild: ${menuData.image}`);
+                    resolve(false);
                 }
             }
-        } else if (!clickedEvent.submenu && clickedEvent.name !== 'Tillbaka') {
-            let errorMessage = "Fel knapp för denna uppgift.";
-            if (currentStepData.customErrorMessage) { errorMessage = currentStepData.customErrorMessage; }
-            if (currentStepData.wrongClickMessages && currentStepData.wrongClickMessages[clickedEvent.name]) {
-                errorMessage = currentStepData.wrongClickMessages[clickedEvent.name];
-            }
-            feedbackMessage.textContent = errorMessage;
-            feedbackArea.className = 'feedback-incorrect';
-            if (areaElement) {
-                areaElement.classList.add('area-incorrect-feedback');
-                setTimeout(() => { areaElement.classList.remove('area-incorrect-feedback'); }, 500);
-            }
+        });
+    }
+
+    function createUIElements(menuData) {
+        imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
+        navOverlay.innerHTML = '';
+        if (menuData.textOverlays) {
+            menuData.textOverlays.forEach(overlayData => {
+                const overlayDiv = document.createElement('div');
+                overlayDiv.id = overlayData.id;
+                overlayDiv.className = 'text-overlay';
+                overlayDiv.dataset.originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height];
+                imageContainer.appendChild(overlayDiv);
+            });
+        }
+        if (menuData.events) {
+            menuData.events.forEach(event => {
+                const triggerCoordinates = event.type === 'dropdown' ? event.triggerCoords : event.coords;
+                if (!triggerCoordinates) return;
+                const area = createArea(triggerCoordinates);
+                area.addEventListener('click', () => {
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event, area);
+                    if (event.submenu) {
+                        menuHistory.push(currentMenuViewKey);
+                        switchMenuView(event.submenu);
+                    } else if (event.type === 'dropdown') {
+                        handleDropdown(event);
+                    }
+                });
+                imageContainer.appendChild(area);
+            });
+        }
+        if (menuData.backButtonCoords) {
+            const backArea = createArea(menuData.backButtonCoords);
+            backArea.addEventListener('click', () => {
+                if (menuHistory.length > 0) {
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: 'Tillbaka' }, backArea);
+                    const previousMenuKey = menuHistory.pop();
+                    switchMenuView(previousMenuKey);
+                }
+            });
+            navOverlay.appendChild(backArea);
         }
     }
 
-    nextScenarioButton.addEventListener('click', () => {
-        let currentIndex = parseInt(sessionStorage.getItem('currentPlaylistIndex') || '0', 10);
-        sessionStorage.setItem('currentPlaylistIndex', currentIndex + 1);
-        location.reload();
-    });
+    function handleDropdown(event) {
+        const oldOverlay = imageContainer.querySelector('.custom-dropdown-overlay');
+        if (oldOverlay) oldOverlay.remove();
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-dropdown-overlay';
+        const panel = document.createElement('div');
+        panel.className = `custom-dropdown-panel ${event.layout || 'radio-list'}`;
+        const title = event.title || `Välj ${event.name}`;
+        panel.innerHTML = `<h3>${title}</h3>`;
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'options-container';
+        let optionsList = (typeof event.options === 'string' && event.options === 'ALL_OFFICES') ? (ALL_OFFICES || []) : (event.options || []);
+        optionsList.forEach(optText => {
+            const optionBtn = document.createElement('button');
+            optionBtn.className = 'custom-dropdown-option';
+            optionBtn.textContent = optText;
+            optionBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                panel.querySelectorAll('.custom-dropdown-option').forEach(btn => btn.classList.remove('selected'));
+                optionBtn.classList.add('selected');
+                setTimeout(() => {
+                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: optText }, null);
+                    if (event.updatesOverlay) {
+                        const overlayToUpdate = imageContainer.querySelector(`#${event.updatesOverlay}`);
+                        if (overlayToUpdate) overlayToUpdate.textContent = optText;
+                    }
+                    overlay.classList.add('fade-out');
+                    setTimeout(() => overlay.remove(), 300);
+                }, 400);
+            });
+            optionsContainer.appendChild(optionBtn);
+        });
+        panel.appendChild(optionsContainer);
+        overlay.appendChild(panel);
+        scaleSingleElement(overlay, event.panelCoords);
+    }
+    
+    function createArea(coords) {
+        const area = document.createElement('div');
+        area.classList.add('clickable-area');
+        if(coords) { area.dataset.originalCoords = [coords.top, coords.left, coords.width, coords.height]; }
+        return area;
+    }
 
-    const simulator = initializeSimulator(simulatorContainer, START_MENU_KEY, handlePlayerClick);
-    initializeGame();
-});
+    function scaleSingleElement(element, coords) {
+        const menuData = ALL_MENUS[currentMenuViewKey];
+        if (!gameImage.offsetWidth || !menuData || !menuData.originalWidth || !coords) return;
+        const scaleRatio = gameImage.offsetWidth / menuData.originalWidth;
+        element.style.top = `${coords.top * scaleRatio}px`;
+        element.style.left = `${coords.left * scaleRatio}px`;
+        element.style.width = `${coords.width * scaleRatio}px`;
+        element.style.height = `${coords.height * scaleRatio}px`;
+    }
+
+    function scaleUIElements() {
+        containerElement.querySelectorAll('.clickable-area, .text-overlay').forEach(area => {
+            const coordsArray = area.dataset.originalCoords.split(',');
+            if (coordsArray.length < 4) return;
+            const coords = { top: coordsArray[0], left: coordsArray[1], width: coordsArray[2], height: coordsArray[3] };
+            scaleSingleElement(area, coords);
+        });
+    }
+
+    window.addEventListener('resize', scaleUIElements);
+    
+    return {
+        reset: async (menuKey = startMenuKey) => {
+            menuHistory = [];
+            return await switchMenuView(menuKey);
+        }
+    };
+}
 
