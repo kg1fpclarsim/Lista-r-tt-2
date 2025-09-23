@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const simulator = initializeSimulator(simulatorContainer, 'main', recordSimulatorClick);
+    simulator.reset();
     addStepBtn.addEventListener('click', () => { addStep(); simulator.reset(); });
     loadExistingScenarios();
     addStep();
