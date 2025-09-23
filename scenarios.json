@@ -4,7 +4,9 @@
     "steps": [
       {
         "description": "## Delmoment 1: Bekräfta Kontor\n\nKontoret för avsändaren är redan ifyllt på skärmen.\n\n**Uppgift:** Bekräfta att kontoret stämmer för att fortsätta.",
-        "sequence": [ "Bekräfta Kontor" ],
+        "sequence": [
+          "Bekräfta Kontor"
+        ],
         "startMenu": "hamta-valj-kontor",
         "initialOverlayState": {
           "selected-office-display": "Karlstad"
@@ -12,7 +14,25 @@
       },
       {
         "description": "## Delmoment 2: Välj Typ av Hämtning\n\n**Uppgift:** Välj rätt alternativ för en obokad hämtning.",
-        "sequence": [ "Hämta obokad hämtning" ]
+        "sequence": [
+          "Hämta obokad hämtning"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Test 1",
+    "steps": [
+      {
+        "description": "Test välj visby",
+        "sequence": [
+          "Hämta",
+          "Kontor",
+          "VISBY"
+        ],
+        "wrongClickMessages": {
+          "Leverera": "fel"
+        }
       }
     ]
   }
