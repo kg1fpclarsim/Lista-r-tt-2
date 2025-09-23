@@ -1,4 +1,4 @@
-const SCRIPT_JS_VERSION = '5.4-FINAL';
+const SCRIPT_JS_VERSION = '5.5-FINAL';
 
 document.addEventListener('DOMContentLoaded', () => {
     const simulatorContainer = document.getElementById('simulator-wrapper');
@@ -16,23 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let loadedScenario = null;
     let currentScenarioStepIndex = 0;
     let currentSequenceStep = 0;
-
-    // "VAKT" SOM UPPDATERAR TEXTRUTOR - NU PÅ RÄTT PLATS
-    const observer = new MutationObserver(() => {
-        if (!loadedScenario) return;
-        const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
-        
-        if (currentStepData && currentStepData.initialOverlayState) {
-            for (const overlayId in currentStepData.initialOverlayState) {
-                const text = currentStepData.initialOverlayState[overlayId];
-                const overlayElement = simulatorContainer.querySelector(`#${overlayId}`);
-                if (overlayElement && overlayElement.textContent !== text) {
-                    overlayElement.textContent = text;
-                }
-            }
-        }
-    });
-    observer.observe(simulatorContainer, { childList: true, subtree: true });
 
     function handlePlayerClick(clickedEvent, areaElement) {
         if (!loadedScenario) return;
@@ -127,8 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
         scenarioTitle.textContent = loadedScenario.title;
         nextScenarioButton.style.display = 'none';
         
+        // Återställ simulatorn TILL RÄTT MENY och skicka med start-texten
         const startMenu = currentStepData.startMenu || 'main';
-        simulator.reset(startMenu);
+        const overlayState = currentStepData.initialOverlayState || {};
+        simulator.reset(startMenu, overlayState);
 
         animateTypewriter(scenarioDescription, currentStepData.description, () => {
             feedbackMessage.textContent = 'Väntar på din första åtgärd...';
