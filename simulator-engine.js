@@ -1,4 +1,4 @@
-const SIMULATOR_ENGINE_VERSION = '5.5-FINAL';
+const SIMULATOR_ENGINE_VERSION = '6.0-FINAL';
 
 function initializeSimulator(containerElement, startMenuKey, onButtonClickCallback) {
     if (!containerElement) {
