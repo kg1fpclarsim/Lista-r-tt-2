@@ -4,15 +4,16 @@
 body {
     font-family: sans-serif;
     background-color: #f0f2f5;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    min-height: 100vh;
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
-    width: 100%;
+}
+
+.versioned-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 h1 { color: #333; }
 .game-container, .admin-container {
@@ -21,6 +22,16 @@ h1 { color: #333; }
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
+    margin: 0 auto;
+}
+.versioned-layout #version-info,
+#version-info {
+    margin-top: auto;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.9rem;
+    color: #555;
 }
 .versioned-layout #version-info,
 #version-info {
