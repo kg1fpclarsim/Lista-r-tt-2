@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentSequenceStep++;
             const isStepComplete = currentSequenceStep === targetActions.length;
             if (isStepComplete) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 const isLastStepOfScenario = currentScenarioStepIndex === loadedScenario.steps.length - 1;
                 if (isLastStepOfScenario) {
                     setTimeout(() => {
