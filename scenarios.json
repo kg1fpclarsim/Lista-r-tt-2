@@ -13,5 +13,21 @@
         }
       }
     ]
+  },
+  {
+    "title": "Övning 1",
+    "steps": [
+      {
+        "description": "Du befinner dig på vår egna omlastning i Hultsfred och ska lasta styckegods som har kommit upp med bil från Nybro, och som ska vidare till Sundsvall. \nHur ska det registreras i handdatorn?",
+        "sequence": [
+          "Lasta ut",
+          "NYBRO",
+          "Bekräfta Kontor"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "HULTSFRED"
+        }
+      }
+    ]
   }
 ]
