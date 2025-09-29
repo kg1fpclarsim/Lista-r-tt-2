@@ -4,7 +4,7 @@ const ALL_MENUS = {
         image: 'images/simulator-screens/handdator.png',
         originalWidth: 426,
         events: [
-            { name: "Lasta ut", coords: { top:  197, left: 71, width: 138, height: 76 } },
+            { name: "Lasta ut", coords: { top:  197, left: 71, width: 138, height: 76 }, submenu: 'lasta-ut-valj-kontor' },
             { name: "Lossa in", coords: { top: 197, left: 221, width: 138, height: 76 } },
             { name: "Hämta", coords: { top: 287, left: 71, width: 138, height: 76 }, submenu: 'hamta-valj-kontor' },
             { name: "Leverera", coords: { top: 287, left: 221, width: 138, height: 76 } },
@@ -42,6 +42,24 @@ const ALL_MENUS = {
              options: "ALL_OFFICES",
              updatesOverlay: 'selected-office-display' },
             { name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 }, submenu: 'hamta-typ' }
+        ]
+    },
+     'lasta-ut-valj-kontor': {
+        key: 'lasta-ut-valj-kontor',
+        image: 'images/simulator-screens/handdator-lasta-ut-valj-kontor.png',
+        originalWidth: 426,
+        backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
+        textOverlays: [
+            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
+        ],
+        events: [
+            { name: "Kontor", type: "dropdown",
+             triggerCoords: { top: 180, left: 55, width: 315, height: 30 },
+             panelCoords: { top: 180, left: 55, width: 315, height: 520 }, 
+             title: "Välj kontor i lista", layout: "radio-list",
+             options: "ALL_OFFICES",
+             updatesOverlay: 'selected-office-display' },
+            { name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 }}
         ]
     },
     'ej-levererat': {
