@@ -70,7 +70,9 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 if (!triggerCoordinates) return;
                 const area = createArea(triggerCoordinates);
                 area.addEventListener('click', () => {
-                    if (typeof onButtonClickCallback === 'function') onButtonClickCallback(event, area);
+                    if (event.type !== 'dropdown' && typeof onButtonClickCallback === 'function') {
+                        onButtonClickCallback(event, area);
+                    }
                     if (event.submenu) {
                         menuHistory.push(currentMenuViewKey);
                         switchMenuView(event.submenu);
