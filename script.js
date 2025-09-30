@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentScenarioStepIndex = 0;
     let currentSequenceStep = 0;
     let typewriterInterval = null;
+    let feedbackResetTimeout = null;
 
     // HTML-element referenser
     const simulatorContainer = document.getElementById('simulator-wrapper');
@@ -97,6 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
         scenarioTitle.textContent = loadedScenario.title;
         nextScenarioButton.style.display = 'none';
+       
+        clearFeedbackResetTimer();
+        feedbackMessage.textContent = '';
+        feedbackArea.className = 'feedback-neutral';
         
         // Här skickar vi med startmeny och starttext till motorn
         const startMenu = currentStepData.startMenu || 'main';
@@ -111,6 +116,22 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Den gamla resetGameState behövs inte längre
     
+     function clearFeedbackResetTimer() {
+        if (feedbackResetTimeout) {
+            clearTimeout(feedbackResetTimeout);
+            feedbackResetTimeout = null;
+        }
+    }
+
+    function scheduleFeedbackReset() {
+        clearFeedbackResetTimer();
+        feedbackResetTimeout = setTimeout(() => {
+            feedbackMessage.textContent = '';
+            feedbackArea.className = 'feedback-neutral';
+            feedbackResetTimeout = null;
+        }, 2500);
+    }
+    
     function handlePlayerClick(clickedEvent, areaElement) {
         if (!loadedScenario) return;
         const currentStepData = loadedScenario.steps[currentScenarioStepIndex];
@@ -120,7 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isStepFinished) { return; }
 
         const nextTargetAction = targetActions[currentSequenceStep];
+        let shouldScheduleReset = true;
         if (clickedEvent.name === nextTargetAction) {
+            clearFeedbackResetTimer();
             feedbackMessage.textContent = `Korrekt! "${clickedEvent.name}" var rätt steg.`;
             feedbackArea.className = 'feedback-correct';
             if (areaElement) {
@@ -133,7 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 const isLastStepOfScenario = currentScenarioStepIndex === loadedScenario.steps.length - 1;
                 if (isLastStepOfScenario) {
+                    shouldScheduleReset = false;
                     setTimeout(() => {
+                        clearFeedbackResetTimer();
                         feedbackMessage.textContent = 'Bra gjort! Hela scenariot är slutfört. Klicka på "Nästa Scenario" för att fortsätta.';
                         nextScenarioButton.style.display = 'block';
                     }, 700);
@@ -145,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } else if (!clickedEvent.submenu && clickedEvent.name !== 'Tillbaka') {
+            clearFeedbackResetTimer();
             let errorMessage = "Fel knapp för denna uppgift.";
             if (currentStepData.customErrorMessage) { errorMessage = currentStepData.customErrorMessage; }
             if (currentStepData.wrongClickMessages && currentStepData.wrongClickMessages[clickedEvent.name]) {
@@ -156,6 +182,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 areaElement.classList.add('area-incorrect-feedback');
                 setTimeout(() => { areaElement.classList.remove('area-incorrect-feedback'); }, 500);
             }
+            scheduleFeedbackReset();
+            return;
+        }
+
+        if (shouldScheduleReset) {
+            scheduleFeedbackReset();
         }
     }
 
