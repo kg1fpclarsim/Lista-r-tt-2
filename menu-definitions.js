@@ -33,7 +33,7 @@ const ALL_MENUS = {
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         textOverlays: [
             { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
-            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 }, mirrorSelectors: ['#selected-office-readout'] }
+            { id: 'selected-office-display', coords: { top: 653, left: 222, width: 120, height: 30 }, mirrorSelectors: ['#selected-office-readout'] }
         ],
         events: [
             { name: "Kontor", type: "dropdown",
@@ -42,7 +42,7 @@ const ALL_MENUS = {
              title: "Välj kontor i lista", layout: "radio-list",
              options: "ALL_OFFICES",
              updatesOverlay: 'selected-office-display' },
-            { name: "Bekräfta Kontor", coords: { top: 640, left: 67, width: 288, height: 40 }, submenu: 'hamta-typ' }
+            { name: "Bekräfta Kontor", coords: { top: 653, left: 222, width: 120, height: 30 }, submenu: 'hamta-typ' }
         ]
     },
      'lasta-ut-valj-kontor': {
