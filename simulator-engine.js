@@ -10,16 +10,16 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
             <div id="navigation-overlay"></div>
         </div>`;
-    const selectedOfficeReadout = document.createElement('div');
-    selectedOfficeReadout.id = 'selected-office-readout';
-    selectedOfficeReadout.className = 'mirrored-overlay';
-    containerElement.appendChild(selectedOfficeReadout);
     const gameImage = containerElement.querySelector('#game-image');
     if (!gameImage) {
         console.error("FATALT FEL: Kunde inte skapa <img>-elementet.");
         return null;
     }
     const imageContainer = containerElement.querySelector('#image-container');
+    const selectedOfficeReadout = document.createElement('div');
+    selectedOfficeReadout.id = 'selected-office-readout';
+    selectedOfficeReadout.className = 'text-overlay mirrored-overlay';
+    imageContainer.appendChild(selectedOfficeReadout);
     const navOverlay = containerElement.querySelector('#navigation-overlay');
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
@@ -75,7 +75,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     }
 
     function createUIElements(menuData, stateToApply = overlayState) {
-        imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
+       imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay:not(.mirrored-overlay)').forEach(el => el.remove());
         navOverlay.innerHTML = '';
         Object.keys(overlayMirrorSelectors).forEach(key => delete overlayMirrorSelectors[key]);
         if (menuData.textOverlays) {
@@ -83,8 +83,15 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 const overlayDiv = document.createElement('div');
                 overlayDiv.id = overlayData.id;
                 overlayDiv.className = 'text-overlay';
-                overlayDiv.dataset.originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height];
-                overlayMirrorSelectors[overlayData.id] = overlayData.mirrorSelectors || [];
+                const originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height].join(',');
+                overlayDiv.dataset.originalCoords = originalCoords;
+                const mirrorSelectors = overlayData.mirrorSelectors || [];
+                overlayMirrorSelectors[overlayData.id] = mirrorSelectors;
+                mirrorSelectors.forEach(selector => {
+                    document.querySelectorAll(selector).forEach(mirrorElement => {
+                        mirrorElement.dataset.originalCoords = originalCoords;
+                    });
+                });
                 imageContainer.appendChild(overlayDiv);
                 const initialValue = (stateToApply && Object.prototype.hasOwnProperty.call(stateToApply, overlayData.id))
                     ? stateToApply[overlayData.id]
