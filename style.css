@@ -137,6 +137,19 @@ input[type="text"], textarea {
     text-align: left; width: 100%; min-height: 100px; box-sizing: border-box;
     transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
 }
+.mirrored-overlay {
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 12px 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    color: #091E6D;
+    font-weight: 600;
+    box-sizing: border-box;
+    text-align: left;
+    min-height: 24px;
+}
 #scenario-description h2 { margin-top: 0; color: #333; }
 #scenario-description.typing::after {
     content: '▋'; position: relative; top: -0.05em;
