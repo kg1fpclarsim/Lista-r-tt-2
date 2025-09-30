@@ -187,7 +187,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
 
     function scaleUIElements() {
         containerElement.querySelectorAll('.clickable-area, .text-overlay').forEach(area => {
-            const coordsArray = area.dataset.originalCoords.split(',');
             const originalCoords = area.dataset.originalCoords;
             if (!originalCoords) return;
             const coordsArray = originalCoords.split(',');
