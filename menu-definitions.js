@@ -32,7 +32,7 @@ const ALL_MENUS = {
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         textOverlays: [
-            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
+            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } },
             { id: 'selected-office-display', coords: { top: 653, left: 222, width: 120, height: 30 }, mirrorSelectors: ['#selected-office-readout'] }
         ],
         events: [
@@ -51,7 +51,7 @@ const ALL_MENUS = {
         originalWidth: 426,
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         textOverlays: [
-            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
+            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } },
             { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 }, mirrorSelectors: ['#selected-office-readout'] }
         ],
         events: [
