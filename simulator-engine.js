@@ -19,6 +19,27 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     const navOverlay = containerElement.querySelector('#navigation-overlay');
     let currentMenuViewKey = startMenuKey;
     let menuHistory = [];
+    let overlayState = {};
+    const overlayMirrorSelectors = {};
+
+    function applyOverlayText(overlayId, value) {
+        const normalizedValue = (value === undefined || value === null) ? '' : value;
+        if (normalizedValue === '') {
+            delete overlayState[overlayId];
+        } else {
+            overlayState[overlayId] = normalizedValue;
+        }
+        const overlayElement = imageContainer.querySelector(`#${overlayId}`);
+        if (overlayElement) {
+            overlayElement.textContent = normalizedValue;
+        }
+        const mirrors = overlayMirrorSelectors[overlayId] || [];
+        mirrors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(element => {
+                element.textContent = normalizedValue;
+            });
+        });
+    }
 
     function switchMenuView(menuKey, stateToApply = overlayState) {
         return new Promise((resolve) => {
@@ -49,19 +70,22 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         });
     }
 
-     function createUIElements(menuData, stateToApply = overlayState) {
+    function createUIElements(menuData, stateToApply = overlayState) {
         imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay').forEach(el => el.remove());
         navOverlay.innerHTML = '';
+        Object.keys(overlayMirrorSelectors).forEach(key => delete overlayMirrorSelectors[key]);
         if (menuData.textOverlays) {
             menuData.textOverlays.forEach(overlayData => {
                 const overlayDiv = document.createElement('div');
                 overlayDiv.id = overlayData.id;
                 overlayDiv.className = 'text-overlay';
                 overlayDiv.dataset.originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height];
-                if (stateToApply && Object.prototype.hasOwnProperty.call(stateToApply, overlayData.id)) {
-                    overlayDiv.textContent = stateToApply[overlayData.id];
-                }
+                overlayMirrorSelectors[overlayData.id] = overlayData.mirrorSelectors || [];
                 imageContainer.appendChild(overlayDiv);
+                const initialValue = (stateToApply && Object.prototype.hasOwnProperty.call(stateToApply, overlayData.id))
+                    ? stateToApply[overlayData.id]
+                    : '';
+                applyOverlayText(overlayData.id, initialValue);
             });
         }
         if (menuData.events) {
@@ -119,9 +143,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 setTimeout(() => {
                     if (typeof onButtonClickCallback === 'function') onButtonClickCallback({ name: optText }, null);
                     if (event.updatesOverlay) {
-                        const overlayToUpdate = imageContainer.querySelector(`#${event.updatesOverlay}`);
-                        overlayState[event.updatesOverlay] = optText;
-                        if (overlayToUpdate) overlayToUpdate.textContent = optText;
+                        applyOverlayText(event.updatesOverlay, optText);
                     }
                     overlay.classList.add('fade-out');
                     setTimeout(() => overlay.remove(), 300);
@@ -166,7 +188,7 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     return {
         reset: async (menuKey = startMenuKey, newOverlayState) => {
             menuHistory = [];
-             overlayState = newOverlayState ? { ...newOverlayState } : {};
+            overlayState = newOverlayState ? { ...newOverlayState } : {};
             return await switchMenuView(menuKey, overlayState);
         }
     };
