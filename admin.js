@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let stepCounter = 0;
     let activeStepCard = null;
     let adminMode = 'idle';
+    let editingScenarioIndex = null;
 
     // Huvudfunktion som tar emot klick från simulatorn
     function recordSimulatorClick(clickedEvent, areaElement) {
@@ -115,7 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         stepsContainer.appendChild(stepDiv);
- const initialOfficeValue = existingStepData?.initialOverlayState?.['selected-office-display'] || '';
+         
+        const initialOfficeValue = existingStepData?.initialOverlayState?.['selected-office-display'] || '';
         const overlayDatastore = stepDiv.querySelector('.initial-overlay-datastore');
         const officeSelect = stepDiv.querySelector('.initial-office-select');
 
@@ -182,6 +184,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 descriptionField.value = existingStepData.description;
             }
         }
+         
+        if (Array.isArray(existingStepData?.sequence) && existingStepData.sequence.length > 0) {
+            const sequenceDisplay = stepDiv.querySelector('.step-sequence-display');
+            const scoringContainer = stepDiv.querySelector('.scoring-clicks-container');
+            sequenceDisplay.innerHTML = '';
+            scoringContainer.innerHTML = '';
+            existingStepData.sequence.forEach((eventName, index) => {
+                const span = document.createElement('span');
+                span.className = 'sequence-step';
+                span.textContent = eventName;
+                sequenceDisplay.appendChild(span);
+
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.className = 'scoring-checkbox';
+                const uniqueId = `scoring_${stepId}_${index}`;
+                checkboxDiv.innerHTML = `<input type="checkbox" id="${uniqueId}" value="${eventName}" checked><label for="${uniqueId}">${eventName}</label>`;
+                checkboxDiv.addEventListener('click', (e) => e.stopPropagation());
+                scoringContainer.appendChild(checkboxDiv);
+            });
+        }
+
+        const wrongMessagesStore = stepDiv.querySelector('.wrong-messages-datastore');
+        if (wrongMessagesStore) {
+            const wrongMessages = existingStepData?.wrongClickMessages || {};
+            wrongMessagesStore.value = JSON.stringify(wrongMessages);
+            renderDefinedErrors(stepDiv);
+        }
+
         activateCard();
     }
     
@@ -210,11 +240,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (newScenario.steps.length > 0) {
-            scenarios.push(newScenario);
-            alert(`Scenariot "${title}" har sparats!`);
+            const isEditing = editingScenarioIndex !== null;
+            if (isEditing) {
+                scenarios[editingScenarioIndex] = newScenario;
+            } else {
+                scenarios.push(newScenario);
+            }
+            alert(`Scenariot "${title}" har ${isEditing ? 'uppdaterats' : 'sparats'}!`);
             scenarioTitleInput.value = '';
             stepsContainer.innerHTML = '';
+            stepCounter = 0;
+            activeStepCard = null;
             addStep();
+            if (isEditing) {
+                editingScenarioIndex = null;
+            }
             renderScenariosList();
             jsonOutput.value = JSON.stringify(scenarios, null, 2);
         } else {
@@ -230,6 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Array.isArray(data)) {
                     scenarios = data;
                     renderScenariosList();
+                    jsonOutput.value = JSON.stringify(scenarios, null, 2);
                 }
             }
         } catch (error) { console.warn("Kunde inte ladda scenarios.json", error); }
@@ -239,16 +280,54 @@ document.addEventListener('DOMContentLoaded', () => {
         scenariosList.innerHTML = '';
         scenarios.forEach((scenario, index) => {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${scenario.title} (${scenario.steps.length} steg)</span> <button data-index="${index}" class="delete-btn">Ta bort</button>`;
+            li.innerHTML = `
+                <span>${scenario.title} (${scenario.steps.length} steg)</span>
+                <button data-index="${index}" class="edit-btn">Redigera</button>
+                <button data-index="${index}" class="delete-btn">Ta bort</button>
+            `;
             scenariosList.appendChild(li);
         });
         scenariosList.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                scenarios.splice(e.target.dataset.index, 1);
+                const indexToDelete = Number(e.target.dataset.index);
+                scenarios.splice(indexToDelete, 1);
+                if (editingScenarioIndex !== null) {
+                    if (editingScenarioIndex === indexToDelete) {
+                        editingScenarioIndex = null;
+                        scenarioTitleInput.value = '';
+                        stepsContainer.innerHTML = '';
+                        stepCounter = 0;
+                        activeStepCard = null;
+                        addStep();
+                    } else if (editingScenarioIndex > indexToDelete) {
+                        editingScenarioIndex -= 1;
+                    }
+                }
                 renderScenariosList();
                 jsonOutput.value = JSON.stringify(scenarios, null, 2);
             });
         });
+        scenariosList.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const indexToEdit = Number(e.target.dataset.index);
+                loadScenarioIntoEditor(indexToEdit);
+            });
+        });
+    }
+
+    function loadScenarioIntoEditor(index) {
+        const scenario = scenarios[index];
+        if (!scenario) return;
+        editingScenarioIndex = index;
+        scenarioTitleInput.value = scenario.title || '';
+        stepsContainer.innerHTML = '';
+        stepCounter = 0;
+        activeStepCard = null;
+        if (Array.isArray(scenario.steps) && scenario.steps.length > 0) {
+            scenario.steps.forEach(stepData => addStep(stepData));
+        } else {
+            addStep();
+        }
     }
 
     const simulator = initializeSimulator(simulatorContainer, 'main', recordSimulatorClick);
