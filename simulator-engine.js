@@ -10,6 +10,10 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
             <img src="" alt="Handdatormeny" id="game-image" style="max-width: 100%; height: auto; display: block;">
             <div id="navigation-overlay"></div>
         </div>`;
+    const selectedOfficeReadout = document.createElement('div');
+    selectedOfficeReadout.id = 'selected-office-readout';
+    selectedOfficeReadout.className = 'mirrored-overlay';
+    containerElement.appendChild(selectedOfficeReadout);
     const gameImage = containerElement.querySelector('#game-image');
     if (!gameImage) {
         console.error("FATALT FEL: Kunde inte skapa <img>-elementet.");
