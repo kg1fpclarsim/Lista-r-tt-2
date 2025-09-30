@@ -33,10 +33,10 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         } else {
             overlayState[overlayId] = normalizedValue;
         }
-        const overlayElement = imageContainer.querySelector(`#${overlayId}`);
-        if (overlayElement) {
+        const overlayElements = imageContainer.querySelectorAll(`.text-overlay[data-overlay-key="${overlayId}"]`);
+        overlayElements.forEach(overlayElement => {
             overlayElement.textContent = normalizedValue;
-        }
+        });
         const mirrors = overlayMirrorSelectors[overlayId] || [];
         mirrors.forEach(selector => {
             document.querySelectorAll(selector).forEach(element => {
@@ -79,14 +79,22 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
         navOverlay.innerHTML = '';
         Object.keys(overlayMirrorSelectors).forEach(key => delete overlayMirrorSelectors[key]);
         if (menuData.textOverlays) {
-            menuData.textOverlays.forEach(overlayData => {
+            menuData.textOverlays.forEach((overlayData, index) => {
                 const overlayDiv = document.createElement('div');
-                overlayDiv.id = overlayData.id;
+                overlayDiv.id = `${overlayData.id}-${index}`;
                 overlayDiv.className = 'text-overlay';
+                overlayDiv.dataset.overlayKey = overlayData.id;
                 const originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height].join(',');
                 overlayDiv.dataset.originalCoords = originalCoords;
                 const mirrorSelectors = overlayData.mirrorSelectors || [];
-                overlayMirrorSelectors[overlayData.id] = mirrorSelectors;
+                const existingSelectors = overlayMirrorSelectors[overlayData.id] || [];
+                const combinedSelectors = [...existingSelectors];
+                mirrorSelectors.forEach(selector => {
+                    if (!combinedSelectors.includes(selector)) {
+                        combinedSelectors.push(selector);
+                    }
+                });
+                overlayMirrorSelectors[overlayData.id] = combinedSelectors;
                 mirrorSelectors.forEach(selector => {
                     document.querySelectorAll(selector).forEach(mirrorElement => {
                         mirrorElement.dataset.originalCoords = originalCoords;
