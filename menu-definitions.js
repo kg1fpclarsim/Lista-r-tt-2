@@ -33,6 +33,7 @@ const ALL_MENUS = {
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         textOverlays: [
             { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
+            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 }, mirrorSelectors: ['#selected-office-readout'] }
         ],
         events: [
             { name: "Kontor", type: "dropdown",
@@ -51,6 +52,7 @@ const ALL_MENUS = {
         backButtonCoords: { top: 145, left: 70, width: 20, height: 25 },
         textOverlays: [
             { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 } }
+            { id: 'selected-office-display', coords: { top: 185, left: 140, width: 170, height: 25 }, mirrorSelectors: ['#selected-office-readout'] }
         ],
         events: [
             { name: "Kontor", type: "dropdown",
