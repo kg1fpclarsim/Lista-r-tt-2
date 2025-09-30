@@ -138,17 +138,14 @@ input[type="text"], textarea {
     transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
 }
 .mirrored-overlay {
-    width: 100%;
-    margin: 20px 0 0;
-    padding: 12px 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
+    position: absolute;
+    pointer-events: none;
     color: #091E6D;
     font-weight: 600;
-    box-sizing: border-box;
-    text-align: left;
-    min-height: 24px;
+    }
+
+.mirrored-overlay:empty {
+    display: none;
 }
 #scenario-description h2 { margin-top: 0; color: #333; }
 #scenario-description.typing::after {
