@@ -54,7 +54,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 return;
             }
             currentMenuViewKey = menuKey;
-            gameImage.src = menuData.image;
             
             const onImageLoad = () => {
                 createUIElements(menuData, stateToApply);
@@ -62,14 +61,23 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 resolve(true);
             };
 
-            if (gameImage.complete && gameImage.src.endsWith(menuData.image)) {
-                onImageLoad();
+           const handleImageLoad = () => {
+                gameImage.onload = null;
+                gameImage.onerror = null;
             } else {
-                gameImage.onload = onImageLoad;
+                gameImage.onload = handleImageLoad;
+               };
+
+            gameImage.src = menuData.image;
+
+            if (gameImage.complete && gameImage.naturalWidth > 0 && gameImage.src.endsWith(menuData.image)) {
+                handleImageLoad();
                 gameImage.onerror = () => {
                     console.error(`Kunde inte ladda bild: ${menuData.image}`);
+                    gameImage.onload = null;
+                    gameImage.onerror = null;
                     resolve(false);
-                }
+                };
             }
         });
     }
