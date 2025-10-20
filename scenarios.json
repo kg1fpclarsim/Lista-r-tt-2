@@ -1,30 +1,18 @@
 [
   {
-    "title": "test värde i kontor",
-    "steps": [
-      {
-        "description": "välj borås",
-        "sequence": [
-          "BORÅS",
-          "Hämta obokad hämtning"
-        ],
-        "initialOverlayState": {
-          "selected-office-display": "VÄXJÖ"
-        }
-      }
-    ]
-  },
-  {
     "title": "Övning 1",
     "steps": [
       {
-        "description": "Du befinner dig på vår egna omlastning i Hultsfred och ska lasta styckegods som har kommit upp med bil från Nybro, och som ska vidare till Sundsvall. \nHur ska det registreras i handdatorn?",
+        "description": "Du är Lots och påbörjar ditt arbetspass hemma i Växjö.\nDu får sedlarna på godset som finns på bilen.\nHur registrerar du dessa i handdatorn?",
         "sequence": [
-          "NYBRO",
-          "Bekräfta Kontor"
+          "Flänsa",
+          "Flänsa på"
         ],
+        "wrongClickMessages": {
+          "Lasta ut": "Lasta ut används bara för sändningar som lastas på Schenker terminal"
+        },
         "initialOverlayState": {
-          "selected-office-display": "HULTSFRED"
+          "selected-office-display": "VÄXJÖ"
         }
       }
     ]
