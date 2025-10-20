@@ -140,9 +140,7 @@ input[type="text"], textarea {
 .mirrored-overlay {
     position: absolute;
     padding: 4px 8px;
-    background: linear-gradient(180deg, rgba(9, 30, 109, 0.95) 0%, rgba(9, 30, 109, 0.85) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(9, 30, 109, 1) 0%, rgba(9, 30, 109, 1) 100%);
     color: #f0f4f7;
     font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
     font-size: 12px;
