@@ -115,13 +115,18 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     function createUIElements(menuData, stateToApply = overlayState) {
         if (menuData.textOverlays) {
             menuData.textOverlays.forEach((overlayData, index) => {
-                const overlayDiv = document.createElement('div');
-                overlayDiv.id = `${overlayData.id}-${index}`;
-                overlayDiv.className = 'text-overlay';
-                overlayDiv.dataset.overlayKey = overlayData.id;
                 const originalCoords = [overlayData.coords.top, overlayData.coords.left, overlayData.coords.width, overlayData.coords.height].join(',');
-                overlayDiv.dataset.originalCoords = originalCoords;
                 const mirrorSelectors = overlayData.mirrorSelectors || [];
+                   const shouldRenderOverlayElement = !(mirrorSelectors.length > 0 && overlayData.mirrorOnly);
+                let overlayDiv = null;
+
+                if (shouldRenderOverlayElement) {
+                    overlayDiv = document.createElement('div');
+                    overlayDiv.id = `${overlayData.id}-${index}`;
+                    overlayDiv.className = 'text-overlay';
+                    overlayDiv.dataset.overlayKey = overlayData.id;
+                    overlayDiv.dataset.originalCoords = originalCoords;
+                }
                 const existingSelectors = overlayMirrorSelectors[overlayData.id] || [];
                 const combinedSelectors = [...existingSelectors];
                 mirrorSelectors.forEach(selector => {
@@ -135,7 +140,9 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                         mirrorElement.dataset.originalCoords = originalCoords;
                     });
                 });
-                imageContainer.appendChild(overlayDiv);
+                if (overlayDiv) {
+                    imageContainer.appendChild(overlayDiv);
+                }
                 const initialValue = (stateToApply && Object.prototype.hasOwnProperty.call(stateToApply, overlayData.id))
                     ? stateToApply[overlayData.id]
                     : '';
