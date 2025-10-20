@@ -61,29 +61,36 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 resolve(true);
             };
 
-           const handleImageLoad = () => {
+            const handleImageLoad = () => {
                 gameImage.onload = null;
                 gameImage.onerror = null;
-            } else {
-                gameImage.onload = handleImageLoad;
-               };
+             onImageLoad();
+            };
+
+            const handleImageError = () => {
+                console.error(`Kunde inte ladda bild: ${menuData.image}`);
+                gameImage.onload = null;
+                gameImage.onerror = null;
+                resolve(false);
+            };
+
+            gameImage.onload = handleImageLoad;
+            gameImage.onerror = handleImageError;
 
             gameImage.src = menuData.image;
 
-            if (gameImage.complete && gameImage.naturalWidth > 0 && gameImage.src.endsWith(menuData.image)) {
-                handleImageLoad();
-                gameImage.onerror = () => {
-                    console.error(`Kunde inte ladda bild: ${menuData.image}`);
-                    gameImage.onload = null;
-                    gameImage.onerror = null;
-                    resolve(false);
-                };
+             if (gameImage.complete && gameImage.src.endsWith(menuData.image)) {
+                if (gameImage.naturalWidth > 0) {
+                    handleImageLoad();
+                } else {
+                    handleImageError();
+                }
             }
         });
     }
 
     function createUIElements(menuData, stateToApply = overlayState) {
-       imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay:not(.mirrored-overlay)').forEach(el => el.remove());
+         imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay:not(.mirrored-overlay)').forEach(el => el.remove());
         navOverlay.innerHTML = '';
         Object.keys(overlayMirrorSelectors).forEach(key => delete overlayMirrorSelectors[key]);
         if (menuData.textOverlays) {
