@@ -42,7 +42,7 @@ const ALL_MENUS = {
              title: "Välj kontor i lista", layout: "radio-list",
              options: "ALL_OFFICES",
              updatesOverlay: 'selected-office-display' },
-            { name: "Bekräfta Kontor", coords: { top: 653, left: 222, width: 120, height: 30 }, submenu: 'hamta-typ' }
+            { name: "Bekräfta Kontor", coords: { top: 645, left: 70, width: 288, height: 40 }, submenu: 'hamta-typ' }
         ]
     },
      'lasta-ut-valj-kontor': {
@@ -61,7 +61,7 @@ const ALL_MENUS = {
              title: "Välj kontor i lista", layout: "radio-list",
              options: "ALL_OFFICES",
              updatesOverlay: 'selected-office-display' },
-            { name: "Bekräfta Kontor-lasta-ut", coords: { top: 640, left: 67, width: 288, height: 40 }}
+            { name: "Bekräfta Kontor-lasta-ut", coords: { top: 645, left: 70, width: 288, height: 40 }}
         ]
     },
     'ej-levererat': {
