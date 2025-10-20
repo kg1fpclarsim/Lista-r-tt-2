@@ -148,7 +148,6 @@ input[type="text"], textarea {
     font-weight: bolder;
     letter-spacing: 0.6px;
     display: flex
-;
     align-items: center;
     padding-top: px;
     justify-content: flex-start;
