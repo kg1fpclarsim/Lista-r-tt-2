@@ -139,17 +139,17 @@ input[type="text"], textarea {
 }
 .mirrored-overlay {
     position: absolute;
-    padding: 4px 0px;
-    background: linear-gradient(to bottom, #091e6d 0%, #091e6d 100%);
-    border: none;
+    padding: 4px 8px;
+    background: linear-gradient(180deg, rgba(9, 30, 109, 0.95) 0%, rgba(9, 30, 109, 0.85) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
     color: #f0f4f7;
-    font-family: sans-serif;
+    font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
     font-size: 12px;
-    font-weight: bolder;
+    font-weight: 700;
     letter-spacing: 0.6px;
-    display: flex
+    display: flex;
     align-items: center;
-    padding-top: px;
     justify-content: flex-start;
     box-sizing: border-box;
     white-space: nowrap;
