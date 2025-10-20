@@ -26,6 +26,27 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     let overlayState = {};
     const overlayMirrorSelectors = {};
 
+        function clearOverlaysAndMirrors() {
+        imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay:not(.mirrored-overlay)')
+            .forEach(el => el.remove());
+        navOverlay.innerHTML = '';
+
+        Object.values(overlayMirrorSelectors).forEach(selectors => {
+            selectors.forEach(selector => {
+                document.querySelectorAll(selector).forEach(element => {
+                    element.textContent = '';
+                    element.removeAttribute('data-original-coords');
+                });
+            });
+        });
+        imageContainer.querySelectorAll('.mirrored-overlay').forEach(element => {
+            element.textContent = '';
+            element.removeAttribute('data-original-coords');
+        });
+
+        Object.keys(overlayMirrorSelectors).forEach(key => delete overlayMirrorSelectors[key]);
+    }
+
     function applyOverlayText(overlayId, value) {
         const normalizedValue = (value === undefined || value === null) ? '' : value;
         if (normalizedValue === '') {
@@ -54,6 +75,8 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
                 return;
             }
             currentMenuViewKey = menuKey;
+ 
+            clearOverlaysAndMirrors();
             
             const onImageLoad = () => {
                 createUIElements(menuData, stateToApply);
@@ -90,9 +113,6 @@ function initializeSimulator(containerElement, startMenuKey, onButtonClickCallba
     }
 
     function createUIElements(menuData, stateToApply = overlayState) {
-         imageContainer.querySelectorAll('.clickable-area, .custom-dropdown-overlay, .text-overlay:not(.mirrored-overlay)').forEach(el => el.remove());
-        navOverlay.innerHTML = '';
-        Object.keys(overlayMirrorSelectors).forEach(key => delete overlayMirrorSelectors[key]);
         if (menuData.textOverlays) {
             menuData.textOverlays.forEach((overlayData, index) => {
                 const overlayDiv = document.createElement('div');
