@@ -14,6 +14,17 @@
         "initialOverlayState": {
           "selected-office-display": "VÄXJÖ"
         }
+      },
+      {
+        "description": "Du får också en sedel på en sändning från Iv Produkter i Växjö, som ska levereras i Älmhult. Hur ska du registrera den i handdatorn?",
+        "sequence": [
+          "Hämta",
+          "Bekräfta Kontor",
+          "Hämta obokad hämtning"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "VÄXJÖ"
+        }
       }
     ]
   }
