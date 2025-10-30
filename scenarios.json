@@ -5,7 +5,6 @@
       {
         "description": "Du är Lots och påbörjar ditt arbetspass hemma i Växjö.\nDu får sedlarna på godset som finns på bilen.\nHur registrerar du dessa i handdatorn?",
         "sequence": [
-          "Flänsa",
           "Flänsa på"
         ],
         "wrongClickMessages": {
@@ -21,6 +20,39 @@
           "Hämta",
           "Bekräfta Kontor",
           "Hämta obokad hämtning"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "VÄXJÖ"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Övning 2",
+    "steps": [
+      {
+        "description": "Du kommer fram till första mottagaren och ska leverera hur registrerar du det i handdatorn?",
+        "sequence": [
+          "Leverera"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "VÄXJÖ"
+        }
+      },
+      {
+        "description": "Du kommer fram till nästa mottagare, men det är stängt. Hur registrerar du det i handdatorn?",
+        "sequence": [
+          "Togs ej emot av mottagaren",
+          "Bekräfta Orsak"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "VÄXJÖ"
+        }
+      },
+      {
+        "description": "Du kommer till Schenkers terminal med sändningen som du inte kunde leverera. Hur ska det registreras i handdatorn?",
+        "sequence": [
+          "Åter terminal"
         ],
         "initialOverlayState": {
           "selected-office-display": "VÄXJÖ"
