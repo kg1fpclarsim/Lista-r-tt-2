@@ -59,5 +59,39 @@
         }
       }
     ]
+  },
+  {
+    "title": "Övning 3",
+    "steps": [
+      {
+        "description": "Du är fjärrchaufför och ska påbörja ditt arbetspass i Nybro. Hur ska du registrera sändningarna som är lastade på bilen?",
+        "sequence": [
+          "Hämta obokad hämtning"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "NYBRO"
+        }
+      },
+      {
+        "description": "En av sändningarna är hämtad i Tingsryd, hur registrerar du den i handdatorn?",
+        "sequence": [
+          "VÄXJÖ",
+          "Hämta obokad hämtning"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "NYBRO"
+        }
+      },
+      {
+        "description": "Du kör över till Schenker och lastar stycket, hur ska du registrera det i handdatorn?",
+        "sequence": [
+          "Lasta ut",
+          "Bekräfta Kontor-lasta-ut"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "NYBRO"
+        }
+      }
+    ]
   }
 ]
