@@ -66,10 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     simulatorContainer.style.display = 'none';
                     return;
                 }
-                for (let i = validScenarios.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [validScenarios[i], validScenarios[j]] = [validScenarios[j], validScenarios[i]];
-                }
                 scenarioPlaylist = validScenarios;
                 sessionStorage.setItem('scenarioPlaylist', JSON.stringify(scenarioPlaylist));
                 sessionStorage.setItem('currentPlaylistIndex', '0');
