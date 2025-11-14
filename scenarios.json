@@ -3,7 +3,7 @@
     "title": "Övning 1",
     "steps": [
       {
-        "description": "Du är Lots och påbörjar ditt arbetspass hemma i Växjö.\nDu får sedlarna på godset som finns på bilen.\nHur registrerar du dessa i handdatorn?",
+        "description": "Du är Lots och påbörjar ditt arbetspass i Växjö.\nDu får sedlarna på godset som finns på bilen.\nHur registrerar du dessa i handdatorn?",
         "sequence": [
           "Flänsa på"
         ],
@@ -90,6 +90,20 @@
         ],
         "initialOverlayState": {
           "selected-office-display": "NYBRO"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Övning 4",
+    "steps": [
+      {
+        "description": "Du har registrerat fel händelse på en sändning. Hur rättar du till det?",
+        "sequence": [
+          "Ångra"
+        ],
+        "initialOverlayState": {
+          "selected-office-display": "MALMÖ"
         }
       }
     ]
