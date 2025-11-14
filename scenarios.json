@@ -42,7 +42,7 @@
       {
         "description": "Du kommer fram till nästa mottagare, men det är stängt. Hur registrerar du det i handdatorn?",
         "sequence": [
-          "Togs ej emot av mottagaren",
+          "Stängt/Semester",
           "Bekräfta Orsak"
         ],
         "initialOverlayState": {
